@@ -1,9 +1,11 @@
 // pages/admin/add-product.tsx
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Head from "next/head";
-import { storage } from "@/lib/firebaseConfig";
+import { auth, db, storage } from "@/lib/firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useRouter } from "next/router";
+import { addDoc, collection, Timestamp } from "firebase/firestore";
+import { useAuth } from "@/context/authContext";
 
 export default function AddProductPage() {
   const [form, setForm] = useState({
@@ -19,7 +21,27 @@ export default function AddProductPage() {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [sizeInput, setSizeInput] = useState("");
   const [error, setError] = useState("");
+  const { user, loading, logOut } = useAuth();
   const router = useRouter();
+  useEffect(() => {
+    if (!user) {
+      router.push("/admin/login"); // redirect to login/signup if not logged in
+    }
+  }, [user]);
+
+  async function saveProduct(product: {
+    name: string;
+    price: string;
+    description: string;
+    image: string;
+    sizes: number[];
+  }) {
+    const productRef = collection(db, "products");
+    await addDoc(productRef, {
+      ...product,
+      createdAt: Timestamp.now(),
+    });
+  }
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -90,11 +112,13 @@ export default function AddProductPage() {
 
     try {
       await saveProduct(form);
-      router.push("/admin/products");
+      router.push("/");
     } catch (err) {
       setError("Failed to save product.");
     }
   };
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <>
@@ -205,19 +229,10 @@ export default function AddProductPage() {
             Save Product
           </button>
         </form>
+        <button onClick={logOut}>Log Out</button>
       </main>
     </>
   );
 }
 
 // Placeholder - replace with real API or Firestore
-async function saveProduct(product: {
-  name: string;
-  price: string;
-  description: string;
-  image: string;
-  sizes: number[];
-}) {
-  console.log("Saving product...", product);
-  // e.g., await fetch('/api/products', { method: 'POST', body: JSON.stringify(product) });
-}

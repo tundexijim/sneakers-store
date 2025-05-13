@@ -1,5 +1,5 @@
 import { collection, getDocs, doc, getDoc } from "firebase/firestore";
-import { db } from "../lib/firebaseConfig";
+import { db } from "@/lib/firebaseConfig";
 import { Product } from "../types";
 
 export async function getAllProducts() {

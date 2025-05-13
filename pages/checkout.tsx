@@ -3,6 +3,7 @@ import { useCart } from "../context/CartContext";
 import { saveOrder } from "@/util/saveOrder";
 import { useRouter } from "next/router";
 import { payWithPaystack } from "@/util/paystack";
+import Head from "next/head";
 
 export default function CheckoutPage() {
   const { cart, total, clearCart } = useCart();
@@ -119,124 +120,130 @@ export default function CheckoutPage() {
   };
 
   return (
-    <main className="max-w-3xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Checkout</h1>
+    <>
+      <Head>
+        <title>Checkout</title>
+      </Head>
+      <main className="max-w-3xl mx-auto p-6">
+        <h1 className="text-2xl font-bold mb-4">Checkout</h1>
 
-      {cart.length === 0 ? (
-        <p>Your cart is empty.</p>
-      ) : (
-        <>
-          <div className="mb-6 space-y-2">
-            {cart.map((item) => (
-              <div
-                key={`${item.id}-${item.selectedSize}`}
-                className="flex justify-between"
-              >
-                <p>
-                  {item.name} (Size {item.selectedSize}) x {item.qty}
-                </p>
-                <p>${item.price * item.qty}</p>
+        {cart.length === 0 ? (
+          <p>Your cart is empty.</p>
+        ) : (
+          <>
+            <div className="mb-6 space-y-2">
+              {cart.map((item) => (
+                <div
+                  key={`${item.id}-${item.selectedSize}`}
+                  className="flex justify-between"
+                >
+                  <p>
+                    {item.name} (Size {item.selectedSize}) x {item.qty}
+                  </p>
+                  <p>${item.price * item.qty}</p>
+                </div>
+              ))}
+              <div className="font-semibold flex justify-between pt-4 border-t">
+                <p>Total:</p>
+                <p>${total.toFixed(2)}</p>
               </div>
-            ))}
-            <div className="font-semibold flex justify-between pt-4 border-t">
-              <p>Total:</p>
-              <p>${total.toFixed(2)}</p>
-            </div>
-          </div>
-
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={form.name}
-              onChange={handleChange}
-              className="w-full border px-4 py-2 rounded"
-              required
-            />
-            <input
-              type="number"
-              name="phone"
-              placeholder="Phone Number"
-              value={form.phone}
-              onChange={handleChange}
-              className="w-full border px-4 py-2 rounded"
-              required
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={form.email}
-              onChange={handleChange}
-              className="w-full border px-4 py-2 rounded"
-              required
-            />
-            <textarea
-              name="address"
-              placeholder="Shipping Address"
-              value={form.address}
-              onChange={handleChange}
-              className="w-full border px-4 py-2 rounded"
-              required
-            />
-
-            <div>
-              <p className="font-semibold mb-1">Payment Method:</p>
-              <label className="inline-flex items-center mr-6">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="bank"
-                  checked={form.paymentMethod === "bank"}
-                  onChange={handleChange}
-                  className="mr-2"
-                />
-                Bank Transfer
-              </label>
-              <label className="inline-flex items-center">
-                <input
-                  type="radio"
-                  name="paymentMethod"
-                  value="card"
-                  checked={form.paymentMethod === "card"}
-                  onChange={handleChange}
-                  className="mr-2"
-                />
-                Card Payment
-              </label>
             </div>
 
-            {form.paymentMethod === "bank" && (
-              <div className="bg-yellow-50 text-yellow-800 border border-yellow-300 p-4 rounded text-sm">
-                Please include your order number <strong>{orderNumber}</strong>{" "}
-                in your bank transfer reference.
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <input
+                type="text"
+                name="name"
+                placeholder="Name"
+                value={form.name}
+                onChange={handleChange}
+                className="w-full border px-4 py-2 rounded"
+                required
+              />
+              <input
+                type="number"
+                name="phone"
+                placeholder="Phone Number"
+                value={form.phone}
+                onChange={handleChange}
+                className="w-full border px-4 py-2 rounded"
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={form.email}
+                onChange={handleChange}
+                className="w-full border px-4 py-2 rounded"
+                required
+              />
+              <textarea
+                name="address"
+                placeholder="Shipping Address"
+                value={form.address}
+                onChange={handleChange}
+                className="w-full border px-4 py-2 rounded"
+                required
+              />
+
+              <div>
+                <p className="font-semibold mb-1">Payment Method:</p>
+                <label className="inline-flex items-center mr-6">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="bank"
+                    checked={form.paymentMethod === "bank"}
+                    onChange={handleChange}
+                    className="mr-2"
+                  />
+                  Bank Transfer
+                </label>
+                <label className="inline-flex items-center">
+                  <input
+                    type="radio"
+                    name="paymentMethod"
+                    value="card"
+                    checked={form.paymentMethod === "card"}
+                    onChange={handleChange}
+                    className="mr-2"
+                  />
+                  Card Payment
+                </label>
               </div>
-            )}
 
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+              {form.paymentMethod === "bank" && (
+                <div className="bg-yellow-50 text-yellow-800 border border-yellow-300 p-4 rounded text-sm">
+                  Please include your order number{" "}
+                  <strong>{orderNumber}</strong> in your bank transfer
+                  reference.
+                </div>
+              )}
 
-            {form.paymentMethod === "bank" && (
+              {error && <p className="text-red-500 text-sm">{error}</p>}
+
+              {form.paymentMethod === "bank" && (
+                <button
+                  type="submit"
+                  disabled={loading}
+                  className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
+                >
+                  {loading ? "Placing Order..." : "Place Order"}
+                </button>
+              )}
+            </form>
+            {form.paymentMethod === "card" && (
               <button
-                type="submit"
-                disabled={loading}
-                className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
+                type="button"
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 mt-4 py-3 rounded-lg shadow-md transition duration-300"
+                onClick={handlePay}
               >
-                {loading ? "Placing Order..." : "Place Order"}
+                Pay with Paystack
               </button>
             )}
-          </form>
-          {form.paymentMethod === "card" && (
-            <button
-              type="button"
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 mt-4 py-3 rounded-lg shadow-md transition duration-300"
-              onClick={handlePay}
-            >
-              Pay with Paystack
-            </button>
-          )}
-        </>
-      )}
-    </main>
+          </>
+        )}
+      </main>
+    </>
   );
 }

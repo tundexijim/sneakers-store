@@ -1,13 +1,26 @@
 import Head from "next/head";
 import Image from "next/image";
-import { useContext } from "react";
-import { CartContext, useCart } from "../context/CartContext";
+import { useCart } from "../context/CartContext";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function CartPage() {
   //   const { cart, updateQty, removeFromCart, total } = useContext(CartContext);
   const { cart, updateQty, removeFromCart, total } = useCart();
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
+  // Render a loading state or skeleton until client-side
+  if (!isClient) {
+    return (
+      <main className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
+        <p>Loading...</p>
+      </main>
+    );
+  }
   return (
     <>
       <Head>
@@ -15,7 +28,7 @@ export default function CartPage() {
         <meta name="description" content="Your shopping cart" />
       </Head>
 
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-16 py-8">
         <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
 
         {cart.length === 0 ? (

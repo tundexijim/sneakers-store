@@ -3,8 +3,23 @@ import Head from "next/head";
 import ProductCard from "../components/ProductCard";
 import { getAllProducts } from "../services/productService";
 import { Product } from "@/types";
+import { useEffect, useState } from "react";
 
 export default function Home({ products }: { products: Product[] }) {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  // Render a loading state or skeleton until client-side
+  if (!isClient) {
+    return (
+      <main className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
+        <p>Loading...</p>
+      </main>
+    );
+  }
   return (
     <>
       <Head>
@@ -13,9 +28,9 @@ export default function Home({ products }: { products: Product[] }) {
       </Head>
 
       <main className="container mx-auto px-16 py-8">
-        <h1 className="text-3xl font-bold mb-6">Sneaker Collection</h1>
+        <h1 className="text-3xl font-bold mb-6">Collections</h1>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}
