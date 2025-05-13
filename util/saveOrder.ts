@@ -1,7 +1,7 @@
 import { db } from "@/lib/firebaseConfig"; // adjust path
 import { collection, addDoc, Timestamp } from "firebase/firestore";
 
-interface OrderData {
+export interface OrderData {
   orderNumber: string;
   items: {
     productId: string;

@@ -5,7 +5,6 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 export default function CartPage() {
-  //   const { cart, updateQty, removeFromCart, total } = useContext(CartContext);
   const { cart, updateQty, removeFromCart, total } = useCart();
   const [isClient, setIsClient] = useState(false);
   useEffect(() => {

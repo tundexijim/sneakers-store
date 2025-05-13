@@ -1,11 +1,12 @@
 // pages/admin/add-product.tsx
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import { auth, db, storage } from "@/lib/firebaseConfig";
+import { db, storage } from "@/lib/firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useRouter } from "next/router";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { useAuth } from "@/context/authContext";
+import Link from "next/link";
 
 export default function AddProductPage() {
   const [form, setForm] = useState({
@@ -24,10 +25,10 @@ export default function AddProductPage() {
   const { user, loading, logOut } = useAuth();
   const router = useRouter();
   useEffect(() => {
-    if (!user) {
+    if (!loading && !user) {
       router.push("/admin/login"); // redirect to login/signup if not logged in
     }
-  }, [user]);
+  }, [user, loading]);
 
   async function saveProduct(product: {
     name: string;
@@ -126,8 +127,13 @@ export default function AddProductPage() {
         <title>Add Product</title>
       </Head>
       <main className="max-w-xl mx-auto p-6">
-        <h1 className="text-2xl font-bold mb-4">Add New Product</h1>
-
+        <div className="flex justify-between items-center">
+          <h1 className="text-2xl font-bold mb-4">Add New Product</h1>
+          <Link href="/admin/AdminPanel">
+            <button>Panel</button>
+          </Link>
+          <button onClick={logOut}>Log Out</button>
+        </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <input
             type="text"
@@ -229,7 +235,6 @@ export default function AddProductPage() {
             Save Product
           </button>
         </form>
-        <button onClick={logOut}>Log Out</button>
       </main>
     </>
   );

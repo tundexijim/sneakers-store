@@ -80,7 +80,7 @@ export default function CheckoutPage() {
     setLoading(true);
     await saveOrder(orderData, setLoading, setError);
     clearCart();
-    router.push(`/success/orderNumber=${orderNumber}`);
+    router.push(`/success?orderNumber=${orderNumber}`);
     localStorage.removeItem("orderNumber");
   };
   const handlePay = async () => {

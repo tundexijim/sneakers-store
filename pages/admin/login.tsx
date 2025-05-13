@@ -14,11 +14,11 @@ export default function AuthPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { user } = useAuth();
+  const { user, loading: authloading } = useAuth();
 
   useEffect(() => {
-    if (user) {
-      router.push("/admin/add-product"); // redirect to login/signup if not logged in
+    if (!authloading && user) {
+      router.push("/admin/AdminPanel"); // redirect to login/signup if not logged in
     }
   }, [user]);
 
@@ -37,7 +37,7 @@ export default function AuthPage() {
     try {
       if (isLogin) {
         await signInWithEmailAndPassword(auth, email, password);
-        router.push("/admin/add-product");
+        router.push("/admin/AdminPanel");
       } else {
         await createUserWithEmailAndPassword(auth, email, password);
         window.alert("Signup successful! You can now log in.");
