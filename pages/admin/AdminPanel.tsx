@@ -29,6 +29,12 @@ export default function AdminPanel() {
   const router = useRouter();
 
   useEffect(() => {
+    if (!authloading && !user) {
+      router.push("/admin/login"); // redirect to login/signup if not logged in
+    }
+  }, [user, authloading]);
+
+  useEffect(() => {
     const fetchOrders = async () => {
       try {
         const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
@@ -48,11 +54,6 @@ export default function AdminPanel() {
 
     fetchOrders();
   }, []);
-  useEffect(() => {
-    if (!authloading && !user) {
-      router.push("/admin/login"); // redirect to login/signup if not logged in
-    }
-  }, [user, authloading]);
 
   const deleteOrder = async (id: string) => {
     if (confirm("Are you sure you want to delete this order?")) {

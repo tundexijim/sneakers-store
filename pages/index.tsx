@@ -23,7 +23,7 @@ export default function Home({ products }: { products: Product[] }) {
   return (
     <>
       <Head>
-        <title>Sneaker Store</title>
+        <title>DTwears</title>
         <meta name="description" content="Shop premium sneakers online" />
       </Head>
 

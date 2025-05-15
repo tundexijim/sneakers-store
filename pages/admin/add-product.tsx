@@ -7,6 +7,7 @@ import { useRouter } from "next/router";
 import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { useAuth } from "@/context/authContext";
 import Link from "next/link";
+import { ProductSize } from "@/types";
 
 export default function AddProductPage() {
   const [form, setForm] = useState({
@@ -14,13 +15,13 @@ export default function AddProductPage() {
     price: "",
     description: "",
     image: "",
-    sizes: [] as number[],
+    sizes: [] as ProductSize[],
   });
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [sizeInput, setSizeInput] = useState("");
+  const [sizeInput, setSizeInput] = useState({ size: "", stock: "" });
   const [error, setError] = useState("");
   const { user, loading, logOut } = useAuth();
   const router = useRouter();
@@ -35,7 +36,7 @@ export default function AddProductPage() {
     price: string;
     description: string;
     image: string;
-    sizes: number[];
+    sizes: ProductSize[];
   }) {
     const productRef = collection(db, "products");
     await addDoc(productRef, {
@@ -48,6 +49,12 @@ export default function AddProductPage() {
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+  };
+
+  const handlesizeInputchange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    setSizeInput({ ...sizeInput, [e.target.name]: e.target.value });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -86,14 +93,23 @@ export default function AddProductPage() {
   };
 
   const addSize = () => {
-    const size = parseInt(sizeInput.trim(), 10);
-    if (!isNaN(size) && !form.sizes.includes(size)) {
-      setForm((prev) => ({ ...prev, sizes: [...prev.sizes, size] }));
-      setSizeInput("");
+    const size = parseInt(sizeInput.size.trim(), 10);
+    const stock = parseInt(sizeInput.stock.trim(), 10);
+
+    if (
+      !isNaN(size) &&
+      !isNaN(stock) &&
+      !form.sizes.some((s) => s.size === size)
+    ) {
+      setForm((prev) => ({
+        ...prev,
+        sizes: [...prev.sizes, { size, stock }],
+      }));
+      setSizeInput({ size: "", stock: "" });
     }
   };
 
-  const removeSize = (size: number) => {
+  const removeSize = (size: ProductSize) => {
     setForm((prev) => ({
       ...prev,
       sizes: prev.sizes.filter((s) => s !== size),
@@ -113,7 +129,14 @@ export default function AddProductPage() {
 
     try {
       await saveProduct(form);
-      router.push("/");
+      window.alert("Product added successfully");
+      setForm({
+        name: "",
+        price: "",
+        description: "",
+        image: "",
+        sizes: [],
+      });
     } catch (err) {
       setError("Failed to save product.");
     }
@@ -158,20 +181,28 @@ export default function AddProductPage() {
             placeholder="Description"
             value={form.description}
             onChange={handleChange}
-            required
             className="w-full border px-4 py-2 rounded"
           />
 
           {/* Sizes */}
           <div className="space-y-2">
-            <label className="font-medium">Sizes</label>
+            <label className="font-medium">Sizes and Stock</label>
             <div className="flex gap-2">
               <input
+                name="size"
                 type="number"
-                value={sizeInput}
-                onChange={(e) => setSizeInput(e.target.value)}
+                value={sizeInput.size}
+                onChange={handlesizeInputchange}
                 className="border px-3 py-1 rounded w-full"
                 placeholder="e.g. 42"
+              />
+              <input
+                name="stock"
+                type="number"
+                value={sizeInput.stock}
+                onChange={handlesizeInputchange}
+                className="border px-3 py-1 rounded w-full"
+                placeholder="e.g. 2"
               />
               <button
                 type="button"
@@ -185,10 +216,10 @@ export default function AddProductPage() {
               <div className="flex gap-2 flex-wrap">
                 {form.sizes.map((size) => (
                   <span
-                    key={size}
+                    key={size.size}
                     className="bg-gray-200 px-3 py-1 rounded-full text-sm flex items-center"
                   >
-                    {size}
+                    {size.size}, {size.stock}
                     <button
                       type="button"
                       onClick={() => removeSize(size)}

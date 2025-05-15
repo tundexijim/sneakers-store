@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
-import { saveOrder } from "@/util/saveOrder";
+import { placeOrder } from "@/util/saveOrder";
 import { useRouter } from "next/router";
 import { payWithPaystack } from "@/util/paystack";
 import Head from "next/head";
@@ -78,7 +78,7 @@ export default function CheckoutPage() {
     }
 
     setLoading(true);
-    await saveOrder(orderData, setLoading, setError);
+    await placeOrder(cart, orderData, setLoading, setError);
     clearCart();
     router.push(`/success?orderNumber=${orderNumber}`);
     localStorage.removeItem("orderNumber");
@@ -102,7 +102,8 @@ export default function CheckoutPage() {
       onSuccess: async (response) => {
         console.log("Payment successful!");
         setLoading(true);
-        await saveOrder(
+        await placeOrder(
+          cart,
           {
             ...orderData,
           },
@@ -114,6 +115,7 @@ export default function CheckoutPage() {
         localStorage.removeItem("orderNumber");
       },
       onClose: () => {
+        localStorage.removeItem("orderNumber");
         console.log("Payment popup closed.");
       },
     });
@@ -122,7 +124,7 @@ export default function CheckoutPage() {
   return (
     <>
       <Head>
-        <title>Checkout</title>
+        <title>Checkout-DTwears</title>
       </Head>
       <main className="max-w-3xl mx-auto p-6">
         <h1 className="text-2xl font-bold mb-4">Checkout</h1>
@@ -130,7 +132,7 @@ export default function CheckoutPage() {
         {cart.length === 0 ? (
           <p>Your cart is empty.</p>
         ) : (
-          <>
+          <div className="">
             <div className="mb-6 space-y-2">
               {cart.map((item) => (
                 <div
@@ -148,100 +150,110 @@ export default function CheckoutPage() {
                 <p>${total.toFixed(2)}</p>
               </div>
             </div>
+            <div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <input
+                  type="text"
+                  name="name"
+                  placeholder="Name"
+                  value={form.name}
+                  onChange={handleChange}
+                  className="w-full border px-4 py-2 rounded"
+                  required
+                />
+                <input
+                  type="number"
+                  name="phone"
+                  placeholder="Phone Number"
+                  value={form.phone}
+                  onChange={handleChange}
+                  className="w-full border px-4 py-2 rounded"
+                  required
+                />
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={form.email}
+                  onChange={handleChange}
+                  className="w-full border px-4 py-2 rounded"
+                  required
+                />
+                <textarea
+                  name="address"
+                  placeholder="Shipping Address"
+                  value={form.address}
+                  onChange={handleChange}
+                  className="w-full border px-4 py-2 rounded"
+                  required
+                />
 
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <input
-                type="text"
-                name="name"
-                placeholder="Name"
-                value={form.name}
-                onChange={handleChange}
-                className="w-full border px-4 py-2 rounded"
-                required
-              />
-              <input
-                type="number"
-                name="phone"
-                placeholder="Phone Number"
-                value={form.phone}
-                onChange={handleChange}
-                className="w-full border px-4 py-2 rounded"
-                required
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={handleChange}
-                className="w-full border px-4 py-2 rounded"
-                required
-              />
-              <textarea
-                name="address"
-                placeholder="Shipping Address"
-                value={form.address}
-                onChange={handleChange}
-                className="w-full border px-4 py-2 rounded"
-                required
-              />
+                <div>
+                  <p className="font-semibold mb-1">Payment Method:</p>
+                  <div className="flex items-center justify-between">
+                    <label className="inline-flex items-center mr-6">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="bank"
+                        checked={form.paymentMethod === "bank"}
+                        onChange={handleChange}
+                        className="mr-2"
+                      />
+                      Bank Transfer
+                    </label>
+                    <label className="inline-flex items-center">
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="card"
+                        checked={form.paymentMethod === "card"}
+                        onChange={handleChange}
+                        className="mr-2"
+                      />
+                      Card Payment
+                    </label>
+                    <img
+                      src="/paystack.png"
+                      alt="paystack"
+                      className="w-[400px]"
+                    />
+                  </div>
+                </div>
 
-              <div>
-                <p className="font-semibold mb-1">Payment Method:</p>
-                <label className="inline-flex items-center mr-6">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="bank"
-                    checked={form.paymentMethod === "bank"}
-                    onChange={handleChange}
-                    className="mr-2"
-                  />
-                  Bank Transfer
-                </label>
-                <label className="inline-flex items-center">
-                  <input
-                    type="radio"
-                    name="paymentMethod"
-                    value="card"
-                    checked={form.paymentMethod === "card"}
-                    onChange={handleChange}
-                    className="mr-2"
-                  />
-                  Card Payment
-                </label>
-              </div>
+                {form.paymentMethod === "bank" && (
+                  <div className="bg-yellow-50 text-yellow-800 border border-yellow-300 p-4 rounded text-sm">
+                    Please include your order number{" "}
+                    <strong>{orderNumber}</strong> in the bank transfer
+                    reference to help us verify your payment faster.
+                  </div>
+                )}
 
-              {form.paymentMethod === "bank" && (
-                <div className="bg-yellow-50 text-yellow-800 border border-yellow-300 p-4 rounded text-sm">
-                  Please include your order number{" "}
-                  <strong>{orderNumber}</strong> in your bank transfer
-                  reference.
+                {error && <p className="text-red-500 text-sm">{error}</p>}
+
+                {form.paymentMethod === "bank" && (
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
+                  >
+                    {loading ? "Placing Order..." : "Place Order"}
+                  </button>
+                )}
+              </form>
+              {form.paymentMethod === "card" && (
+                <div>
+                  <button
+                    type="button"
+                    className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 mt-4 py-3 rounded-lg shadow-md transition duration-300"
+                    onClick={handlePay}
+                  >
+                    Pay with Paystack
+                  </button>
                 </div>
               )}
-
-              {error && <p className="text-red-500 text-sm">{error}</p>}
-
-              {form.paymentMethod === "bank" && (
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
-                >
-                  {loading ? "Placing Order..." : "Place Order"}
-                </button>
-              )}
-            </form>
-            {form.paymentMethod === "card" && (
-              <button
-                type="button"
-                className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 mt-4 py-3 rounded-lg shadow-md transition duration-300"
-                onClick={handlePay}
-              >
-                Pay with Paystack
-              </button>
-            )}
-          </>
+            </div>
+          </div>
         )}
       </main>
     </>

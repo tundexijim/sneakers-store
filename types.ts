@@ -1,12 +1,15 @@
 // types/Product.ts
-
+export type ProductSize = {
+  size: number;
+  stock: number;
+};
 export type Product = {
   id: string;
   name: string;
   price: number;
   image: string;
   description: string;
-  sizes: number[];
+  sizes: ProductSize[];
   createdAt: string;
 };
 

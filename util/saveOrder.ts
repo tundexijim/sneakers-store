@@ -1,5 +1,14 @@
 import { db } from "@/lib/firebaseConfig"; // adjust path
-import { collection, addDoc, Timestamp } from "firebase/firestore";
+import { CartItem } from "@/types";
+import {
+  collection,
+  addDoc,
+  Timestamp,
+  runTransaction,
+  getDoc,
+  updateDoc,
+  doc,
+} from "firebase/firestore";
 
 export interface OrderData {
   orderNumber: string;
@@ -20,7 +29,7 @@ export interface OrderData {
   total: number;
 }
 
-export async function saveOrder(
+async function saveOrder(
   order: OrderData,
   setLoading: (state: boolean) => void,
   setError: (msg: string) => void
@@ -43,3 +52,55 @@ export async function saveOrder(
     setLoading(false);
   }
 }
+
+export const placeOrder = async (
+  cart: CartItem[],
+  order: OrderData,
+  setLoading: (state: boolean) => void,
+  setError: (msg: string) => void
+) => {
+  try {
+    await runTransaction(db, async (transaction) => {
+      for (const item of cart) {
+        const productRef = doc(db, "products", item.id);
+        const productSnap = await transaction.get(productRef);
+
+        if (!productSnap.exists()) {
+          throw new Error("Product not found");
+        }
+
+        const productData = productSnap.data();
+        const sizes = productData.sizes;
+
+        const sizeIndex = sizes.findIndex(
+          (s: any) => s.size === item.selectedSize
+        );
+
+        if (sizeIndex === -1) {
+          throw new Error(`Size ${item.selectedSize} not found`);
+        }
+
+        const availableStock = sizes[sizeIndex].stock;
+
+        if (availableStock < item.qty) {
+          throw new Error(
+            `Not enough stock for size ${item.selectedSize}. Only ${availableStock} left.`
+          );
+        }
+
+        // Deduct the quantity
+        sizes[sizeIndex].stock -= item.qty;
+
+        // Update the document
+        transaction.update(productRef, { sizes });
+      }
+
+      await saveOrder(order, setLoading, setError);
+      // Optionally create an 'orders' document here too
+    });
+
+    console.log("Order placed successfully!");
+  } catch (error) {
+    console.error("Order failed:", error);
+  }
+};

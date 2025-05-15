@@ -19,7 +19,7 @@ export default function ProductPage({ product }: { product: Product }) {
   return (
     <>
       <Head>
-        <title>{product.name} | Sneaker Store</title>
+        <title>{product.name} | DTwears</title>
         <meta name="description" content={product.description} />
       </Head>
 
@@ -42,17 +42,25 @@ export default function ProductPage({ product }: { product: Product }) {
               <h3 className="font-semibold mb-2">Select Size:</h3>
               <div className="flex gap-2">
                 {product.sizes.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`px-4 py-2 border rounded ${
-                      selectedSize === size
-                        ? "bg-black text-white"
-                        : "bg-white text-black"
-                    }`}
-                  >
-                    {size}
-                  </button>
+                  <div className="relative">
+                    <button
+                      key={size.size}
+                      onClick={() => setSelectedSize(size.size)}
+                      disabled={size.stock === 0}
+                      className={`px-4 py-2 border rounded ${
+                        selectedSize === size.size
+                          ? "bg-black text-white"
+                          : "bg-white text-black"
+                      }`}
+                    >
+                      {size.size}
+                    </button>
+                    {size.stock === 0 && (
+                      <span className="10 text-red-500 font-bold absolute left-[40%] top-[20%]">
+                        &times;
+                      </span>
+                    )}
+                  </div>
                 ))}
               </div>
             </div>
