@@ -5,9 +5,8 @@ import {
   addDoc,
   Timestamp,
   runTransaction,
-  getDoc,
-  updateDoc,
   doc,
+  DocumentReference,
 } from "firebase/firestore";
 
 export interface OrderData {
@@ -20,16 +19,20 @@ export interface OrderData {
     selectedSize: number;
   }[];
   customer: {
-    name: string;
+    firstname: string;
+    lastname: string;
     email: string;
     address: string;
     phone: string;
+    selectedState: string;
   };
   paymentMethod: string;
   total: number;
+  ShippingCost: number;
+  Subtotal: number;
 }
 
-async function saveOrder(
+async function saveOrder<OrderType>(
   order: OrderData,
   setLoading: (state: boolean) => void,
   setError: (msg: string) => void
@@ -43,7 +46,6 @@ async function saveOrder(
       createdAt: Timestamp.now(),
     });
     setLoading(false);
-    // console.log("Order saved successfully");
   } catch (error: any) {
     console.error("Failed to save order:", error);
     setError("Failed to save order. Please try again.");
@@ -60,18 +62,31 @@ export const placeOrder = async (
   setError: (msg: string) => void
 ) => {
   try {
+    setLoading(true);
+
     await runTransaction(db, async (transaction) => {
+      const productDataMap: {
+        [productId: string]: { ref: DocumentReference; sizes: any[] };
+      } = {};
+
       for (const item of cart) {
         const productRef = doc(db, "products", item.id);
-        const productSnap = await transaction.get(productRef);
 
-        if (!productSnap.exists()) {
-          throw new Error("Product not found");
+        if (!productDataMap[item.id]) {
+          const productSnap = await transaction.get(productRef);
+
+          if (!productSnap.exists()) {
+            throw new Error("Product not found");
+          }
+
+          productDataMap[item.id] = {
+            ref: productRef,
+            sizes: productSnap.data().sizes,
+          };
         }
-
-        const productData = productSnap.data();
-        const sizes = productData.sizes;
-
+      }
+      for (const item of cart) {
+        const { sizes } = productDataMap[item.id];
         const sizeIndex = sizes.findIndex(
           (s: any) => s.size === item.selectedSize
         );
@@ -87,20 +102,18 @@ export const placeOrder = async (
             `Not enough stock for size ${item.selectedSize}. Only ${availableStock} left.`
           );
         }
-
-        // Deduct the quantity
         sizes[sizeIndex].stock -= item.qty;
-
-        // Update the document
-        transaction.update(productRef, { sizes });
       }
-
-      await saveOrder(order, setLoading, setError);
-      // Optionally create an 'orders' document here too
+      for (const { ref, sizes } of Object.values(productDataMap)) {
+        transaction.update(ref, { sizes });
+      }
     });
-
+    await saveOrder(order, setLoading, setError);
     console.log("Order placed successfully!");
-  } catch (error) {
-    console.error("Order failed:", error);
+  } catch (error: any) {
+    console.error("Order failed:", error.message);
+    setError(error.message);
+  } finally {
+    setLoading(false);
   }
 };

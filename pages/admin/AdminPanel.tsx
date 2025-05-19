@@ -90,7 +90,7 @@ export default function AdminPanel() {
                 </p>
                 <p>
                   <span className="font-semibold">Customer:</span>{" "}
-                  {order.customer?.name ?? "Unknown"}
+                  {order.customer?.firstname ?? "Unknown"}
                 </p>
                 <p className="text-sm text-gray-500">
                   {order.createdAt?.seconds &&
@@ -130,7 +130,10 @@ export default function AdminPanel() {
               Order #{selectedOrder.orderNumber}
             </h2>
             <p>
-              <strong>Customer:</strong> {selectedOrder.customer?.name}
+              <strong>First Name:</strong> {selectedOrder.customer?.firstname}
+            </p>
+            <p>
+              <strong>Last Name:</strong> {selectedOrder.customer?.lastname}
             </p>
             <p>
               <strong>Email:</strong> {selectedOrder.customer?.email}
@@ -142,10 +145,19 @@ export default function AdminPanel() {
               <strong>Address:</strong> {selectedOrder.customer.address}
             </p>
             <p>
+              <strong>State:</strong> {selectedOrder.customer.selectedState}
+            </p>
+            <p>
               <strong>Payment:</strong> {selectedOrder.paymentMethod}
             </p>
             <p>
               <strong>Total:</strong> ₦{selectedOrder.total}
+            </p>
+            <p>
+              <strong>Shipping Cost:</strong> ₦{selectedOrder.ShippingCost}
+            </p>
+            <p>
+              <strong>Subtotal:</strong> ₦{selectedOrder.Subtotal}
             </p>
 
             <div className="mt-4">

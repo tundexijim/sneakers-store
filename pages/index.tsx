@@ -27,10 +27,10 @@ export default function Home({ products }: { products: Product[] }) {
         <meta name="description" content="Shop premium sneakers online" />
       </Head>
 
-      <main className="container mx-auto px-16 py-8">
+      <main className="container mx-auto md:px-16 px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">Collections</h1>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
           {products.map((product) => (
             <ProductCard key={product.id} product={product} />
           ))}

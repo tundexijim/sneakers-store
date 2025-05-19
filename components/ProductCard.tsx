@@ -3,7 +3,7 @@ import { Product } from "@/types";
 
 export default function ProductCard({ product }: { product: Product }) {
   return (
-    <div className=" rounded-lg p-4 hover:shadow-lg transition">
+    <div className="">
       <Link href={`/product/${product.id}`}>
         <img
           src={product.image}

@@ -1,0 +1,81 @@
+// utils/getStateCode.js
+export function getStateCode(state: string) {
+  switch (state) {
+    case "Abia":
+      return 1;
+    case "Adamawa":
+      return 2;
+    case "Akwa Ibom":
+      return 3;
+    case "Anambra":
+      return 4;
+    case "Bauchi":
+      return 5;
+    case "Bayelsa":
+      return 6;
+    case "Benue":
+      return 7;
+    case "Borno":
+      return 8;
+    case "Cross River":
+      return 9;
+    case "Delta":
+      return 10;
+    case "Ebonyi":
+      return 11;
+    case "Edo":
+      return 12;
+    case "Ekiti":
+      return 13;
+    case "Enugu":
+      return 14;
+    case "FCT":
+      return 15;
+    case "Gombe":
+      return 16;
+    case "Imo":
+      return 17;
+    case "Jigawa":
+      return 18;
+    case "Kaduna":
+      return 19;
+    case "Kano":
+      return 20;
+    case "Katsina":
+      return 21;
+    case "Kebbi":
+      return 22;
+    case "Kogi":
+      return 23;
+    case "Kwara":
+      return 24;
+    case "Lagos":
+      return 25;
+    case "Nasarawa":
+      return 26;
+    case "Niger":
+      return 27;
+    case "Ogun":
+      return 28;
+    case "Ondo":
+      return 29;
+    case "Osun":
+      return 30;
+    case "Oyo":
+      return 31;
+    case "Plateau":
+      return 32;
+    case "Rivers":
+      return 33;
+    case "Sokoto":
+      return 34;
+    case "Taraba":
+      return 35;
+    case "Yobe":
+      return 36;
+    case "Zamfara":
+      return 37;
+    default:
+      return 0;
+  }
+}

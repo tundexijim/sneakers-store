@@ -3,6 +3,7 @@ import Image from "next/image";
 import { useCart } from "../context/CartContext";
 import Link from "next/link";
 import { useIsClient } from "@/hooks/useIsClient";
+import toast from "react-hot-toast";
 
 export default function CartPage() {
   const { cart, updateQty, removeFromCart, total } = useCart();
@@ -20,7 +21,7 @@ export default function CartPage() {
         <meta name="description" content="Your shopping cart" />
       </Head>
 
-      <main className="container mx-auto px-16 py-8">
+      <main className="container mx-auto md:px-16 px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
 
         {cart.length === 0 ? (
@@ -61,10 +62,23 @@ export default function CartPage() {
                       </button>
                       <span>{item.qty}</span>
                       <button
-                        className="px-2 py-1 bg-gray-200 rounded"
-                        onClick={() =>
-                          updateQty(item.id, item.selectedSize, item.qty + 1)
-                        }
+                        className={`px-2 py-1 rounded ${
+                          item.qty >=
+                          (item.sizes.find((s) => s.size === item.selectedSize)
+                            ?.stock ?? Infinity)
+                            ? "bg-gray-300 cursor-not-allowed"
+                            : "bg-gray-200"
+                        }`}
+                        onClick={() => {
+                          const stock =
+                            item.sizes.find((s) => s.size === item.selectedSize)
+                              ?.stock ?? 0;
+                          if (item.qty >= stock) {
+                            toast.error("Stock limit reached for this size.");
+                          } else {
+                            updateQty(item.id, item.selectedSize, item.qty + 1);
+                          }
+                        }}
                       >
                         +
                       </button>

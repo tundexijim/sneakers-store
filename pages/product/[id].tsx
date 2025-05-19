@@ -6,10 +6,15 @@ import { Product } from "../../types";
 import { useCart } from "../../context/CartContext";
 import Link from "next/link";
 import { useState } from "react";
+import { X } from "lucide-react";
 
 export default function ProductPage({ product }: { product: Product }) {
-  const { addToCart } = useCart();
+  const { addToCart, cart } = useCart();
   const [selectedSize, setSelectedSize] = useState<number>(0);
+  const isInCart = cart.some((item) => item.id === product.id);
+
+  const stock = product.sizes.reduce((sum, size) => sum + size.stock, 0);
+  console.log(stock);
 
   const handleAddToCart = () => {
     if (selectedSize === 0) return alert("Please select a size");
@@ -23,7 +28,7 @@ export default function ProductPage({ product }: { product: Product }) {
         <meta name="description" content={product.description} />
       </Head>
 
-      <main className="container mx-auto px-16 py-8">
+      <main className="container mx-auto md:px-16 px-4 py-8">
         <div className="flex flex-col md:flex-row gap-8">
           <div className="w-full md:w-1/2">
             <Image
@@ -38,6 +43,7 @@ export default function ProductPage({ product }: { product: Product }) {
             <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
             <p className="text-gray-600 mb-6">{product.description}</p>
             <div className="text-2xl font-semibold mb-4">${product.price}</div>
+            {stock === 0 && <p className="text-red-500">Out Of Stock</p>}
             <div className="mt-4">
               <h3 className="font-semibold mb-2">Select Size:</h3>
               <div className="flex gap-2">
@@ -56,20 +62,29 @@ export default function ProductPage({ product }: { product: Product }) {
                       {size.size}
                     </button>
                     {size.stock === 0 && (
-                      <span className="10 text-red-500 font-bold absolute left-[40%] top-[20%]">
-                        &times;
+                      <span className="absolute left-0.5 top-0 ">
+                        <X color="#f40b0b" size={40} />
                       </span>
                     )}
                   </div>
                 ))}
               </div>
             </div>
-            <button
-              onClick={handleAddToCart}
-              className="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 cursor-pointer mt-4"
-            >
-              Add to Cart
-            </button>
+            <div className="flex flex-col">
+              <button
+                onClick={handleAddToCart}
+                className="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 w-fit cursor-pointer mt-4"
+              >
+                Add to Cart
+              </button>
+              {isInCart && (
+                <Link href="/cart">
+                  <button className="bg-green-600 text-white px-8 py-3 rounded-xl hover:bg-green-700 cursor-pointer mt-4">
+                    View Cart
+                  </button>
+                </Link>
+              )}
+            </div>
             <div className="mt-4">
               <Link href="/" passHref>
                 <button className="text-blue-600 underline hover:text-blue-800">
