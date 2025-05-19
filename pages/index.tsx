@@ -1,25 +1,25 @@
+// pages/index.tsx
 import { GetServerSideProps } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import ProductCard from "../components/ProductCard";
-import { getAllProducts } from "../services/productService";
+import { getAllProducts, PRODUCTS_PER_PAGE } from "../services/productService";
 import { Product } from "@/types";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-export default function Home({ products }: { products: Product[] }) {
-  const [isClient, setIsClient] = useState(false);
+type Props = {
+  products: Product[];
+  total: number;
+  currentPage: number;
+};
+
+export default function Home({ products, total, currentPage }: Props) {
+  const totalPages = Math.ceil(total / PRODUCTS_PER_PAGE);
+
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [currentPage]);
 
-  // Render a loading state or skeleton until client-side
-  if (!isClient) {
-    return (
-      <main className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Your Cart</h1>
-        <p>Loading...</p>
-      </main>
-    );
-  }
   return (
     <>
       <Head>
@@ -35,12 +35,69 @@ export default function Home({ products }: { products: Product[] }) {
             <ProductCard key={product.id} product={product} />
           ))}
         </div>
+
+        {/* Pagination Buttons */}
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="flex justify-center items-center mt-10 space-x-2 flex-wrap">
+            {/* Prev Button */}
+            <Link href={`/?page=${currentPage - 1}`} scroll={false}>
+              <button
+                disabled={currentPage === 1}
+                className={`px-4 py-2 border rounded ${
+                  currentPage === 1
+                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    : "bg-white text-black border-gray-400"
+                }`}
+              >
+                Prev
+              </button>
+            </Link>
+
+            {/* Numbered Page Buttons */}
+            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <Link key={page} href={`/?page=${page}`} scroll={false}>
+                <button
+                  className={`px-4 py-2 border rounded ${
+                    page === currentPage
+                      ? "bg-black text-white"
+                      : "bg-white text-black border-gray-400"
+                  }`}
+                >
+                  {page}
+                </button>
+              </Link>
+            ))}
+
+            {/* Next Button */}
+            <Link href={`/?page=${currentPage + 1}`} scroll={false}>
+              <button
+                disabled={currentPage === totalPages}
+                className={`px-4 py-2 border rounded ${
+                  currentPage === totalPages
+                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    : "bg-white text-black border-gray-400"
+                }`}
+              >
+                Next
+              </button>
+            </Link>
+          </div>
+        )}
       </main>
     </>
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const products = await getAllProducts();
-  return { props: { products } };
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const page = parseInt(context.query.page as string) || 1;
+  const { products, total } = await getAllProducts(page);
+
+  return {
+    props: {
+      products,
+      total,
+      currentPage: page,
+    },
+  };
 };

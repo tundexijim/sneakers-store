@@ -2,9 +2,12 @@ import { collection, getDocs, doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebaseConfig";
 import { Product } from "../types";
 
-export async function getAllProducts() {
+export const PRODUCTS_PER_PAGE = 12;
+
+export async function getAllProducts(page: number = 1) {
   const snapshot = await getDocs(collection(db, "products"));
-  return snapshot.docs.map((doc) => {
+
+  const allProducts = snapshot.docs.map((doc) => {
     const data = doc.data();
     return {
       id: doc.id,
@@ -12,6 +15,18 @@ export async function getAllProducts() {
       createdAt: data.createdAt?.toDate().toISOString() || null,
     };
   });
+
+  const total = allProducts.length;
+
+  const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
+  const paginated = allProducts
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1))
+    .slice(startIndex, startIndex + PRODUCTS_PER_PAGE);
+
+  return {
+    products: paginated,
+    total,
+  };
 }
 
 export const getProductById = async (id: string): Promise<Product | null> => {
