@@ -6,6 +6,7 @@ import ProductCard from "../components/ProductCard";
 import { getAllProducts, PRODUCTS_PER_PAGE } from "../services/productService";
 import { Product } from "@/types";
 import { useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Props = {
   products: Product[];
@@ -36,50 +37,45 @@ export default function Home({ products, total, currentPage }: Props) {
           ))}
         </div>
 
-        {/* Pagination Buttons */}
-        {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="flex justify-center items-center mt-10 space-x-2 flex-wrap">
-            {/* Prev Button */}
+          <div className="flex justify-center items-center mt-10 flex-wrap space-x-2">
             <Link href={`/?page=${currentPage - 1}`} scroll={false}>
               <button
                 disabled={currentPage === 1}
-                className={`px-4 py-2 border rounded ${
+                className={`flex items-center justify-center w-8 h-8 rounded-full text-sm cursor-pointer ${
                   currentPage === 1
-                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-white text-black border-gray-400"
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-black hover:underline"
                 }`}
               >
-                Prev
+                <ChevronLeft />
               </button>
             </Link>
-
-            {/* Numbered Page Buttons */}
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <Link key={page} href={`/?page=${page}`} scroll={false}>
-                <button
-                  className={`px-4 py-2 border rounded ${
-                    page === currentPage
-                      ? "bg-black text-white"
-                      : "bg-white text-black border-gray-400"
-                  }`}
-                >
-                  {page}
+                <button className="relative px-2 py-1 text-sm cursor-pointer">
+                  <span
+                    className={`${
+                      page === currentPage
+                        ? "after:content-[''] after:absolute after:left-[-2] after:h-[2px] after:w-3 after:bg-black after:bottom-[-2]"
+                        : ""
+                    } relative`}
+                  >
+                    {page}
+                  </span>
                 </button>
               </Link>
             ))}
-
-            {/* Next Button */}
             <Link href={`/?page=${currentPage + 1}`} scroll={false}>
               <button
                 disabled={currentPage === totalPages}
-                className={`px-4 py-2 border rounded ${
+                className={`flex items-center justify-center w-8 h-8 rounded-full text-sm cursor-pointer ${
                   currentPage === totalPages
-                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-white text-black border-gray-400"
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-black hover:underline"
                 }`}
               >
-                Next
+                <ChevronRight />
               </button>
             </Link>
           </div>

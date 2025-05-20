@@ -1,4 +1,4 @@
-import { collection, getDocs, doc, getDoc } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebaseConfig";
 import { Product } from "../types";
 
@@ -29,12 +29,16 @@ export async function getAllProducts(page: number = 1) {
   };
 }
 
-export const getProductById = async (id: string): Promise<Product | null> => {
+export const getProductBySlug = async (
+  slug: string
+): Promise<Product | null> => {
   try {
-    const docRef = doc(db, "products", id);
-    const docSnap = await getDoc(docRef);
+    const productsRef = collection(db, "products");
+    const q = query(productsRef, where("slug", "==", slug));
+    const querySnapshot = await getDocs(q);
 
-    if (docSnap.exists()) {
+    if (!querySnapshot.empty) {
+      const docSnap = querySnapshot.docs[0];
       const data = docSnap.data();
       return {
         id: docSnap.id,
@@ -45,7 +49,7 @@ export const getProductById = async (id: string): Promise<Product | null> => {
       return null;
     }
   } catch (error) {
-    console.error("Error fetching product by ID:", error);
+    console.error("Error fetching product by slug:", error);
     return null;
   }
 };

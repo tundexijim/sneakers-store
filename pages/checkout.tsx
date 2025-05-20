@@ -132,9 +132,9 @@ export default function CheckoutPage() {
 
     setLoading(true);
     await placeOrder(cart, orderData, setLoading, setError);
-    clearCart();
     localStorage.removeItem("orderNumber");
     router.push(`/success?orderNumber=${orderNumber}`);
+    clearCart();
   };
 
   const handlePay = async () => {
@@ -157,9 +157,9 @@ export default function CheckoutPage() {
       onSuccess: async () => {
         setLoading(true);
         await placeOrder(cart, orderData, setLoading, setError);
-        clearCart();
         localStorage.removeItem("orderNumber");
         router.push(`/success?orderNumber=${reference}`);
+        clearCart();
       },
       onClose: () => {
         localStorage.removeItem("orderNumber");

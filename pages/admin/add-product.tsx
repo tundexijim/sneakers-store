@@ -8,6 +8,7 @@ import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { useAuth } from "@/context/authContext";
 import Link from "next/link";
 import { ProductSize } from "@/types";
+import { generateSlug } from "@/util/slugGenerator";
 
 export default function AddProductPage() {
   const [form, setForm] = useState({
@@ -25,22 +26,27 @@ export default function AddProductPage() {
   const [error, setError] = useState("");
   const { user, loading, logOut } = useAuth();
   const router = useRouter();
+
   useEffect(() => {
     if (!loading && !user) {
       router.push("/admin/login"); // redirect to login/signup if not logged in
     }
   }, [user, loading]);
 
-  async function saveProduct(product: {
-    name: string;
-    price: string;
-    description: string;
-    image: string;
-    sizes: ProductSize[];
-  }) {
+  async function saveProduct(
+    product: {
+      name: string;
+      price: string;
+      description: string;
+      image: string;
+      sizes: ProductSize[];
+    },
+    slug: string
+  ) {
     const productRef = collection(db, "products");
     await addDoc(productRef, {
       ...product,
+      slug,
       createdAt: Timestamp.now(),
     });
   }
@@ -128,7 +134,8 @@ export default function AddProductPage() {
     }
 
     try {
-      await saveProduct(form);
+      const slug = await generateSlug(form.name);
+      await saveProduct(form, slug);
       window.alert("Product added successfully");
       setForm({
         name: "",

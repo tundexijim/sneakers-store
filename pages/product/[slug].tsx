@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { getProductById } from "../../services/productService";
+import { getProductBySlug } from "../../services/productService";
 import { Product } from "../../types";
 import { useCart } from "../../context/CartContext";
 import Link from "next/link";
@@ -100,8 +100,8 @@ export default function ProductPage({ product }: { product: Product }) {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-  const id = params?.id as string;
-  const product = await getProductById(id);
+  const slug = params?.slug as string;
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     return { notFound: true };
