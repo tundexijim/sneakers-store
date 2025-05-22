@@ -1,11 +1,15 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
+import { useIsClient } from "@/hooks/useIsClient";
 
 export default function DTwears() {
   const text = ["Welcome to DTwears", "You are Welcome"];
   const [index, setIndex] = useState(0);
+  const isClient = useIsClient();
+
+  if (!isClient) return null;
   return (
-    <div className="w-screen h-10 bg-green-600 items-center justify-between flex px-4 md:px-16">
+    <div className="w-screen h-10 bg-black items-center justify-between flex px-4 md:px-16">
       <button
         onClick={() =>
           setIndex((prev) => (prev === 0 ? text.length - 1 : prev - 1))

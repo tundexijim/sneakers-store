@@ -13,12 +13,25 @@ export default function ProductPage({ product }: { product: Product }) {
   const [selectedSize, setSelectedSize] = useState<number>(0);
   const isInCart = cart.some((item) => item.id === product.id);
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const stock = product.sizes.reduce((sum, size) => sum + size.stock, 0);
   console.log(stock);
 
   const handleAddToCart = () => {
-    if (selectedSize === 0) return alert("Please select a size");
-    addToCart({ ...product, qty: 1, selectedSize });
+    // const Cartitem = cart.filter((item) => item.id === product.id);
+    // if (Cartitem.qty >= product.sizes.)
+
+    if (isLoading) return;
+    setIsLoading(true);
+    if (selectedSize === 0) {
+      setIsLoading(false);
+      return alert("Please select a size");
+    } else {
+      setTimeout(() => {
+        setIsLoading(false);
+        addToCart({ ...product, qty: 1, selectedSize });
+      }, 1000);
+    }
   };
 
   return (
@@ -75,7 +88,33 @@ export default function ProductPage({ product }: { product: Product }) {
                 onClick={handleAddToCart}
                 className="bg-black text-white px-6 py-3 rounded-xl hover:bg-gray-800 w-fit cursor-pointer mt-4"
               >
-                Add to Cart
+                {isLoading ? (
+                  <div className="flex items-center">
+                    <svg
+                      className="animate-spin -ml-1 mr-2 h-4 w-4"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    <span>Adding...</span>
+                  </div>
+                ) : (
+                  "Add to Cart"
+                )}
               </button>
               {isInCart && (
                 <Link href="/cart">

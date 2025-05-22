@@ -204,60 +204,85 @@ export default function CheckoutPage() {
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="w-full flex gap-4">
+              <div className="grid grid-cols-2 gap-2">
+                <div className="flex flex-col gap-2 ">
+                  <label htmlFor="state" className="font-medium">
+                    First Name<span className="">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    name="firstname"
+                    placeholder="First Name"
+                    value={form.firstname}
+                    onChange={handleChange}
+                    className={`border px-4 py-2 rounded ${
+                      errors.firstname ? "border-red-500" : "border-gray-300"
+                    }`}
+                  />
+                </div>
+                <div className=" flex flex-col gap-2 ">
+                  <label htmlFor="state" className="font-medium">
+                    Last Name
+                  </label>
+                  <input
+                    type="text"
+                    name="lastname"
+                    placeholder="Last Name"
+                    value={form.lastname}
+                    onChange={handleChange}
+                    className={`border px-4 py-2 rounded ${
+                      errors.lastname ? "border-red-500" : "border-gray-300"
+                    }`}
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="state" className="font-medium">
+                  Phone Number
+                </label>
                 <input
                   type="text"
-                  name="firstname"
-                  placeholder="First Name"
-                  value={form.firstname}
+                  name="phone"
+                  placeholder="Phone Number"
+                  value={form.phone}
                   onChange={handleChange}
-                  className={`w-[50%] border px-4 py-2 rounded ${
-                    errors.firstname ? "border-red-500" : "border-gray-300"
-                  }`}
-                />
-                <input
-                  type="text"
-                  name="lastname"
-                  placeholder="Last Name"
-                  value={form.lastname}
-                  onChange={handleChange}
-                  className={`w-[50%] border px-4 py-2 rounded ${
-                    errors.lastname ? "border-red-500" : "border-gray-300"
+                  className={`w-full border px-4 py-2 rounded ${
+                    errors.phone ? "border-red-500" : "border-gray-300"
                   }`}
                 />
               </div>
-              <input
-                type="text"
-                name="phone"
-                placeholder="Phone Number"
-                value={form.phone}
-                onChange={handleChange}
-                className={`w-full border px-4 py-2 rounded ${
-                  errors.phone ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-              <input
-                type="email"
-                name="email"
-                placeholder="Email"
-                value={form.email}
-                onChange={handleChange}
-                className={`w-full border px-4 py-2 rounded ${
-                  errors.email ? "border-red-500" : "border-gray-300"
-                }`}
-              />
-              <textarea
-                name="address"
-                placeholder="Shipping Address"
-                value={form.address}
-                onChange={handleChange}
-                className={`w-full border px-4 py-2 rounded ${
-                  errors.address ? "border-red-500" : "border-gray-300"
-                }`}
-              />
               <div className="flex flex-col gap-2">
                 <label htmlFor="state" className="font-medium">
-                  Select State
+                  E-mail
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  placeholder="Email"
+                  value={form.email}
+                  onChange={handleChange}
+                  className={`w-full border px-4 py-2 rounded ${
+                    errors.email ? "border-red-500" : "border-gray-300"
+                  }`}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="state" className="font-medium">
+                  Address
+                </label>
+                <textarea
+                  name="address"
+                  placeholder="Shipping Address"
+                  value={form.address}
+                  onChange={handleChange}
+                  className={`w-full border px-4 py-2 rounded ${
+                    errors.address ? "border-red-500" : "border-gray-300"
+                  }`}
+                />
+              </div>
+              <div className="flex flex-col gap-2">
+                <label htmlFor="state" className="font-medium">
+                  State
                 </label>
                 <select
                   id="state"

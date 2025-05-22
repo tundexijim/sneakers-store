@@ -3,12 +3,13 @@ import { useCart } from "../context/CartContext";
 import { Menu, ShoppingCart, X } from "lucide-react"; // uses lucide icons
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-
+import { useIsClient } from "@/hooks/useIsClient";
 export default function Navbar() {
   const router = useRouter();
   const { cart } = useCart();
   const itemCount = cart.reduce((sum, item) => sum + item.qty, 0);
   const [MenuOpen, setMenuOpen] = useState(false);
+  const isClient = useIsClient();
 
   useEffect(() => {
     const handleRouteChange = () => {
@@ -37,15 +38,13 @@ export default function Navbar() {
       document.body.style.paddingRight = "";
     };
   }, [MenuOpen]);
+  if (!isClient) return null;
 
   return (
     <nav className="bg-white shadow-md">
       <div className="container mx-auto md:px-16 px-4 py-4 flex justify-between items-center">
-        <Link
-          href="/"
-          className="text-xl font-bold text-gray-800 hidden md:flex"
-        >
-          DTwears
+        <Link href="/" className="hidden md:flex">
+          <img src="/logo.png" alt="logo" className="w-14" />
         </Link>
 
         {!MenuOpen ? (
@@ -61,8 +60,12 @@ export default function Navbar() {
             onClick={() => setMenuOpen(false)}
           />
         )}
+        <Link href="/" className=" md:hidden">
+          <img src="/logo.png" alt="logo" className="w-14" />
+        </Link>
+
         <div
-          className={`space-x-6 flex md:flex-row md:static md:p-0 md:gap-0 flex-col absolute bg-white bottom-0 top-24 p-20 gap-10 z-10 transition-all duration-400 ease-in-out ${
+          className={`space-x-6 flex md:flex-row md:static md:p-0 md:gap-0 flex-col absolute bg-white bottom-0 top-30 p-20 gap-10 z-10 transition-all duration-400 ease-in-out ${
             MenuOpen ? "left-0" : "left-[-280px]"
           }`}
         >
