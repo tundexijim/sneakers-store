@@ -24,13 +24,26 @@ export default function Navbar() {
 
   useEffect(() => {
     if (MenuOpen) {
+      scrollY = window.scrollY;
       const scrollBarWidth =
         window.innerWidth - document.documentElement.clientWidth;
       document.body.style.overflow = "hidden";
       document.body.style.paddingRight = `${scrollBarWidth}px`;
+
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.left = "0";
+      document.body.style.right = "0";
+      document.body.style.width = "100%";
     } else {
       document.body.style.overflow = "";
       document.body.style.paddingRight = "";
+      document.body.style.position = "";
+      document.body.style.top = "";
+      document.body.style.left = "";
+      document.body.style.right = "";
+      document.body.style.width = "";
+      window.scrollTo(0, scrollY);
     }
 
     return () => {
@@ -65,8 +78,8 @@ export default function Navbar() {
         </Link>
 
         <div
-          className={`space-x-6 flex md:flex-row md:static md:p-0 md:gap-0 flex-col absolute bg-white bottom-0 top-30 p-20 gap-10 z-10 transition-all duration-400 ease-in-out ${
-            MenuOpen ? "left-0" : "left-[-280px]"
+          className={`space-x-6 flex md:flex-row md:static md:p-0 md:gap-0 flex-col absolute bg-white bottom-0 top-30 py-20 pl-20 pr-40 gap-10 z-10 transition-all duration-400 ease-in-out ${
+            MenuOpen ? "left-0" : "left-[-420px]"
           }`}
         >
           <Link href="/" className="text-gray-700 hover:text-black">

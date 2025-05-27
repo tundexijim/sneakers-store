@@ -5,10 +5,12 @@ import { useRouter } from "next/router";
 import { payWithPaystack } from "@/util/paystack";
 import Head from "next/head";
 import { getStateCode } from "@/util/getStateCode";
-import nigerianStates from "@/data/nigerianStates";
+import { nigerianStates } from "@/data/nigerianStates";
+import toast from "react-hot-toast";
+import { useIsClient } from "@/hooks/useIsClient";
 
 export default function CheckoutPage() {
-  const { cart, total, clearCart } = useCart();
+  const { cart, total, clearCart, updateQty } = useCart();
   const router = useRouter();
 
   const [ShippingCost, setShippingCost] = useState(0);
@@ -23,15 +25,14 @@ export default function CheckoutPage() {
     address: "",
     paymentMethod: "bank",
   });
-
   const [orderNumber, setOrderNumber] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [hasRestoredForm, setHasRestoredForm] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
+  const isClient = useIsClient();
 
   useEffect(() => {
-    // Restore form localStorage only once
     if (!hasRestoredForm) {
       const savedForm = localStorage.getItem("checkoutForm");
       if (savedForm) {
@@ -58,6 +59,25 @@ export default function CheckoutPage() {
       localStorage.setItem("checkoutForm", JSON.stringify(form));
     }
   }, [form, hasRestoredForm]);
+
+  //check for cart item quantity
+  useEffect(() => {
+    if (!isClient) return;
+    cart.forEach((item) => {
+      const stock =
+        item.sizes?.find((s) => s.size === item.selectedSize)?.stock ?? 0;
+      if (item.qty > stock) {
+        updateQty(item.id, item.selectedSize, stock);
+        toast(
+          `"${item.name}" (size ${item.selectedSize}) quantity reduced to available stock (${stock}).`,
+          {
+            icon: "⚠️",
+            duration: 5000,
+          }
+        );
+      }
+    });
+  }, [isClient, cart, updateQty]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -121,9 +141,6 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedState) return alert("Please select a state");
-    setError("");
-
     const isValid = validateForm();
     if (!isValid) {
       setError("Please fill out all required fields correctly.");
@@ -133,11 +150,17 @@ export default function CheckoutPage() {
     setLoading(true);
     await placeOrder(cart, orderData, setLoading, setError);
     localStorage.removeItem("orderNumber");
+    localStorage.removeItem("checkoutForm");
     router.push(`/success?orderNumber=${orderNumber}`);
     clearCart();
   };
 
   const handlePay = async () => {
+    const isValid = validateForm();
+    if (!isValid) {
+      setError("Please fill out all required fields correctly.");
+      return;
+    }
     const reference =
       localStorage.getItem("orderNumber") || "ORD-" + Date.now();
     if (!localStorage.getItem("orderNumber")) {
@@ -158,6 +181,7 @@ export default function CheckoutPage() {
         setLoading(true);
         await placeOrder(cart, orderData, setLoading, setError);
         localStorage.removeItem("orderNumber");
+        localStorage.removeItem("checkoutForm");
         router.push(`/success?orderNumber=${reference}`);
         clearCart();
       },
@@ -167,6 +191,7 @@ export default function CheckoutPage() {
       },
     });
   };
+  if (!isClient) return null;
 
   return (
     <>
@@ -207,7 +232,7 @@ export default function CheckoutPage() {
               <div className="grid grid-cols-2 gap-2">
                 <div className="flex flex-col gap-2 ">
                   <label htmlFor="state" className="font-medium">
-                    First Name<span className="">*</span>
+                    First Name<span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -222,7 +247,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className=" flex flex-col gap-2 ">
                   <label htmlFor="state" className="font-medium">
-                    Last Name
+                    Last Name<span className="text-red-500">*</span>
                   </label>
                   <input
                     type="text"
@@ -238,7 +263,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <label htmlFor="state" className="font-medium">
-                  Phone Number
+                  Phone Number<span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
@@ -253,7 +278,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <label htmlFor="state" className="font-medium">
-                  E-mail
+                  E-mail<span className="text-red-500">*</span>
                 </label>
                 <input
                   type="email"
@@ -268,7 +293,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <label htmlFor="state" className="font-medium">
-                  Address
+                  Address<span className="text-red-500">*</span>
                 </label>
                 <textarea
                   name="address"
@@ -282,7 +307,7 @@ export default function CheckoutPage() {
               </div>
               <div className="flex flex-col gap-2">
                 <label htmlFor="state" className="font-medium">
-                  State
+                  State<span className="text-red-500">*</span>
                 </label>
                 <select
                   id="state"
@@ -356,6 +381,7 @@ export default function CheckoutPage() {
               ) : (
                 <button
                   type="button"
+                  disabled={loading}
                   onClick={handlePay}
                   className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 mt-4 py-3 rounded-lg shadow-md transition duration-300"
                 >

@@ -9,7 +9,7 @@ export default function DTwears() {
 
   if (!isClient) return null;
   return (
-    <div className="w-screen h-10 bg-black items-center justify-between flex px-4 md:px-16">
+    <div className="w-screen h-10 bg-purple-600 items-center justify-between flex px-4 md:px-16">
       <button
         onClick={() =>
           setIndex((prev) => (prev === 0 ? text.length - 1 : prev - 1))

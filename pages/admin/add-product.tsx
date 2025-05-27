@@ -9,6 +9,7 @@ import { useAuth } from "@/context/authContext";
 import Link from "next/link";
 import { ProductSize } from "@/types";
 import { generateSlug } from "@/util/slugGenerator";
+import { useIsClient } from "@/hooks/useIsClient";
 
 export default function AddProductPage() {
   const [form, setForm] = useState({
@@ -26,10 +27,12 @@ export default function AddProductPage() {
   const [error, setError] = useState("");
   const { user, loading, logOut } = useAuth();
   const router = useRouter();
+  const isClient = useIsClient();
 
   useEffect(() => {
+    if (!isClient) return;
     if (!loading && !user) {
-      router.push("/admin/login"); // redirect to login/signup if not logged in
+      router.push("/admin/login");
     }
   }, [user, loading]);
 
@@ -148,7 +151,7 @@ export default function AddProductPage() {
       setError("Failed to save product.");
     }
   };
-
+  if (!isClient) return null;
   if (loading) return <p>Loading...</p>;
 
   return (

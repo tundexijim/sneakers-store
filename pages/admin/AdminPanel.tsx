@@ -77,43 +77,46 @@ export default function AdminPanel() {
       {orders.length === 0 ? (
         <p>No orders found.</p>
       ) : (
-        <div className="space-y-4">
-          {orders.map((order) => (
-            <div
-              key={order.id}
-              className="border p-4 rounded shadow flex justify-between items-center"
-            >
-              <div>
-                <p>
-                  <span className="font-semibold">Order #:</span>{" "}
-                  {order.orderNumber}
-                </p>
-                <p>
-                  <span className="font-semibold">Customer:</span>{" "}
-                  {order.customer?.firstname ?? "Unknown"}
-                </p>
-                <p className="text-sm text-gray-500">
-                  {order.createdAt?.seconds &&
-                    format(new Date(order.createdAt.seconds * 1000), "PPPpp")}
-                </p>
+        <>
+          <p>Total Orders: {orders.length}</p>
+          <div className="space-y-4">
+            {orders.map((order) => (
+              <div
+                key={order.id}
+                className="border p-4 rounded shadow flex justify-between items-center"
+              >
+                <div>
+                  <p>
+                    <span className="font-semibold">Order #:</span>{" "}
+                    {order.orderNumber}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Customer:</span>{" "}
+                    {order.customer?.firstname ?? "Unknown"}
+                  </p>
+                  <p className="text-sm text-gray-500">
+                    {order.createdAt?.seconds &&
+                      format(new Date(order.createdAt.seconds * 1000), "PPPpp")}
+                  </p>
+                </div>
+                <div className="space-x-2">
+                  <button
+                    onClick={() => setSelectedOrder(order)}
+                    className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
+                  >
+                    View
+                  </button>
+                  <button
+                    onClick={() => deleteOrder(order.id)}
+                    className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
               </div>
-              <div className="space-x-2">
-                <button
-                  onClick={() => setSelectedOrder(order)}
-                  className="bg-blue-600 text-white px-4 py-1 rounded hover:bg-blue-700"
-                >
-                  View
-                </button>
-                <button
-                  onClick={() => deleteOrder(order.id)}
-                  className="bg-red-600 text-white px-4 py-1 rounded hover:bg-red-700"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        </>
       )}
 
       {/* Modal for Order Details */}

@@ -1,5 +1,5 @@
 // data/nigerianStates.js
-const nigerianStates = [
+export const nigerianStates = [
   "Abia",
   "Adamawa",
   "Akwa Ibom",
@@ -38,5 +38,3 @@ const nigerianStates = [
   "Yobe",
   "Zamfara",
 ];
-
-export default nigerianStates;

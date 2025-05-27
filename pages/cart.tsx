@@ -4,36 +4,41 @@ import { useCart } from "../context/CartContext";
 import Link from "next/link";
 import { useIsClient } from "@/hooks/useIsClient";
 import toast from "react-hot-toast";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import RandomProducts from "@/components/RandomProducts";
 
 export default function CartPage() {
   const { cart, updateQty, removeFromCart, total } = useCart();
   const isClient = useIsClient();
+  const [removedItems, setRemovedItems] = useState<string[]>([]);
+  const uniqueProductIds = Array.from(new Set(cart.map((item) => item.id)));
+
   useEffect(() => {
     if (!isClient) return;
+
+    const newMessages: string[] = [];
+
     cart.forEach((item) => {
       const stock =
-        item.sizes.find((s) => s.size === item.selectedSize)?.stock ?? 0;
+        item.sizes?.find((s) => s.size === item.selectedSize)?.stock ?? 0;
       if (item.qty > stock) {
         updateQty(item.id, item.selectedSize, stock);
-        toast(
-          `"${item.name}" (size ${item.selectedSize}) quantity reduced to available stock (${stock}).`,
-          {
-            icon: "⚠️",
-            duration: 5000,
-          }
+        newMessages.push(
+          `"${item.name}" (size ${item.selectedSize}) quantity reduced to available stock (${stock}).`
         );
       }
     });
+
+    if (newMessages.length > 0) {
+      setRemovedItems(newMessages);
+
+      setTimeout(() => {
+        setRemovedItems([]);
+      }, 5000);
+    }
   }, [isClient, cart, updateQty]);
+
   if (!isClient) return null;
-
-  // const outOfStockItems = cart.filter((item) => {
-  //   const stock =
-  //     item.sizes.find((s) => s.size === item.selectedSize)?.stock ?? 0;
-  //   return item.qty > stock;
-  // });
-
   return (
     <>
       <Head>
@@ -44,7 +49,13 @@ export default function CartPage() {
       <main className="container mx-auto md:px-16 px-4 py-8">
         <h1 className="text-3xl font-bold mb-2">Your Cart</h1>
         <p className="text-gray-500 mb-4">{cart.length} item(s) in your cart</p>
-
+        {removedItems.length > 0 && (
+          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded">
+            {removedItems.map((msg, i) => (
+              <p key={i}>{msg}</p>
+            ))}
+          </div>
+        )}
         {cart.length === 0 ? (
           <p className="text-gray-600">
             Your cart is empty.{" "}
@@ -138,6 +149,7 @@ export default function CartPage() {
             </div>
           </>
         )}
+        <RandomProducts excludeIds={uniqueProductIds} />
       </main>
     </>
   );

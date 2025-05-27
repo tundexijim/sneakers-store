@@ -1,4 +1,3 @@
-// utils/getStateCode.js
 export function getStateCode(state: string) {
   switch (state) {
     case "Abia":

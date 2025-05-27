@@ -7,23 +7,20 @@ import { useCart } from "../../context/CartContext";
 import Link from "next/link";
 import { useState } from "react";
 import { X } from "lucide-react";
+import RandomProducts from "@/components/RandomProducts";
 
 export default function ProductPage({ product }: { product: Product }) {
   const { addToCart, cart } = useCart();
-  const [selectedSize, setSelectedSize] = useState<number>(0);
+  const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const isInCart = cart.some((item) => item.id === product.id);
 
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const stock = product.sizes.reduce((sum, size) => sum + size.stock, 0);
-  console.log(stock);
 
   const handleAddToCart = () => {
-    // const Cartitem = cart.filter((item) => item.id === product.id);
-    // if (Cartitem.qty >= product.sizes.)
-
     if (isLoading) return;
     setIsLoading(true);
-    if (selectedSize === 0) {
+    if (selectedSize === null) {
       setIsLoading(false);
       return alert("Please select a size");
     } else {
@@ -37,7 +34,7 @@ export default function ProductPage({ product }: { product: Product }) {
   return (
     <>
       <Head>
-        <title>{product.name} | DTwears</title>
+        <title>{`${product.name} | DTwears`}</title>
         <meta name="description" content={product.description} />
       </Head>
 
@@ -60,10 +57,9 @@ export default function ProductPage({ product }: { product: Product }) {
             <div className="mt-4">
               <h3 className="font-semibold mb-2">Select Size:</h3>
               <div className="flex gap-2">
-                {product.sizes.map((size) => (
-                  <div className="relative">
+                {product.sizes.map((size, i) => (
+                  <div className="relative" key={i}>
                     <button
-                      key={size.size}
                       onClick={() => setSelectedSize(size.size)}
                       disabled={size.stock === 0}
                       className={`px-4 py-2 border rounded ${
@@ -125,7 +121,7 @@ export default function ProductPage({ product }: { product: Product }) {
               )}
             </div>
             <div className="mt-4">
-              <Link href="/" passHref>
+              <Link href="/productslist" passHref>
                 <button className="text-blue-600 underline hover:text-blue-800">
                   ← Continue Shopping
                 </button>
@@ -133,6 +129,7 @@ export default function ProductPage({ product }: { product: Product }) {
             </div>
           </div>
         </div>
+        <RandomProducts excludeIds={[product.id]} />
       </main>
     </>
   );
