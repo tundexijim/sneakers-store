@@ -6,22 +6,39 @@ import ProductCard from "../components/ProductCard";
 import { getAllProducts, PRODUCTS_PER_PAGE } from "../services/productService";
 import { Product } from "@/types";
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight, Grid, List } from "lucide-react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductListPanel from "@/components/ProductListPanel";
+import { useRouter } from "next/router";
 
 type Props = {
   products: Product[];
   total: number;
   currentPage: number;
+  sortBy: string;
 };
 
-export default function ProductsList({ products, total, currentPage }: Props) {
+export default function ProductsList({
+  products,
+  total,
+  currentPage,
+  sortBy,
+}: Props) {
   const totalPages = Math.ceil(total / PRODUCTS_PER_PAGE);
   const [viewMode, setViewMode] = useState("grid");
+  const [selectedSort, setSelectedSort] = useState(sortBy);
+  const router = useRouter();
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
+  const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newSort = e.target.value;
+    setSelectedSort(newSort);
+    router.push({
+      pathname: "/productslist",
+      query: { ...router.query, sortBy: newSort },
+    });
+  };
 
   return (
     <>
@@ -32,7 +49,12 @@ export default function ProductsList({ products, total, currentPage }: Props) {
 
       <main className="container mx-auto md:px-16 px-4 py-8">
         <h1 className="text-3xl font-bold mb-6">Sneakers</h1>
-        <ProductListPanel viewMode={viewMode} setViewMode={setViewMode} />
+        <ProductListPanel
+          viewMode={viewMode}
+          setViewMode={setViewMode}
+          selectedSort={selectedSort}
+          onSortChange={handleSortChange}
+        />
         <div
           className={
             viewMode === "grid"
@@ -49,15 +71,26 @@ export default function ProductsList({ products, total, currentPage }: Props) {
           ))}
         </div>
 
+        {/* Pagination Controls */}
         {totalPages > 1 && (
-          <div className="flex justify-center items-center mt-10 flex-wrap space-x-2">
-            <Link href={`/productslist?page=${currentPage - 1}`} scroll={false}>
+          <div className="flex justify-center items-center mt-10 space-x-2 flex-wrap">
+            {/* Prev Button */}
+            <Link
+              href={{
+                pathname: "/productslist",
+                query: {
+                  page: currentPage - 1,
+                  sortBy: router.query.sortBy || "newest",
+                },
+              }}
+              scroll={false}
+            >
               <button
                 disabled={currentPage === 1}
-                className={`flex items-center justify-center w-8 h-8 rounded-full text-sm cursor-pointer ${
+                className={`p-2 border rounded cursor-pointer ${
                   currentPage === 1
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "text-black hover:underline"
+                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    : "bg-white text-black border-gray-400"
                 }`}
               >
                 <ChevronLeft />
@@ -66,29 +99,43 @@ export default function ProductsList({ products, total, currentPage }: Props) {
             {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
               <Link
                 key={page}
-                href={`/productslist?page=${page}`}
+                href={{
+                  pathname: "/productslist",
+                  query: {
+                    page: page,
+                    sortBy: router.query.sortBy || "newest",
+                  },
+                }}
                 scroll={false}
               >
-                <button className="relative px-2 py-1 text-sm cursor-pointer">
-                  <span
-                    className={`${
-                      page === currentPage
-                        ? "after:content-[''] after:absolute after:left-[-2] after:h-[2px] after:w-3 after:bg-black after:bottom-[-2]"
-                        : ""
-                    } relative`}
-                  >
-                    {page}
-                  </span>
+                <button
+                  className={`p-2 border rounded cursor-pointer ${
+                    page === currentPage
+                      ? "bg-black text-white"
+                      : "bg-white text-black border-gray-400"
+                  }`}
+                >
+                  {page}
                 </button>
               </Link>
             ))}
-            <Link href={`/productslist?page=${currentPage + 1}`} scroll={false}>
+
+            <Link
+              href={{
+                pathname: "/productslist",
+                query: {
+                  page: currentPage + 1,
+                  sortBy: router.query.sortBy || "newest",
+                },
+              }}
+              scroll={false}
+            >
               <button
                 disabled={currentPage === totalPages}
-                className={`flex items-center justify-center w-8 h-8 rounded-full text-sm cursor-pointer ${
+                className={`p-2 border rounded cursor-pointer ${
                   currentPage === totalPages
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "text-black hover:underline"
+                    ? "bg-gray-200 text-gray-500 cursor-not-allowed"
+                    : "bg-white text-black border-gray-400"
                 }`}
               >
                 <ChevronRight />
@@ -103,13 +150,15 @@ export default function ProductsList({ products, total, currentPage }: Props) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const page = parseInt(context.query.page as string) || 1;
-  const { products, total } = await getAllProducts(page);
+  const sortBy = (context.query.sortBy as string) || "newest";
+  const { products, total } = await getAllProducts(page, sortBy);
 
   return {
     props: {
       products,
       total,
       currentPage: page,
+      sortBy,
     },
   };
 };

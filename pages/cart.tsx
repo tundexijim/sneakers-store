@@ -59,7 +59,7 @@ export default function CartPage() {
         {cart.length === 0 ? (
           <p className="text-gray-600">
             Your cart is empty.{" "}
-            <Link href="/" className="text-blue-500 underline">
+            <Link href="/productslist" className="text-blue-500 underline">
               Go shopping
             </Link>
           </p>

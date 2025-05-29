@@ -11,7 +11,7 @@ export type Product = {
   slug: string;
   description: string;
   sizes: ProductSize[];
-  createdAt: string;
+  createdAt: string | null;
 };
 
 export type CartItem = Product & { qty: number; selectedSize: number };
