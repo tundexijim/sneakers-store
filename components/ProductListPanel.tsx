@@ -1,5 +1,4 @@
 import { Grid, List } from "lucide-react";
-import { useState } from "react";
 
 type Props = {
   viewMode: string;

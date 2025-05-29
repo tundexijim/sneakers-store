@@ -2,58 +2,68 @@ import {
   collection,
   getDocs,
   query,
-  Timestamp,
   where,
+  orderBy,
+  limit,
+  getCountFromServer,
 } from "firebase/firestore";
 import { db } from "@/lib/firebaseConfig";
 import { Product } from "../types";
 
 export const PRODUCTS_PER_PAGE = 12;
 
-export async function getAllProducts(
-  page: number = 1,
-  sortBy: string = "newest"
-): Promise<{ products: Product[]; total: number }> {
+function getSortParams(sortBy: string): [string, "asc" | "desc"] {
+  switch (sortBy) {
+    case "priceLowToHigh":
+      return ["price", "asc"];
+    case "priceHighToLow":
+      return ["price", "desc"];
+    case "name":
+      return ["name", "asc"];
+    default:
+      return ["createdAt", "desc"];
+  }
+}
+
+export async function getAllProducts(page = 1, sortBy = "newest") {
   try {
-    const snapshot = await getDocs(collection(db, "products"));
+    const [sortField, direction] = getSortParams(sortBy);
 
-    const allProducts: Product[] = snapshot.docs.map((doc) => {
-      const data = doc.data();
+    // For small offsets, fetch more items and slice (hybrid approach)
+    const itemsToFetch = page * PRODUCTS_PER_PAGE;
 
-      return {
-        id: doc.id,
-        ...data,
-        createdAt:
-          data.createdAt && data.createdAt.toDate
-            ? (data.createdAt as Timestamp).toDate().toISOString()
-            : data.createdAt || null,
-      } as Product;
-    });
-
-    const total = allProducts.length;
-
-    const sortedProducts = [...allProducts].sort((a, b) => {
-      if (sortBy === "name") {
-        return a.name.localeCompare(b.name);
-      } else if (sortBy === "priceLowToHigh") {
-        return a.price - b.price;
-      } else if (sortBy === "priceHighToLow") {
-        return b.price - a.price;
-      } else {
-        if (!a.createdAt || !b.createdAt) return 0;
-        return new Date(a.createdAt) < new Date(b.createdAt) ? 1 : -1;
-      }
-    });
-
-    const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
-    const paginated = sortedProducts.slice(
-      startIndex,
-      startIndex + PRODUCTS_PER_PAGE
+    const q = query(
+      collection(db, "products"),
+      orderBy(sortField, direction),
+      limit(itemsToFetch)
     );
 
+    const snapshot = await getDocs(q);
+
+    // Calculate start index for slicing
+    const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
+    const products = snapshot.docs
+      .slice(startIndex, startIndex + PRODUCTS_PER_PAGE)
+      .map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate().toISOString() || null,
+        };
+      });
+
+    // Get total count for pagination
+    const countSnapshot = await getCountFromServer(collection(db, "products"));
+    const total = countSnapshot.data().count;
+
     return {
-      products: paginated,
+      products,
       total,
+      hasNextPage:
+        snapshot.docs.length === itemsToFetch &&
+        products.length === PRODUCTS_PER_PAGE,
+      currentPage: page,
     };
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -61,6 +71,7 @@ export async function getAllProducts(
   }
 }
 
+// Get single product with slug
 export const getProductBySlug = async (
   slug: string
 ): Promise<Product | null> => {

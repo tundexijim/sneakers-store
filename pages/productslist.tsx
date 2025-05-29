@@ -1,4 +1,3 @@
-// pages/index.tsx
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
@@ -31,14 +30,48 @@ export default function ProductsList({
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [currentPage]);
+
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newSort = e.target.value;
     setSelectedSort(newSort);
     router.push({
       pathname: "/productslist",
-      query: { ...router.query, sortBy: newSort },
+      query: { ...router.query, sortBy: newSort, page: 1 },
     });
   };
+
+  const getPaginationNumbers = () => {
+    const pages = [];
+    const showPages = 5;
+    if (totalPages <= showPages + 2) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i);
+      }
+    } else {
+      pages.push(1);
+      let start = Math.max(2, currentPage - Math.floor(showPages / 2));
+      let end = Math.min(
+        totalPages - 1,
+        currentPage + Math.floor(showPages / 2)
+      );
+      if (start > 2) {
+        pages.push("...");
+      }
+      for (let i = start; i <= end; i++) {
+        pages.push(i);
+      }
+      if (end < totalPages - 1) {
+        pages.push("...");
+      }
+      if (totalPages > 1) {
+        pages.push(totalPages);
+      }
+    }
+
+    return pages;
+  };
+
+  const paginationNumbers = getPaginationNumbers();
 
   return (
     <>
@@ -71,15 +104,13 @@ export default function ProductsList({
           ))}
         </div>
 
-        {/* Pagination Controls */}
         {totalPages > 1 && (
           <div className="flex justify-center items-center mt-10 space-x-2 flex-wrap">
-            {/* Prev Button */}
             <Link
               href={{
                 pathname: "/productslist",
                 query: {
-                  page: currentPage - 1,
+                  page: Math.max(1, currentPage - 1),
                   sortBy: router.query.sortBy || "newest",
                 },
               }}
@@ -90,41 +121,45 @@ export default function ProductsList({
                 className={`p-2 border rounded cursor-pointer ${
                   currentPage === 1
                     ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-white text-black border-gray-400"
+                    : "bg-white text-black border-gray-400 hover:bg-gray-50"
                 }`}
               >
                 <ChevronLeft />
               </button>
             </Link>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <Link
-                key={page}
-                href={{
-                  pathname: "/productslist",
-                  query: {
-                    page: page,
-                    sortBy: router.query.sortBy || "newest",
-                  },
-                }}
-                scroll={false}
-              >
-                <button
-                  className={`p-2 border rounded cursor-pointer ${
-                    page === currentPage
-                      ? "bg-black text-white"
-                      : "bg-white text-black border-gray-400"
-                  }`}
-                >
-                  {page}
-                </button>
-              </Link>
+            {paginationNumbers.map((page, index) => (
+              <div key={index}>
+                {page === "..." ? (
+                  <span className="px-3 py-2 text-gray-500">...</span>
+                ) : (
+                  <Link
+                    href={{
+                      pathname: "/productslist",
+                      query: {
+                        page: page,
+                        sortBy: router.query.sortBy || "newest",
+                      },
+                    }}
+                    scroll={false}
+                  >
+                    <button
+                      className={`p-2 border rounded cursor-pointer min-w-[40px] ${
+                        page === currentPage
+                          ? "bg-black text-white"
+                          : "bg-white text-black border-gray-400 hover:bg-gray-50"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  </Link>
+                )}
+              </div>
             ))}
-
             <Link
               href={{
                 pathname: "/productslist",
                 query: {
-                  page: currentPage + 1,
+                  page: Math.min(totalPages, currentPage + 1),
                   sortBy: router.query.sortBy || "newest",
                 },
               }}
@@ -135,7 +170,7 @@ export default function ProductsList({
                 className={`p-2 border rounded cursor-pointer ${
                   currentPage === totalPages
                     ? "bg-gray-200 text-gray-500 cursor-not-allowed"
-                    : "bg-white text-black border-gray-400"
+                    : "bg-white text-black border-gray-400 hover:bg-gray-50"
                 }`}
               >
                 <ChevronRight />
@@ -143,6 +178,11 @@ export default function ProductsList({
             </Link>
           </div>
         )}
+
+        <div className="text-center mt-4 text-sm text-gray-600">
+          Showing {(currentPage - 1) * PRODUCTS_PER_PAGE + 1} to{" "}
+          {Math.min(currentPage * PRODUCTS_PER_PAGE, total)} of {total} products
+        </div>
       </main>
     </>
   );
@@ -151,6 +191,7 @@ export default function ProductsList({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const page = parseInt(context.query.page as string) || 1;
   const sortBy = (context.query.sortBy as string) || "newest";
+
   const { products, total } = await getAllProducts(page, sortBy);
 
   return {

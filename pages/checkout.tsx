@@ -8,6 +8,7 @@ import { getStateCode } from "@/util/getStateCode";
 import { nigerianStates } from "@/data/nigerianStates";
 import toast from "react-hot-toast";
 import { useIsClient } from "@/hooks/useIsClient";
+import Link from "next/link";
 
 export default function CheckoutPage() {
   const { cart, total, clearCart, updateQty } = useCart();
@@ -202,7 +203,12 @@ export default function CheckoutPage() {
         <h1 className="text-2xl font-bold mb-4">Checkout</h1>
 
         {cart.length === 0 ? (
-          <p>Your cart is empty.</p>
+          <p>
+            Your cart is empty.{" "}
+            <Link href="/productslist" className="text-blue-500 underline">
+              Go shopping
+            </Link>
+          </p>
         ) : (
           <div>
             {/* Order Summary */}
