@@ -6,9 +6,13 @@ import {
   orderBy,
   limit,
   getCountFromServer,
+  addDoc,
+  Timestamp,
+  deleteDoc,
+  doc,
 } from "firebase/firestore";
 import { db } from "@/lib/firebaseConfig";
-import { Product } from "../types";
+import { Product, ProductSize } from "../types";
 
 export const PRODUCTS_PER_PAGE = 12;
 
@@ -28,8 +32,6 @@ function getSortParams(sortBy: string): [string, "asc" | "desc"] {
 export async function getAllProducts(page = 1, sortBy = "newest") {
   try {
     const [sortField, direction] = getSortParams(sortBy);
-
-    // For small offsets, fetch more items and slice (hybrid approach)
     const itemsToFetch = page * PRODUCTS_PER_PAGE;
 
     const q = query(
@@ -39,8 +41,6 @@ export async function getAllProducts(page = 1, sortBy = "newest") {
     );
 
     const snapshot = await getDocs(q);
-
-    // Calculate start index for slicing
     const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
     const products = snapshot.docs
       .slice(startIndex, startIndex + PRODUCTS_PER_PAGE)
@@ -52,11 +52,8 @@ export async function getAllProducts(page = 1, sortBy = "newest") {
           createdAt: data.createdAt?.toDate().toISOString() || null,
         };
       });
-
-    // Get total count for pagination
     const countSnapshot = await getCountFromServer(collection(db, "products"));
     const total = countSnapshot.data().count;
-
     return {
       products,
       total,
@@ -96,3 +93,36 @@ export const getProductBySlug = async (
     return null;
   }
 };
+
+//add product
+
+export async function saveProduct(
+  product: {
+    name: string;
+    price: string;
+    description: string;
+    image: string;
+    sizes: ProductSize[];
+  },
+  slug: string
+) {
+  const productRef = collection(db, "products");
+  await addDoc(productRef, {
+    ...product,
+    slug,
+    randomValue: Math.random(),
+    createdAt: Timestamp.now(),
+  });
+}
+
+//delete product
+export async function deleteProduct(productId: string): Promise<void> {
+  try {
+    const productRef = doc(db, "products", productId);
+    await deleteDoc(productRef);
+    console.log(`Product with ID ${productId} deleted successfully.`);
+  } catch (error) {
+    console.error("Error deleting product:", error);
+    throw new Error("Failed to delete the product.");
+  }
+}

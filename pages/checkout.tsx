@@ -9,6 +9,7 @@ import { nigerianStates } from "@/data/nigerianStates";
 import toast from "react-hot-toast";
 import { useIsClient } from "@/hooks/useIsClient";
 import Link from "next/link";
+import { validateStockAvailability } from "@/util/saveOrder";
 
 export default function CheckoutPage() {
   const { cart, total, clearCart, updateQty } = useCart();
@@ -147,6 +148,13 @@ export default function CheckoutPage() {
       setError("Please fill out all required fields correctly.");
       return;
     }
+    try {
+      await validateStockAvailability(cart);
+    } catch (error: any) {
+      setError(error.message);
+      setLoading(false);
+      return;
+    }
 
     setLoading(true);
     await placeOrder(cart, orderData, setLoading, setError);
@@ -157,40 +165,62 @@ export default function CheckoutPage() {
   };
 
   const handlePay = async () => {
-    const isValid = validateForm();
-    if (!isValid) {
-      setError("Please fill out all required fields correctly.");
-      return;
-    }
-    const reference =
-      localStorage.getItem("orderNumber") || "ORD-" + Date.now();
-    if (!localStorage.getItem("orderNumber")) {
-      localStorage.setItem("orderNumber", reference);
-      setOrderNumber(reference);
-    }
+    try {
+      const isValid = validateForm();
+      if (!isValid) {
+        setError("Please fill out all required fields correctly.");
+        return;
+      }
+      setLoading(true);
+      setError("");
 
-    payWithPaystack({
-      email: form.email,
-      amount: Subtotal * 100,
-      reference,
-      metadata: {
-        firstname: form.firstname,
-        lastname: form.lastname,
-        phone: form.phone,
-      },
-      onSuccess: async () => {
-        setLoading(true);
-        await placeOrder(cart, orderData, setLoading, setError);
-        localStorage.removeItem("orderNumber");
-        localStorage.removeItem("checkoutForm");
-        router.push(`/success?orderNumber=${reference}`);
-        clearCart();
-      },
-      onClose: () => {
-        localStorage.removeItem("orderNumber");
-        console.log("Payment popup closed.");
-      },
-    });
+      try {
+        await validateStockAvailability(cart);
+      } catch (error: any) {
+        setError(error.message);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(false);
+      payWithPaystack({
+        email: form.email,
+        amount: Subtotal * 100,
+        reference: orderNumber,
+        metadata: {
+          firstname: form.firstname,
+          lastname: form.lastname,
+          phone: form.phone,
+        },
+        onSuccess: async () => {
+          try {
+            setLoading(true);
+            await placeOrder(cart, orderData, setLoading, setError);
+            localStorage.removeItem("orderNumber");
+            localStorage.removeItem("checkoutForm");
+            router.push(`/success?orderNumber=${orderNumber}`);
+            clearCart();
+          } catch (error: any) {
+            console.error(
+              "Payment successful but order processing failed:",
+              error
+            );
+            setError(
+              "Payment was successful, but there was an issue processing your order. Please contact support with your reference: " +
+                orderNumber
+            );
+            localStorage.removeItem("checkoutForm");
+          }
+        },
+        onClose: () => {
+          localStorage.removeItem("orderNumber");
+          console.log("Payment popup closed.");
+        },
+      });
+    } catch (error: any) {
+      setError("An unexpected error occurred. Please try again.");
+      setLoading(false);
+    }
   };
   if (!isClient) return null;
 

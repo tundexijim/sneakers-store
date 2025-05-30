@@ -29,7 +29,7 @@ export default function ProductCard({
           />
         </div>
 
-        <div className={`${isListView ? "flex-1" : "p-4"} space-y-2`}>
+        <div className={`${isListView ? "flex-1" : "p-4"} space-y-2 relative`}>
           <h3
             className={`${
               isListView ? "text-lg" : "text-xl"

@@ -7,6 +7,7 @@ import {
   runTransaction,
   doc,
   DocumentReference,
+  getDoc,
 } from "firebase/firestore";
 
 export interface OrderData {
@@ -63,12 +64,15 @@ export const placeOrder = async (
 ) => {
   try {
     setLoading(true);
+    setError(""); // Clear any previous errors
 
+    // Execute the transaction - this will throw an error if stock validation fails
     await runTransaction(db, async (transaction) => {
       const productDataMap: {
         [productId: string]: { ref: DocumentReference; sizes: any[] };
       } = {};
 
+      // Fetch all product data first
       for (const item of cart) {
         const productRef = doc(db, "products", item.id);
 
@@ -76,7 +80,7 @@ export const placeOrder = async (
           const productSnap = await transaction.get(productRef);
 
           if (!productSnap.exists()) {
-            throw new Error("Product not found");
+            throw new Error(`Product ${item.id} not found`);
           }
 
           productDataMap[item.id] = {
@@ -85,6 +89,8 @@ export const placeOrder = async (
           };
         }
       }
+
+      // Validate stock and update quantities
       for (const item of cart) {
         const { sizes } = productDataMap[item.id];
         const sizeIndex = sizes.findIndex(
@@ -92,14 +98,16 @@ export const placeOrder = async (
         );
 
         if (sizeIndex === -1) {
-          throw new Error(`Size ${item.selectedSize} not found`);
+          throw new Error(
+            `Size ${item.selectedSize} not found for product ${item.id}`
+          );
         }
 
         const availableStock = sizes[sizeIndex].stock;
 
         if (availableStock < item.qty) {
           throw new Error(
-            `Not enough stock for size ${item.selectedSize}. Only ${availableStock} left.`
+            `Not enough stock for size ${item.name}(${item.selectedSize}). Only ${availableStock} available, but ${item.qty} requested. Please adjust in cart`
           );
         }
         sizes[sizeIndex].stock -= item.qty;
@@ -111,9 +119,45 @@ export const placeOrder = async (
     await saveOrder(order, setLoading, setError);
     console.log("Order placed successfully!");
   } catch (error: any) {
-    console.error("Order failed:", error.message);
-    setError(error.message);
+    console.error("Order failed:", error);
+    const errorMessage =
+      error?.message || "An unexpected error occurred while placing the order";
+    setError(errorMessage);
+    setLoading(false);
+    throw error;
   } finally {
     setLoading(false);
   }
+};
+
+export const validateStockAvailability = async (
+  cart: CartItem[]
+): Promise<void> => {
+  const productChecks = cart.map(async (item) => {
+    const productRef = doc(db, "products", item.id);
+    const productSnap = await getDoc(productRef);
+
+    if (!productSnap.exists()) {
+      throw new Error(`Product ${item.id} not found`);
+    }
+
+    const sizes = productSnap.data().sizes;
+    const sizeIndex = sizes.findIndex((s: any) => s.size === item.selectedSize);
+
+    if (sizeIndex === -1) {
+      throw new Error(
+        `Size ${item.selectedSize} not found for product ${item.id}`
+      );
+    }
+
+    const availableStock = sizes[sizeIndex].stock;
+
+    if (availableStock < item.qty) {
+      throw new Error(
+        `Not enough stock for ${item.name}(size: ${item.selectedSize}). Only ${availableStock} available, but ${item.qty} requested. Please adjust in cart`
+      );
+    }
+  });
+
+  await Promise.all(productChecks);
 };

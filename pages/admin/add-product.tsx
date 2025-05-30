@@ -10,6 +10,7 @@ import Link from "next/link";
 import { ProductSize } from "@/types";
 import { generateSlug } from "@/util/slugGenerator";
 import { useIsClient } from "@/hooks/useIsClient";
+import { saveProduct } from "@/services/productService";
 
 export default function AddProductPage() {
   const [form, setForm] = useState({
@@ -35,24 +36,6 @@ export default function AddProductPage() {
       router.push("/admin/login");
     }
   }, [user, loading]);
-
-  async function saveProduct(
-    product: {
-      name: string;
-      price: string;
-      description: string;
-      image: string;
-      sizes: ProductSize[];
-    },
-    slug: string
-  ) {
-    const productRef = collection(db, "products");
-    await addDoc(productRef, {
-      ...product,
-      slug,
-      createdAt: Timestamp.now(),
-    });
-  }
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>

@@ -12,6 +12,7 @@ export type Product = {
   description: string;
   sizes: ProductSize[];
   createdAt: string | null;
+  randomValue: number;
 };
 
 export type CartItem = Product & { qty: number; selectedSize: number };

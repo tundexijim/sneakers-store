@@ -136,16 +136,20 @@ export default function CartPage() {
                 );
               })}
             </div>
-
-            <div className="mt-8 text-right">
-              <p className="text-xl font-bold mb-4">
-                Subtotal: ${total.toFixed(2)}
-              </p>
-              <Link href="/checkout">
-                <button className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800">
-                  Proceed to Checkout
-                </button>
+            <div className="flex items-center justify-between mt-8">
+              <Link href="/productslist" className="text-blue-500 underline">
+                ← Continue Shopping
               </Link>
+              <div className=" text-right">
+                <p className="text-xl font-bold mb-4">
+                  Subtotal: ${total.toFixed(2)}
+                </p>
+                <Link href="/checkout">
+                  <button className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800">
+                    Proceed to Checkout
+                  </button>
+                </Link>
+              </div>
             </div>
           </>
         )}

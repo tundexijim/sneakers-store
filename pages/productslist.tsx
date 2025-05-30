@@ -14,6 +14,7 @@ type Props = {
   total: number;
   currentPage: number;
   sortBy: string;
+  error: string;
 };
 
 export default function ProductsList({
@@ -21,6 +22,7 @@ export default function ProductsList({
   total,
   currentPage,
   sortBy,
+  error,
 }: Props) {
   const totalPages = Math.ceil(total / PRODUCTS_PER_PAGE);
   const [viewMode, setViewMode] = useState("grid");
@@ -70,8 +72,10 @@ export default function ProductsList({
 
     return pages;
   };
-
   const paginationNumbers = getPaginationNumbers();
+  if (error) {
+    return <p className="flex  justify-center text-red-500">{error}</p>;
+  }
 
   return (
     <>
@@ -181,7 +185,7 @@ export default function ProductsList({
 
         <div className="text-center mt-4 text-sm text-gray-600">
           Showing {(currentPage - 1) * PRODUCTS_PER_PAGE + 1} to{" "}
-          {Math.min(currentPage * PRODUCTS_PER_PAGE, total)} of {total} products
+          {Math.min(currentPage * PRODUCTS_PER_PAGE, total)} of {total}
         </div>
       </main>
     </>
@@ -191,15 +195,19 @@ export default function ProductsList({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const page = parseInt(context.query.page as string) || 1;
   const sortBy = (context.query.sortBy as string) || "newest";
-
-  const { products, total } = await getAllProducts(page, sortBy);
-
-  return {
-    props: {
-      products,
-      total,
-      currentPage: page,
-      sortBy,
-    },
-  };
+  try {
+    const { products, total } = await getAllProducts(page, sortBy);
+    return {
+      props: {
+        products,
+        total,
+        currentPage: page,
+        sortBy,
+      },
+    };
+  } catch (error) {
+    return {
+      props: { error: "Something went wrong" },
+    };
+  }
 };

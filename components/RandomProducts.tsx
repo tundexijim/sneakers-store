@@ -26,10 +26,6 @@ const RandomProducts: React.FC<RandomProductsProps> = ({
           excludeIds.forEach((id) => params.append("excludeIds", id));
           url += `?${params.toString()}`;
         }
-        // if (type) {
-        //   url = `/api/random-products?type = ${type}`;
-        // }
-
         const res = await axios.get(url);
         setProducts(res.data);
       } catch (err) {

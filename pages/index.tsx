@@ -3,6 +3,7 @@ import { ArrowRight, Star, Zap, Shield, Truck } from "lucide-react";
 import RandomProducts from "@/components/RandomProducts";
 import Head from "next/head";
 import Link from "next/link";
+import { useIsClient } from "@/hooks/useIsClient";
 
 const SneakersHomepage = () => {
   const categories = [
@@ -31,6 +32,9 @@ const SneakersHomepage = () => {
       count: "95+ styles",
     },
   ];
+  const isClient = useIsClient();
+
+  if (!isClient) return null;
 
   return (
     <>

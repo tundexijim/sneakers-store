@@ -78,7 +78,7 @@ export default function Navbar() {
         </Link>
 
         <div
-          className={`space-x-6 flex md:flex-row md:static md:p-0 md:gap-0 flex-col absolute bg-white bottom-0 top-30 py-20 pl-20 pr-40 gap-10 z-10 transition-all duration-400 ease-in-out ${
+          className={`space-x-6 flex md:flex-row md:static md:p-0 md:gap-0 flex-col absolute bg-white bottom-0 top-21 py-20 pl-20 pr-40 gap-10 z-10 transition-all duration-400 ease-in-out ${
             MenuOpen ? "left-0" : "left-[-420px]"
           }`}
         >

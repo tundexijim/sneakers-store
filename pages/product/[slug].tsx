@@ -1,22 +1,24 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Image from "next/image";
-import { getProductBySlug } from "../../services/productService";
+import { deleteProduct, getProductBySlug } from "../../services/productService";
 import { Product } from "../../types";
 import { useCart } from "../../context/CartContext";
 import Link from "next/link";
 import { useState } from "react";
-import { X } from "lucide-react";
+import { Trash2, X } from "lucide-react";
 import RandomProducts from "@/components/RandomProducts";
+import { useAuth } from "@/context/authContext";
+import { useRouter } from "next/router";
 
 export default function ProductPage({ product }: { product: Product }) {
   const { addToCart, cart } = useCart();
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const isInCart = cart.some((item) => item.id === product.id);
-
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const stock = product.sizes.reduce((sum, size) => sum + size.stock, 0);
-
+  const router = useRouter();
   const handleAddToCart = () => {
     if (isLoading) return;
     setIsLoading(true);
@@ -30,6 +32,21 @@ export default function ProductPage({ product }: { product: Product }) {
       }, 1000);
     }
   };
+
+  function handleDelete(productId: string) {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this product?"
+    );
+    if (!confirmDelete) return;
+    deleteProduct(productId)
+      .then(() => {
+        router.replace("/productslist");
+      })
+      .catch((err) => {
+        console.error(err);
+        alert("Failed to delete the product. Please try again.");
+      });
+  }
 
   return (
     <>
@@ -113,18 +130,28 @@ export default function ProductPage({ product }: { product: Product }) {
                 )}
               </button>
               {isInCart && (
-                <Link href="/cart">
-                  <button className="bg-green-600 text-white px-8 py-3 rounded-xl hover:bg-green-700 cursor-pointer mt-4">
-                    View Cart
-                  </button>
-                </Link>
+                <div>
+                  <Link href="/cart">
+                    <button className="bg-green-600 text-white px-8 py-3 rounded-xl hover:bg-green-700 cursor-pointer mt-4">
+                      View Cart
+                    </button>
+                  </Link>
+                </div>
               )}
             </div>
-            <div className="mt-4">
-              <Link href="/productslist" passHref>
-                <button className="text-blue-600 underline hover:text-blue-800">
-                  ← Continue Shopping
+            {user?.email === "ijimakindetunde@gmail.com" && (
+              <div className="mt-4">
+                <button
+                  onClick={() => handleDelete(product.id)}
+                  className="cursor-pointer"
+                >
+                  <Trash2 />
                 </button>
+              </div>
+            )}
+            <div className="mt-4">
+              <Link href="/productslist" className="text-blue-500 underline">
+                ← Continue Shopping
               </Link>
             </div>
           </div>
