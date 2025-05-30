@@ -135,6 +135,7 @@ export default function AddProductPage() {
     }
   };
   if (!isClient) return null;
+  if (user?.email !== "ijimakindetunde@gmail.com") return null;
   if (loading) return <p>Loading...</p>;
 
   return (
@@ -142,7 +143,7 @@ export default function AddProductPage() {
       <Head>
         <title>Add Product</title>
       </Head>
-      <main className="max-w-xl mx-auto p-6">
+      <main className="max-w-xl mx-auto p-4">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold mb-4">Add New Product</h1>
           <Link href="/admin/AdminPanel">

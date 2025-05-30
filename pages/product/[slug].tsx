@@ -16,6 +16,7 @@ export default function ProductPage({ product }: { product: Product }) {
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
   const isInCart = cart.some((item) => item.id === product.id);
   const { user } = useAuth();
+  const [stockinsize, setstockInSize] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const stock = product.sizes.reduce((sum, size) => sum + size.stock, 0);
   const router = useRouter();
@@ -31,6 +32,10 @@ export default function ProductPage({ product }: { product: Product }) {
         addToCart({ ...product, qty: 1, selectedSize });
       }, 1000);
     }
+  };
+  const handleSelectSize = (size: number, stock: number) => {
+    setSelectedSize(size);
+    setstockInSize(stock);
   };
 
   function handleDelete(productId: string) {
@@ -71,13 +76,16 @@ export default function ProductPage({ product }: { product: Product }) {
             <p className="text-gray-600 mb-6">{product.description}</p>
             <div className="text-2xl font-semibold mb-4">${product.price}</div>
             {stock === 0 && <p className="text-red-500">Out Of Stock</p>}
+            {stockinsize && (
+              <p className="text-green-600">{stockinsize} left in stock</p>
+            )}
             <div className="mt-4">
               <h3 className="font-semibold mb-2">Select Size:</h3>
               <div className="flex gap-2">
                 {product.sizes.map((size, i) => (
                   <div className="relative" key={i}>
                     <button
-                      onClick={() => setSelectedSize(size.size)}
+                      onClick={() => handleSelectSize(size.size, size.stock)}
                       disabled={size.stock === 0}
                       className={`px-4 py-2 border rounded ${
                         selectedSize === size.size
@@ -143,9 +151,9 @@ export default function ProductPage({ product }: { product: Product }) {
               <div className="mt-4">
                 <button
                   onClick={() => handleDelete(product.id)}
-                  className="cursor-pointer"
+                  className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
                 >
-                  <Trash2 />
+                  Delete
                 </button>
               </div>
             )}

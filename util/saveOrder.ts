@@ -154,7 +154,7 @@ export const validateStockAvailability = async (
 
     if (availableStock < item.qty) {
       throw new Error(
-        `Not enough stock for ${item.name}(size: ${item.selectedSize}). Only ${availableStock} available, but ${item.qty} requested. Please adjust in cart`
+        `Not enough stock for ${item.name}(size: ${item.selectedSize}). Only ${availableStock} item(s) is available, but you requested for ${item.qty} item(s). Please adjust in cart`
       );
     }
   });

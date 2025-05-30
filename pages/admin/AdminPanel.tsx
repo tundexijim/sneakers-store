@@ -62,6 +62,7 @@ export default function AdminPanel() {
     }
   };
   if (!isClient) return null;
+  if (user?.email !== "ijimakindetunde@gmail.com") return null;
 
   if (loading) return <p className="text-center py-10">Loading orders...</p>;
 
