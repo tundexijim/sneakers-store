@@ -33,7 +33,7 @@ export interface OrderData {
   Subtotal: number;
 }
 
-async function saveOrder<OrderType>(
+export async function saveOrder(
   order: OrderData,
   setLoading: (state: boolean) => void,
   setError: (msg: string) => void
@@ -61,70 +61,64 @@ export const placeOrder = async (
   order: OrderData,
   setLoading: (state: boolean) => void,
   setError: (msg: string) => void
-) => {
+): Promise<boolean> => {
   try {
     setLoading(true);
-    setError(""); // Clear any previous errors
+    setError("");
+    const productDataMap: {
+      [productId: string]: { ref: DocumentReference; sizes: any[] };
+    } = {};
+    for (const item of cart) {
+      const productRef = doc(db, "products", item.id);
 
-    // Execute the transaction - this will throw an error if stock validation fails
-    await runTransaction(db, async (transaction) => {
-      const productDataMap: {
-        [productId: string]: { ref: DocumentReference; sizes: any[] };
-      } = {};
+      if (!productDataMap[item.id]) {
+        const productSnap = await getDoc(productRef);
 
-      // Fetch all product data first
-      for (const item of cart) {
-        const productRef = doc(db, "products", item.id);
-
-        if (!productDataMap[item.id]) {
-          const productSnap = await transaction.get(productRef);
-
-          if (!productSnap.exists()) {
-            throw new Error(`Product ${item.id} not found`);
-          }
-
-          productDataMap[item.id] = {
-            ref: productRef,
-            sizes: productSnap.data().sizes,
-          };
+        if (!productSnap.exists()) {
+          setError(`Product ${item.id} not found`);
+          return false;
         }
-      }
 
-      // Validate stock and update quantities
+        productDataMap[item.id] = {
+          ref: productRef,
+          sizes: productSnap.data().sizes,
+        };
+      }
+      const { sizes } = productDataMap[item.id];
+      const sizeIndex = sizes.findIndex(
+        (s: any) => s.size === item.selectedSize
+      );
+      if (sizeIndex === -1) {
+        setError(`Size ${item.selectedSize} not found for product ${item.id}`);
+        return false;
+      }
+      const availableStock = sizes[sizeIndex].stock;
+      if (availableStock < item.qty) {
+        setError(
+          `Not enough stock for ${item.name}(${item.selectedSize}). Only ${availableStock} available, but ${item.qty} requested. Please adjust in cart`
+        );
+        return false;
+      }
+    }
+    await runTransaction(db, async (transaction) => {
       for (const item of cart) {
-        const { sizes } = productDataMap[item.id];
+        const { ref, sizes } = productDataMap[item.id];
         const sizeIndex = sizes.findIndex(
           (s: any) => s.size === item.selectedSize
         );
-
-        if (sizeIndex === -1) {
-          throw new Error(
-            `Size ${item.selectedSize} not found for product ${item.id}`
-          );
-        }
-
-        const availableStock = sizes[sizeIndex].stock;
-
-        if (availableStock < item.qty) {
-          throw new Error(
-            `Not enough stock for size ${item.name}(${item.selectedSize}). Only ${availableStock} available, but ${item.qty} requested. Please adjust in cart`
-          );
-        }
         sizes[sizeIndex].stock -= item.qty;
-      }
-      for (const { ref, sizes } of Object.values(productDataMap)) {
         transaction.update(ref, { sizes });
       }
     });
     await saveOrder(order, setLoading, setError);
     console.log("Order placed successfully!");
+    return true;
   } catch (error: any) {
     console.error("Order failed:", error);
     const errorMessage =
       error?.message || "An unexpected error occurred while placing the order";
     setError(errorMessage);
-    setLoading(false);
-    throw error;
+    return false;
   } finally {
     setLoading(false);
   }
@@ -154,7 +148,7 @@ export const validateStockAvailability = async (
 
     if (availableStock < item.qty) {
       throw new Error(
-        `Not enough stock for ${item.name}(size: ${item.selectedSize}). Only ${availableStock} item(s) is available, but you requested for ${item.qty} item(s). Please adjust in cart`
+        `Not enough stock for ${item.name}(size: ${item.selectedSize}). Only ${availableStock} item(s) is available, but you requested for ${item.qty} item(s). Please adjust in cart.`
       );
     }
   });

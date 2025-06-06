@@ -84,7 +84,11 @@ export default function AdminPanel() {
             {orders.map((order) => (
               <div
                 key={order.id}
-                className="border p-4 rounded shadow flex justify-between items-center"
+                className={`border p-4 rounded shadow flex justify-between items-center ${
+                  order.paymentMethod?.toLowerCase().trim() === "error occured"
+                    ? "bg-gray-600"
+                    : ""
+                }`}
               >
                 <div>
                   <p>

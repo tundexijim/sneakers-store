@@ -38,7 +38,7 @@ export default function ProductPage({ product }: { product: Product }) {
     setstockInSize(stock);
   };
 
-  function handleDelete(productId: string) {
+  const handleDelete = (productId: string) => {
     const confirmDelete = window.confirm(
       "Are you sure you want to delete this product?"
     );
@@ -51,7 +51,7 @@ export default function ProductPage({ product }: { product: Product }) {
         console.error(err);
         alert("Failed to delete the product. Please try again.");
       });
-  }
+  };
 
   return (
     <>

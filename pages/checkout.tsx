@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
-import { placeOrder } from "@/util/saveOrder";
+import { placeOrder, saveOrder } from "@/util/saveOrder";
 import { useRouter } from "next/router";
 import { payWithPaystack } from "@/util/paystack";
 import Head from "next/head";
@@ -10,6 +10,7 @@ import toast from "react-hot-toast";
 import { useIsClient } from "@/hooks/useIsClient";
 import Link from "next/link";
 import { validateStockAvailability } from "@/util/saveOrder";
+import { saveProduct } from "@/services/productService";
 
 export default function CheckoutPage() {
   const { cart, total, clearCart, updateQty } = useCart();
@@ -155,13 +156,15 @@ export default function CheckoutPage() {
       setLoading(false);
       return;
     }
-
     setLoading(true);
-    await placeOrder(cart, orderData, setLoading, setError);
-    localStorage.removeItem("orderNumber");
-    localStorage.removeItem("checkoutForm");
-    router.push(`/success?orderNumber=${orderNumber}`);
-    clearCart();
+    const success = await placeOrder(cart, orderData, setLoading, setError);
+    if (success) {
+      localStorage.removeItem("orderNumber");
+      localStorage.removeItem("checkoutForm");
+      router.push(`/payment-success/success?orderNumber=${orderNumber}`);
+      clearCart();
+    }
+    setLoading(false);
   };
 
   const handlePay = async () => {
@@ -181,39 +184,48 @@ export default function CheckoutPage() {
         setLoading(false);
         return;
       }
-
+      const random = Math.floor(100000 + Math.random() * 900000);
+      const date = new Date().getTime().toString().slice(-4);
+      const newOrder = `ORD-${date}-${random}`;
+      const reference = newOrder;
       setLoading(false);
       payWithPaystack({
         email: form.email,
         amount: Subtotal * 100,
-        reference: orderNumber,
+        reference: reference,
         metadata: {
           firstname: form.firstname,
           lastname: form.lastname,
           phone: form.phone,
         },
         onSuccess: async () => {
-          try {
-            setLoading(true);
-            await placeOrder(cart, orderData, setLoading, setError);
-            localStorage.removeItem("orderNumber");
+          setLoading(true);
+          const success = await placeOrder(
+            cart,
+            { ...orderData, orderNumber: reference },
+            setLoading,
+            setError
+          );
+          if (success) {
             localStorage.removeItem("checkoutForm");
-            router.push(`/success?orderNumber=${orderNumber}`);
+            router.push(`/payment-success/success?orderNumber=${orderNumber}`);
             clearCart();
-          } catch (error: any) {
-            console.error(
-              "Payment successful but order processing failed:",
-              error
+          } else {
+            await saveOrder(
+              {
+                ...orderData,
+                paymentMethod: "Error Occured",
+                orderNumber: reference,
+              },
+              setLoading,
+              setError
             );
-            setError(
-              "Payment was successful, but there was an issue processing your order. Please contact support with your reference: " +
-                orderNumber
+            router.push(
+              `/payment-success/payment-success-pending?reference=${reference}`
             );
-            localStorage.removeItem("checkoutForm");
           }
         },
         onClose: () => {
-          localStorage.removeItem("orderNumber");
           console.log("Payment popup closed.");
         },
       });
@@ -222,6 +234,7 @@ export default function CheckoutPage() {
       setLoading(false);
     }
   };
+
   if (!isClient) return null;
 
   return (
