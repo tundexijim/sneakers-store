@@ -12,7 +12,7 @@ export default function App({ Component, pageProps }: AppProps) {
       <div className="flex flex-col min-h-screen">
         {/* <DTwears /> */}
         <Navbar />
-        <main className="flex-grow">
+        <main className="flex-grow min-h-screen">
           <Toaster position="top-right" reverseOrder={false} />
           <Component {...pageProps} />
         </main>

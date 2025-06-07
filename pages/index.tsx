@@ -44,7 +44,7 @@ const SneakersHomepage = () => {
       </Head>
       <div className="min-h-screen bg-white">
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden">
+        <section className="relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden px-2 md:px-16">
           <div className="absolute inset-0 bg-black/20"></div>
           <div className="relative container mx-auto px-4 py-16 lg:py-24">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -83,7 +83,7 @@ const SneakersHomepage = () => {
         </section>
 
         {/* Features Section */}
-        <section className="py-16 bg-gray-50">
+        <section className="py-16 bg-gray-50 px-2 md:px-16">
           <div className="container mx-auto px-4">
             <div className="grid md:grid-cols-3 gap-8">
               <div className="text-center space-y-4">
@@ -121,7 +121,7 @@ const SneakersHomepage = () => {
         </section>
 
         {/* Featured Products */}
-        <section className="py-16">
+        <section className="py-16 px-2 md:px-16">
           <div className="container mx-auto px-4">
             <RandomProducts type="featured" />
             <div className="text-center">
@@ -137,7 +137,7 @@ const SneakersHomepage = () => {
         </section>
 
         {/* Categories Section */}
-        <section className="py-16 bg-gray-900 text-white">
+        <section className="py-16 px-2 md:px-16 bg-gray-900 text-white">
           <div className="container mx-auto px-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl lg:text-4xl font-bold mb-4">

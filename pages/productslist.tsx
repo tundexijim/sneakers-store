@@ -74,7 +74,11 @@ export default function ProductsList({
   };
   const paginationNumbers = getPaginationNumbers();
   if (error) {
-    return <p className="flex  justify-center text-red-500">{error}</p>;
+    return (
+      <div className="flex items-center justify-center text-red-500">
+        <p>{error}</p>
+      </div>
+    );
   }
 
   return (
@@ -84,7 +88,7 @@ export default function ProductsList({
         <meta name="description" content="Shop premium sneakers online" />
       </Head>
 
-      <main className="container mx-auto md:px-16 px-4 py-8">
+      <main className="container mx-auto md:px-16 px-2 py-8">
         <h1 className="text-3xl font-bold mb-6">Sneakers</h1>
         <ProductListPanel
           viewMode={viewMode}
@@ -205,9 +209,9 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         sortBy,
       },
     };
-  } catch (error) {
+  } catch (error: any) {
     return {
-      props: { error: "Something went wrong" },
+      props: { error: error.message },
     };
   }
 };

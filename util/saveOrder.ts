@@ -78,7 +78,6 @@ export const placeOrder = async (
           setError(`Product ${item.id} not found`);
           return false;
         }
-
         productDataMap[item.id] = {
           ref: productRef,
           sizes: productSnap.data().sizes,

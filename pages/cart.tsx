@@ -86,7 +86,7 @@ export default function CartPage() {
                     />
                     <div className="flex-1">
                       <h2 className="text-lg font-semibold">{item.name}</h2>
-                      <p>${item.price}</p>
+                      <p>₦{item.price}</p>
                       <p>Size: {item.selectedSize}</p>
                       <div className="flex items-center mt-2 gap-2">
                         <button
@@ -130,19 +130,22 @@ export default function CartPage() {
                       </div>
                     </div>
                     <div className="text-right font-semibold">
-                      ${(item.price * displayQty).toFixed(2)}
+                      ₦{(item.price * displayQty).toFixed(2)}
                     </div>
                   </div>
                 );
               })}
             </div>
-            <div className="flex items-center justify-between mt-8">
-              <Link href="/productslist" className="text-blue-500 underline">
+            <div className="flex flex-col md:flex-row items-end md:items-center md:justify-between mt-8">
+              <Link
+                href="/productslist"
+                className="text-blue-500 hidden md:block underline"
+              >
                 ← Continue Shopping
               </Link>
               <div className=" text-right">
                 <p className="text-xl font-bold mb-4">
-                  Subtotal: ${total.toFixed(2)}
+                  Subtotal:₦{total.toFixed(2)}
                 </p>
                 <Link href="/checkout">
                   <button className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800">
@@ -150,6 +153,12 @@ export default function CartPage() {
                   </button>
                 </Link>
               </div>
+              <Link
+                href="/productslist"
+                className="text-blue-500 md:hidden mt-4 underline"
+              >
+                ← Continue Shopping
+              </Link>
             </div>
           </>
         )}

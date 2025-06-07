@@ -74,7 +74,7 @@ export default function ProductPage({ product }: { product: Product }) {
           <div className="w-full md:w-1/2">
             <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
             <p className="text-gray-600 mb-6">{product.description}</p>
-            <div className="text-2xl font-semibold mb-4">${product.price}</div>
+            <div className="text-2xl font-semibold mb-4">₦{product.price}</div>
             {stock === 0 && <p className="text-red-500">Out Of Stock</p>}
             {stockinsize && (
               <p className="text-green-600">{stockinsize} left in stock</p>

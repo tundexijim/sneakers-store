@@ -143,7 +143,7 @@ export default function AddProductPage() {
       <Head>
         <title>Add Product</title>
       </Head>
-      <main className="max-w-xl mx-auto p-4">
+      <main className="max-w-xl mx-auto pt-16">
         <div className="flex justify-between items-center">
           <h1 className="text-2xl font-bold mb-4">Add New Product</h1>
           <Link href="/admin/AdminPanel">
@@ -264,5 +264,3 @@ export default function AddProductPage() {
     </>
   );
 }
-
-// Placeholder - replace with real API or Firestore

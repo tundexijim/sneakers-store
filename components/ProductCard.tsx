@@ -43,7 +43,7 @@ export default function ProductCard({
                 isListView ? "text-xl" : "text-2xl"
               } font-bold text-blue-600`}
             >
-              ${product.price}
+              ₦{product.price}
             </p>
           </div>
         </div>

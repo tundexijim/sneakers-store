@@ -55,7 +55,7 @@ export default function Navbar() {
 
   return (
     <nav className="bg-black shadow-md sticky top-0 left-0 w-full z-50">
-      <div className="container mx-auto md:px-16 px-4 py-4 flex justify-between items-center">
+      <div className="container mx-auto md:px-16 px-2 py-4 flex justify-between items-center">
         <Link href="/" className="hidden md:flex">
           <img src="/logo2.png" alt="logo" className="w-14" />
         </Link>

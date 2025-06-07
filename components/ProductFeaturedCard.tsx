@@ -17,7 +17,7 @@ export default function ProductFeaturedCard({ product }: { product: Product }) {
           <h3 className="text-xl font-semibold group-hover:text-purple-600 transition-colors">
             {product.name}
           </h3>
-          <p className="text-2xl font-bold text-purple-600">${product.price}</p>
+          <p className="text-2xl font-bold text-purple-600">₦{product.price}</p>
         </div>
       </Link>
     </div>
