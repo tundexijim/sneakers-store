@@ -6,12 +6,21 @@ import { useIsClient } from "@/hooks/useIsClient";
 import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import RandomProducts from "@/components/RandomProducts";
+import {
+  AlertTriangle,
+  ArrowLeft,
+  Minus,
+  Plus,
+  ShoppingBag,
+  Trash2,
+} from "lucide-react";
 
 export default function CartPage() {
   const { cart, updateQty, removeFromCart, total } = useCart();
   const isClient = useIsClient();
   const [removedItems, setRemovedItems] = useState<string[]>([]);
   const uniqueProductIds = Array.from(new Set(cart.map((item) => item.id)));
+  const formatPrice = (price: number) => `₦${price.toFixed(2)}`;
 
   useEffect(() => {
     if (!isClient) return;
@@ -47,22 +56,56 @@ export default function CartPage() {
       </Head>
 
       <main className="container mx-auto md:px-16 px-4 py-8">
-        <h1 className="text-3xl font-bold mb-2">Your Cart</h1>
-        <p className="text-gray-500 mb-4">{cart.length} item(s) in your cart</p>
+        <div className="bg-white shadow-sm sticky top-0 z-10 mb-8">
+          <div className="max-w-6xl mx-auto px-4 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-4">
+                <Link href="/productslist">
+                  <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                    <ArrowLeft className="w-5 h-5" />
+                  </button>
+                </Link>
+                <div>
+                  <h1 className="text-2xl font-bold text-gray-900">
+                    Shopping Cart
+                  </h1>
+                  <p className="text-gray-600">
+                    {cart.length} {cart.length === 1 ? "item" : "items"}
+                  </p>
+                </div>
+              </div>
+              <ShoppingBag className="w-8 h-8 text-gray-400" />
+            </div>
+          </div>
+        </div>
         {removedItems.length > 0 && (
-          <div className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4 rounded">
-            {removedItems.map((msg, i) => (
-              <p key={i}>{msg}</p>
-            ))}
+          <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+            <div className="flex items-start space-x-3">
+              <AlertTriangle className="w-5 h-5 text-yellow-600 mt-0.5 flex-shrink-0" />
+              <div className="space-y-1">
+                {removedItems.map((msg, i) => (
+                  <p key={i} className="text-yellow-800 text-sm">
+                    {msg}
+                  </p>
+                ))}
+              </div>
+            </div>
           </div>
         )}
+
         {cart.length === 0 ? (
-          <p className="text-gray-600">
-            Your cart is empty.{" "}
-            <Link href="/productslist" className="text-blue-500 underline">
-              Go shopping
+          <div className="text-center py-16">
+            <ShoppingBag className="w-24 h-24 text-gray-300 mx-auto mb-4" />
+            <h2 className="text-2xl font-semibold text-gray-900 mb-2">
+              Your cart is empty
+            </h2>
+            <p className="text-gray-600 mb-8">Add some items to get started</p>
+            <Link href="/productslist">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+                Continue Shopping
+              </button>
             </Link>
-          </p>
+          </div>
         ) : (
           <>
             <div className="flex flex-col gap-6">
@@ -72,93 +115,148 @@ export default function CartPage() {
                   0;
                 const displayQty = item.qty > stock ? stock : item.qty;
 
+                const lowStock = stock > 0 && stock <= 3;
+
                 return (
                   <div
                     key={`${item.id}-${item.selectedSize}`}
-                    className="flex items-center gap-4 border-b pb-4"
+                    className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden"
                   >
-                    <Image
-                      src={item.image}
-                      alt={item.name}
-                      width={100}
-                      height={100}
-                      className="rounded-md object-cover"
-                    />
-                    <div className="flex-1">
-                      <h2 className="text-lg font-semibold">{item.name}</h2>
-                      <p>₦{item.price}</p>
-                      <p>Size: {item.selectedSize}</p>
-                      <div className="flex items-center mt-2 gap-2">
-                        <button
-                          className="px-2 py-1 bg-gray-200 rounded"
-                          onClick={() =>
-                            updateQty(item.id, item.selectedSize, item.qty - 1)
-                          }
-                          disabled={item.qty <= 1}
-                        >
-                          −
-                        </button>
-                        <span>{displayQty}</span>
-                        <button
-                          className={`px-2 py-1 rounded ${
-                            item.qty >= stock
-                              ? "bg-gray-300 cursor-not-allowed"
-                              : "bg-gray-200"
-                          }`}
-                          onClick={() => {
-                            if (item.qty >= stock) {
-                              toast.error("Stock limit reached for this size.");
-                            } else {
-                              updateQty(
-                                item.id,
-                                item.selectedSize,
-                                item.qty + 1
-                              );
-                            }
-                          }}
-                        >
-                          +
-                        </button>
-                        <button
-                          className="ml-4 text-red-600 underline"
-                          onClick={() =>
-                            removeFromCart(item.id, item.selectedSize)
-                          }
-                        >
-                          Remove
-                        </button>
+                    <div className="p-6">
+                      <div className="flex items-start space-x-4">
+                        {/* Product Image */}
+                        <div className="relative">
+                          <Image
+                            src={item.image}
+                            alt={item.name}
+                            width={96}
+                            height={96}
+                            className="w-24 h-24 object-cover rounded-lg"
+                          />
+                        </div>
+
+                        {/* Product Details */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                                {item.name}
+                              </h3>
+                              <div className="flex items-center space-x-4 text-sm text-gray-600 mb-2">
+                                <span>Size: {item.selectedSize}</span>
+                                {lowStock && (
+                                  <>
+                                    <span>•</span>
+                                    <span className="text-orange-600 font-medium">
+                                      Only {stock} left
+                                    </span>
+                                  </>
+                                )}
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <span className="text-xl font-bold text-gray-900">
+                                  {formatPrice(Number(item.price))}
+                                </span>
+                              </div>
+                            </div>
+
+                            {/* Remove Button */}
+                            <button
+                              onClick={() =>
+                                removeFromCart(item.id, item.selectedSize)
+                              }
+                              className="p-2 hover:bg-red-50 rounded-lg transition-colors"
+                            >
+                              <Trash2 className="w-5 h-5 text-gray-400 hover:text-red-500" />
+                            </button>
+                          </div>
+
+                          {/* Quantity Controls */}
+                          <div className="flex flex-col md:flex-row items-end md:items-center justify-between gap-2 mt-4">
+                            <div className="flex items-center space-x-3">
+                              <span className="text-sm text-gray-600">
+                                Quantity:
+                              </span>
+                              <div className="flex items-center border border-gray-300 rounded-lg">
+                                <button
+                                  onClick={() =>
+                                    updateQty(
+                                      item.id,
+                                      item.selectedSize,
+                                      item.qty - 1
+                                    )
+                                  }
+                                  disabled={item.qty <= 1}
+                                  className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                  <Minus className="w-4 h-4" />
+                                </button>
+                                <span className="px-4 py-2 text-center min-w-[3rem] border-x border-gray-300">
+                                  {displayQty}
+                                </span>
+                                <button
+                                  onClick={() => {
+                                    updateQty(
+                                      item.id,
+                                      item.selectedSize,
+                                      item.qty + 1
+                                    );
+                                  }}
+                                  disabled={item.qty >= stock}
+                                  className="p-2 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                >
+                                  <Plus className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <p className="text-lg font-semibold text-gray-900">
+                                {formatPrice(item.price * displayQty)}
+                              </p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                    <div className="text-right font-semibold">
-                      ₦{(item.price * displayQty).toFixed(2)}
                     </div>
                   </div>
                 );
               })}
             </div>
-            <div className="flex flex-col md:flex-row items-end md:items-center md:justify-between mt-8">
-              <Link
-                href="/productslist"
-                className="text-blue-500 hidden md:block underline"
-              >
-                ← Continue Shopping
-              </Link>
-              <div className=" text-right">
-                <p className="text-xl font-bold mb-4">
-                  Subtotal:₦{total.toFixed(2)}
-                </p>
-                <Link href="/checkout">
-                  <button className="bg-black text-white px-6 py-3 rounded hover:bg-gray-800">
-                    Proceed to Checkout
-                  </button>
-                </Link>
+            <div className="mt-8">
+              <div className="bg-white rounded-xl shadow-sm border border-gray-100 sticky top-24">
+                <div className="p-6">
+                  <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                    Order Summary
+                  </h2>
+
+                  {/* Price Breakdown */}
+                  <div className="space-y-3 mb-6">
+                    <div className="flex justify-between text-gray-600">
+                      <span>Subtotal ({cart.length} items)</span>
+                      <span>{formatPrice(total)}</span>
+                    </div>
+                    <div className="border-t border-gray-200 pt-3">
+                      <div className="flex justify-between text-lg font-semibold text-gray-900">
+                        <span>Total</span>
+                        <span>{formatPrice(total)}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Checkout Button */}
+                  <Link href="/checkout">
+                    <button className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-4 px-6 rounded-lg transition-colors mb-4">
+                      Proceed to Checkout
+                    </button>
+                  </Link>
+
+                  <Link href="/productslist">
+                    <button className="w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors">
+                      Continue Shopping
+                    </button>
+                  </Link>
+                </div>
               </div>
-              <Link
-                href="/productslist"
-                className="text-blue-500 md:hidden mt-4 underline"
-              >
-                ← Continue Shopping
-              </Link>
             </div>
           </>
         )}
