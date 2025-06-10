@@ -245,13 +245,13 @@ export default function CartPage() {
 
                   {/* Checkout Button */}
                   <Link href="/checkout">
-                    <button className="w-full bg-black hover:bg-gray-800 text-white font-semibold py-4 px-6 rounded-lg transition-colors mb-4">
+                    <button className="w-full bg-black hover:bg-gray-800 cursor-pointer text-white font-semibold py-4 px-6 rounded-lg transition-colors mb-4">
                       Proceed to Checkout
                     </button>
                   </Link>
 
                   <Link href="/productslist">
-                    <button className="w-full border border-gray-300 hover:bg-gray-50 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors">
+                    <button className="w-full border border-gray-300 cursor-pointer hover:bg-gray-50 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors">
                       Continue Shopping
                     </button>
                   </Link>

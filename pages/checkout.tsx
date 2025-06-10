@@ -307,29 +307,31 @@ export default function CheckoutPage() {
 
                   <div className="space-y-4 mb-6">
                     {cart.map((item) => (
-                      <div
-                        key={`${item.id}-${item.selectedSize}`}
-                        className="flex items-center p-4 gap-14 bg-slate-50 rounded-xl border border-slate-100"
-                      >
-                        <Image
-                          src={item.image}
-                          alt={item.name}
-                          width={40}
-                          height={40}
-                          className="w-12 h-12 object-cover rounded-lg"
-                        />
-                        <div className="">
-                          <p className="font-medium text-slate-900 mb-1">
-                            {item.name}
-                          </p>
-                          <p className="text-sm text-slate-600">
-                            Size {item.selectedSize} × {item.qty}
+                      <Link href={`/product/${item.slug}`}>
+                        <div
+                          key={`${item.id}-${item.selectedSize}`}
+                          className="flex items-center p-4 gap-14 bg-slate-50 rounded-xl border border-slate-100"
+                        >
+                          <Image
+                            src={item.image}
+                            alt={item.name}
+                            width={40}
+                            height={40}
+                            className="w-12 h-12 object-cover rounded-lg"
+                          />
+                          <div className="">
+                            <p className="font-medium text-slate-900 mb-1">
+                              {item.name}
+                            </p>
+                            <p className="text-sm text-slate-600">
+                              Size {item.selectedSize} × {item.qty}
+                            </p>
+                          </div>
+                          <p className="font-semibold text-slate-900">
+                            ₦{(item.price * item.qty).toLocaleString()}
                           </p>
                         </div>
-                        <p className="font-semibold text-slate-900">
-                          ₦{(item.price * item.qty).toLocaleString()}
-                        </p>
-                      </div>
+                      </Link>
                     ))}
                   </div>
 
@@ -739,7 +741,7 @@ export default function CheckoutPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full relative bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
+                      className="w-full relative bg-gradient-to-r cursor-pointer from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
                     >
                       <span
                         className={`flex items-center justify-center ${
@@ -754,22 +756,6 @@ export default function CheckoutPage() {
                         </div>
                       )}
                     </button>
-
-                    <div className="flex items-center justify-center mt-4 space-x-4 text-sm text-slate-500">
-                      <div className="flex items-center space-x-2">
-                        <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                          <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                        </div>
-                        <span>Secure Payment</span>
-                      </div>
-                      <div className="w-1 h-1 bg-slate-300 rounded-full"></div>
-                      <div className="flex items-center space-x-2">
-                        <div className="w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                          <div className="w-1.5 h-1.5 bg-white rounded-full"></div>
-                        </div>
-                        <span>256-bit SSL</span>
-                      </div>
-                    </div>
                   </div>
                 </form>
               </div>
