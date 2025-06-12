@@ -266,13 +266,13 @@ export default function CheckoutPage() {
     setLoading(true);
     setError("");
 
-    // try {
-    //   await validateStockAvailability(cart);
-    // } catch (error: any) {
-    //   setError(error.message);
-    //   setLoading(false);
-    //   return;
-    // }
+    try {
+      await validateStockAvailability(cart);
+    } catch (error: any) {
+      setError(error.message);
+      setLoading(false);
+      return;
+    }
 
     if (form.paymentMethod === "bank") {
       handleSubmit();

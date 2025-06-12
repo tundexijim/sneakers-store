@@ -125,7 +125,10 @@ export default function CartPage() {
                     <div className="p-6">
                       <div className="flex items-start space-x-4">
                         {/* Product Image */}
-                        <div className="relative">
+                        <Link
+                          href={`/product/${item.slug}`}
+                          className="relative"
+                        >
                           <Image
                             src={item.image}
                             alt={item.name}
@@ -133,7 +136,7 @@ export default function CartPage() {
                             height={96}
                             className="w-24 h-24 object-cover rounded-lg"
                           />
-                        </div>
+                        </Link>
 
                         {/* Product Details */}
                         <div className="flex-1 min-w-0">

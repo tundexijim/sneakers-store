@@ -7,11 +7,6 @@ import {
   Mail,
   Phone,
   MapPin,
-  CreditCard,
-  Shield,
-  Truck,
-  RotateCcw,
-  Heart,
 } from "lucide-react";
 import { useIsClient } from "@/hooks/useIsClient";
 
@@ -64,16 +59,12 @@ const Footer = () => {
               <div className="flex items-center gap-3">
                 <MapPin size={16} className="text-gray-400" />
                 <span className="text-gray-300">
-                  123 Sneaker Street, Lagos, Nigeria
+                  30, Wendey Garba Street, Arepo, Ogun state
                 </span>
               </div>
               <div className="flex items-center gap-3">
                 <Phone size={16} className="text-gray-400" />
                 <span className="text-gray-300">08062474452</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Mail size={16} className="text-gray-400" />
-                <span className="text-gray-300">hello@kickz.com</span>
               </div>
             </div>
           </div>
@@ -82,25 +73,18 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-6 text-lg">Quick Links</h4>
             <ul className="space-y-3 text-sm">
-              {[
-                "New Arrivals",
-                "Best Sellers",
-                "Sale",
-                "Men's Sneakers",
-                "Women's Sneakers",
-                "Kids Sneakers",
-                "Brands",
-                "Size Guide",
-              ].map((link) => (
-                <li key={link}>
-                  <a
-                    href="#"
-                    className="text-gray-300 hover:text-white transition-colors"
-                  >
-                    {link}
-                  </a>
-                </li>
-              ))}
+              {["New Arrivals", "Best Sellers", , "Brands", "Size Guide"].map(
+                (link) => (
+                  <li key={link}>
+                    <a
+                      href="#"
+                      className="text-gray-300 hover:text-white transition-colors"
+                    >
+                      {link}
+                    </a>
+                  </li>
+                )
+              )}
             </ul>
           </div>
 
@@ -114,9 +98,6 @@ const Footer = () => {
                 "Shipping Info",
                 "Returns & Exchanges",
                 "Size Guide",
-                "Track Your Order",
-                "Gift Cards",
-                "Store Locator",
               ].map((link) => (
                 <li key={link}>
                   <a
@@ -134,14 +115,7 @@ const Footer = () => {
           <div>
             <h4 className="font-semibold mb-6 text-lg">About DTWEARS</h4>
             <ul className="space-y-3 text-sm mb-6">
-              {[
-                "Our Story",
-                "Careers",
-                "Press",
-                "Sustainability",
-                "Privacy Policy",
-                "Terms of Service",
-              ].map((link) => (
+              {["Our Story", "Press", "Privacy Policy"].map((link) => (
                 <li key={link}>
                   <a
                     href="#"
@@ -176,47 +150,6 @@ const Footer = () => {
           </div>
         </div>
       </div>
-
-      {/* Features Section */}
-      <div className="border-t border-gray-800">
-        <div className="max-w-7xl mx-auto px-4 py-8">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[
-              {
-                icon: Truck,
-                title: "Free Shipping",
-                description: "On orders over ₦75,000",
-              },
-              {
-                icon: RotateCcw,
-                title: "30-Day Returns",
-                description: "Easy returns & exchanges",
-              },
-              {
-                icon: Shield,
-                title: "Authenticity Guaranteed",
-                description: "100% authentic sneakers",
-              },
-              {
-                icon: Heart,
-                title: "Customer Support",
-                description: "24/7 dedicated support",
-              },
-            ].map((feature, index) => (
-              <div key={index} className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gray-800 rounded-full flex items-center justify-center flex-shrink-0">
-                  <feature.icon size={20} className="text-gray-300" />
-                </div>
-                <div>
-                  <h6 className="font-semibold text-sm">{feature.title}</h6>
-                  <p className="text-gray-400 text-xs">{feature.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
       {/* Payment Methods & Copyright */}
       <div className="border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 py-6">

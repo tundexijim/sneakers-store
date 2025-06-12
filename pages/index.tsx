@@ -180,10 +180,7 @@ const SneakersHomepage = () => {
               <h2 className="text-3xl lg:text-5xl font-bold">
                 Ready to Find Your Perfect Pair?
               </h2>
-              <p className="text-xl text-purple-100">
-                Join thousands of satisfied customers who've found their stride
-                with our premium sneaker collection.
-              </p>
+
               {/* <div className="flex flex-col sm:flex-row gap-4 justify-center pt-6"> */}
               <Link href="/productslist">
                 <button className="bg-white text-purple-600 px-8 py-4 rounded-full cursor-pointer font-semibold hover:bg-gray-100 transition-all duration-300 inline-flex items-center justify-center space-x-2 group">
