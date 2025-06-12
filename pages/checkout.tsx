@@ -22,13 +22,15 @@ import {
   Home,
 } from "lucide-react";
 import Image from "next/image";
+import { httpsCallable } from "firebase/functions";
+import { functions } from "@/lib/firebaseConfig";
 
 export default function CheckoutPage() {
   const { cart, total, clearCart, updateQty } = useCart();
   const router = useRouter();
 
   const [ShippingCost, setShippingCost] = useState(0);
-  const Subtotal = total + ShippingCost;
+  const Subtotal = total + (total <= 75000 ? ShippingCost : 0);
 
   const [selectedState, setSelectedState] = useState("");
   const [form, setForm] = useState({
@@ -177,9 +179,10 @@ export default function CheckoutPage() {
     try {
       const random = Math.floor(100000 + Math.random() * 900000);
       const date = new Date().getTime().toString().slice(-4);
-      const newOrder = `ORD-${date}-${random}`;
-      const reference = newOrder;
-      setLoading(false);
+      const reference = `ORD-${date}-${random}`;
+
+      setLoading(true);
+
       payWithPaystack({
         email: form.email,
         amount: Subtotal * 100,
@@ -189,38 +192,64 @@ export default function CheckoutPage() {
           lastname: form.lastname,
           phone: form.phone,
         },
-        onSuccess: async () => {
-          setLoading(true);
-          const success = await placeOrder(
-            cart,
-            { ...orderData, orderNumber: reference },
-            setLoading,
-            setError
-          );
-          if (success) {
-            localStorage.removeItem("checkoutForm");
-            router.push(`/payment-success/success?orderNumber=${orderNumber}`);
-            clearCart();
-          } else {
-            await saveOrder(
-              {
-                ...orderData,
-                paymentMethod: "Error Occured",
-                orderNumber: reference,
-              },
-              setLoading,
-              setError
-            );
-            router.push(
-              `/payment-success/payment-success-pending?reference=${reference}`
-            );
+        onSuccess: async (response) => {
+          try {
+            setLoading(true);
+
+            // Call Firebase Cloud Function to verify payment
+            const verifyPayment = httpsCallable(functions, "verifyPayment");
+            const result: any = await verifyPayment({
+              reference: response.reference,
+            });
+
+            if (result.data.success && result.data.status === "success") {
+              // Payment verified successfully - now place the order
+              const success = await placeOrder(
+                cart,
+                { ...orderData, orderNumber: reference },
+                setLoading,
+                setError
+              );
+
+              if (success) {
+                localStorage.removeItem("checkoutForm");
+                router.push(
+                  `/payment-success/success?orderNumber=${reference}`
+                );
+                clearCart();
+              } else {
+                await saveOrder(
+                  {
+                    ...orderData,
+                    paymentMethod: "Failed to submit",
+                    orderNumber: reference,
+                  },
+                  setLoading,
+                  setError
+                );
+                router.push(
+                  `/payment-success/payment-success-pending?reference=${reference}`
+                );
+
+                setError(
+                  `Order placement failed after successful payment. Please contact support with your reference number: ${reference}`
+                );
+              }
+            } else {
+              setError("Payment verification failed. Please contact support.");
+            }
+          } catch (verificationError) {
+            console.error("Verification error:", verificationError);
+            setError("Payment verification failed. Please contact support.");
           }
         },
         onClose: () => {
           console.log("Payment popup closed.");
+          setLoading(false);
         },
       });
-    } catch (error: any) {
+    } catch (error) {
+      console.error("Payment error:", error);
       setError("An unexpected error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -237,13 +266,13 @@ export default function CheckoutPage() {
     setLoading(true);
     setError("");
 
-    try {
-      await validateStockAvailability(cart);
-    } catch (error: any) {
-      setError(error.message);
-      setLoading(false);
-      return;
-    }
+    // try {
+    //   await validateStockAvailability(cart);
+    // } catch (error: any) {
+    //   setError(error.message);
+    //   setLoading(false);
+    //   return;
+    // }
 
     if (form.paymentMethod === "bank") {
       handleSubmit();
@@ -338,7 +367,9 @@ export default function CheckoutPage() {
                   <div className="space-y-3 pt-4 border-t border-slate-200">
                     <div className="flex justify-between text-slate-600">
                       <span>Shipping</span>
-                      <span>₦{ShippingCost.toLocaleString()}</span>
+                      <span>
+                        ₦{total <= 75000 ? ShippingCost.toLocaleString() : 0}
+                      </span>
                     </div>
                     <div className="flex justify-between text-xl font-bold text-slate-900 pt-2">
                       <span>Total</span>

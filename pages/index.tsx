@@ -92,8 +92,8 @@ const SneakersHomepage = () => {
                 </div>
                 <h3 className="text-xl font-semibold">Free Shipping</h3>
                 <p className="text-gray-600">
-                  Free delivery on orders over $75. Fast and reliable shipping
-                  worldwide.
+                  Free delivery on orders over ₦75000. Fast and reliable
+                  shipping worldwide.
                 </p>
               </div>
               <div className="text-center space-y-4">

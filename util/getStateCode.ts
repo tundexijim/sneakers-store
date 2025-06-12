@@ -1,79 +1,79 @@
 export function getStateCode(state: string) {
   switch (state) {
     case "Abia":
-      return 1;
+      return 5000;
     case "Adamawa":
-      return 2;
+      return 5000;
     case "Akwa Ibom":
-      return 3;
+      return 5000;
     case "Anambra":
-      return 4;
+      return 5000;
     case "Bauchi":
-      return 5;
+      return 5000;
     case "Bayelsa":
-      return 6;
+      return 5000;
     case "Benue":
-      return 7;
+      return 5000;
     case "Borno":
-      return 8;
+      return 5000;
     case "Cross River":
-      return 9;
+      return 5000;
     case "Delta":
-      return 10;
+      return 5000;
     case "Ebonyi":
-      return 11;
+      return 5000;
     case "Edo":
-      return 12;
+      return 5000;
     case "Ekiti":
-      return 13;
+      return 5000;
     case "Enugu":
-      return 14;
+      return 5000;
     case "FCT":
-      return 15;
+      return 5000;
     case "Gombe":
-      return 16;
+      return 5000;
     case "Imo":
-      return 17;
+      return 5000;
     case "Jigawa":
-      return 18;
+      return 5000;
     case "Kaduna":
-      return 19;
+      return 5000;
     case "Kano":
-      return 20;
+      return 5000;
     case "Katsina":
-      return 21;
+      return 5000;
     case "Kebbi":
-      return 22;
+      return 5000;
     case "Kogi":
-      return 23;
+      return 5000;
     case "Kwara":
-      return 24;
+      return 5000;
     case "Lagos":
-      return 25;
+      return 3000;
     case "Nasarawa":
-      return 26;
+      return 5000;
     case "Niger":
-      return 27;
+      return 5000;
     case "Ogun":
-      return 28;
+      return 5000;
     case "Ondo":
-      return 29;
+      return 5000;
     case "Osun":
-      return 30;
+      return 5000;
     case "Oyo":
-      return 31;
+      return 5000;
     case "Plateau":
-      return 32;
+      return 5000;
     case "Rivers":
-      return 33;
+      return 5000;
     case "Sokoto":
-      return 34;
+      return 5000;
     case "Taraba":
-      return 35;
+      return 5000;
     case "Yobe":
-      return 36;
+      return 5000;
     case "Zamfara":
-      return 37;
+      return 5000;
     default:
       return 0;
   }

@@ -85,7 +85,8 @@ export default function AdminPanel() {
               <div
                 key={order.id}
                 className={`border p-4 rounded shadow flex justify-between items-center ${
-                  order.paymentMethod?.toLowerCase().trim() === "error occured"
+                  order.paymentMethod?.toLowerCase().trim() ===
+                  "failed to submit"
                     ? "bg-gray-600"
                     : ""
                 }`}

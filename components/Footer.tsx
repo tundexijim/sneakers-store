@@ -185,7 +185,7 @@ const Footer = () => {
               {
                 icon: Truck,
                 title: "Free Shipping",
-                description: "On orders over ₦50,000",
+                description: "On orders over ₦75,000",
               },
               {
                 icon: RotateCcw,
