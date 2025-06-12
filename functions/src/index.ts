@@ -1,28 +1,28 @@
-const functions = require("firebase-functions");
+const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { defineSecret } = require("firebase-functions/params");
 const axios = require("axios");
 
 // Set your Paystack secret key
-const PAYSTACK_SECRET_KEY = functions.config().paystack.secret_key;
+const paystackSecretKey = defineSecret("PAYSTACK_SECRET_KEY");
 
-exports.verifyPayment = functions.https.onCall(
-  async (data: any, context: any) => {
+exports.verifyPayment = onCall(
+  // Specify which secrets this function needs
+  { secrets: [paystackSecretKey] },
+  async (request: any) => {
     try {
       // Extract reference from the request
-      const { reference } = data;
+      const { reference } = request.data;
 
       if (!reference) {
-        throw new functions.https.HttpsError(
-          "invalid-argument",
-          "Reference is required"
-        );
+        throw new HttpsError("invalid-argument", "Reference is required");
       }
-
+      const secretKey = paystackSecretKey.value();
       // Call Paystack verification API
       const response = await axios.get(
         `https://api.paystack.co/transaction/verify/${reference}`,
         {
           headers: {
-            Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+            Authorization: `Bearer ${secretKey}`,
             "Content-Type": "application/json",
           },
         }
@@ -46,17 +46,14 @@ exports.verifyPayment = functions.https.onCall(
 
       // Handle Paystack API errors
       if (error.response) {
-        throw new functions.https.HttpsError(
+        throw new HttpsError(
           "failed-precondition",
           `Paystack API error: ${error.response.data.message}`
         );
       }
 
       // Handle other errors
-      throw new functions.https.HttpsError(
-        "internal",
-        "Payment verification failed"
-      );
+      throw new HttpsError("internal", "Payment verification failed");
     }
   }
 );
