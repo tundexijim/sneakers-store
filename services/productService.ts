@@ -99,7 +99,7 @@ export const getProductBySlug = async (
 export async function saveProduct(
   product: {
     name: string;
-    price: string;
+    price: number;
     description: string;
     image: string;
     sizes: ProductSize[];

@@ -15,7 +15,7 @@ import { saveProduct } from "@/services/productService";
 export default function AddProductPage() {
   const [form, setForm] = useState({
     name: "",
-    price: "",
+    price: 0,
     description: "",
     image: "",
     sizes: [] as ProductSize[],
@@ -36,7 +36,6 @@ export default function AddProductPage() {
       router.push("/admin/login");
     }
   }, [user, loading]);
-
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -121,11 +120,11 @@ export default function AddProductPage() {
 
     try {
       const slug = await generateSlug(form.name);
-      await saveProduct(form, slug);
+      await saveProduct({ ...form, price: Number(form.price) }, slug);
       window.alert("Product added successfully");
       setForm({
         name: "",
-        price: "",
+        price: 0,
         description: "",
         image: "",
         sizes: [],

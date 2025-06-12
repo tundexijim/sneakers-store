@@ -158,7 +158,7 @@ export default function CartPage() {
                               </div>
                               <div className="flex items-center space-x-2">
                                 <span className="text-xl font-bold text-gray-900">
-                                  {formatPrice(Number(item.price))}
+                                  {formatPrice(item.price)}
                                 </span>
                               </div>
                             </div>
