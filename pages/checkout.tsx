@@ -721,7 +721,7 @@ export default function CheckoutPage() {
                                 Account Name
                               </p>
                               <p className="font-semibold text-slate-900">
-                                Akinloye Olaoye
+                                Adeyeye Damilola Caroline
                               </p>
                             </div>
                             <div className="bg-white rounded-lg p-4 border border-slate-200">
@@ -729,7 +729,7 @@ export default function CheckoutPage() {
                                 Account Number
                               </p>
                               <p className="font-semibold text-slate-900">
-                                6541274738
+                                3156850684
                               </p>
                             </div>
                             <div className="bg-white rounded-lg p-4 border border-slate-200">
@@ -737,7 +737,7 @@ export default function CheckoutPage() {
                                 Bank Name
                               </p>
                               <p className="font-semibold text-slate-900">
-                                Moniepoint MFB
+                                First Bank
                               </p>
                             </div>
                           </div>
@@ -746,8 +746,10 @@ export default function CheckoutPage() {
                               <div className="w-2 h-2 bg-white rounded-full"></div>
                             </div>
                             <p className="text-sm text-blue-800">
-                              All orders will be fulfilled immediately after
-                              your payment is confirmed
+                              All orders will be processed immediately after
+                              your payment is confirmed. Please include your
+                              order number as reference for easy confirmation of
+                              your payment.
                             </p>
                           </div>
                         </div>
