@@ -40,10 +40,31 @@ const SneakersHomepage = () => {
     <>
       <Head>
         <title>DTwears</title>
-        <meta name="description" content="Shop premium sneakers online" />
+        <meta name="description" content="Shop premium sneakers online" />\
+        <meta property="og:title" content="DTwears" />
+        <meta
+          property="og:description"
+          content="Shop premium sneakers online"
+        />
+        <meta
+          property="og:image"
+          content="https://goclove.com/cdn/shop/articles/how_to_wear_sneakers_1200x.jpg?v=1723492877"
+        />
+        <meta property="og:url" content="https://dtwears.ng" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="DTwears" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="DTwears" />
+        <meta
+          name="twitter:description"
+          content="Shop premium sneakers online"
+        />
+        <meta
+          name="twitter:image"
+          content="https://goclove.com/cdn/shop/articles/how_to_wear_sneakers_1200x.jpg?v=1723492877"
+        />
       </Head>
       <div className="min-h-screen bg-white">
-        {/* Hero Section */}
         <section className="relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden px-2 md:px-16">
           <div className="absolute inset-0 bg-black/20"></div>
           <div className="relative container mx-auto px-4 py-16 lg:py-24">

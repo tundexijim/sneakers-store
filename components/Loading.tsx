@@ -25,3 +25,30 @@ export const Loading = () => {
     </p>
   );
 };
+
+interface LoadingOverlayProps {
+  isLoading: boolean;
+  children: React.ReactNode;
+}
+
+export function LoadingOverlay({ isLoading, children }: LoadingOverlayProps) {
+  return (
+    <div className="relative">
+      {isLoading && (
+        <div className="absolute inset-0 bg-white bg-opacity-90 flex items-center justify-center z-20 rounded-lg">
+          <div className="flex flex-col items-center space-y-3">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p className="text-sm text-gray-600">Loading new page...</p>
+          </div>
+        </div>
+      )}
+      <div
+        className={`transition-opacity duration-200 ${
+          isLoading ? "opacity-30" : "opacity-100"
+        }`}
+      >
+        {children}
+      </div>
+    </div>
+  );
+}

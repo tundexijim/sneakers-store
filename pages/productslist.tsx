@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductListPanel from "@/components/ProductListPanel";
 import { useRouter } from "next/router";
+import { LoadingOverlay } from "@/components/Loading";
 
 type Props = {
   products: Product[];
@@ -28,6 +29,23 @@ export default function ProductsList({
   const [viewMode, setViewMode] = useState("grid");
   const [selectedSort, setSelectedSort] = useState(sortBy);
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+    const handleRouteChangeStart = () => setIsLoading(true);
+    const handleRouteChangeComplete = () => setIsLoading(false);
+    const handleRouteChangeError = () => setIsLoading(false);
+
+    router.events.on("routeChangeStart", handleRouteChangeStart);
+    router.events.on("routeChangeComplete", handleRouteChangeComplete);
+    router.events.on("routeChangeError", handleRouteChangeError);
+
+    return () => {
+      router.events.off("routeChangeStart", handleRouteChangeStart);
+      router.events.off("routeChangeComplete", handleRouteChangeComplete);
+      router.events.off("routeChangeError", handleRouteChangeError);
+    };
+  }, [router]);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -96,22 +114,23 @@ export default function ProductsList({
           selectedSort={selectedSort}
           onSortChange={handleSortChange}
         />
-        <div
-          className={
-            viewMode === "grid"
-              ? "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 gap-y-20"
-              : "space-y-4"
-          }
-        >
-          {products.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-              isListView={viewMode === "list"}
-            />
-          ))}
-        </div>
-
+        <LoadingOverlay isLoading={isLoading}>
+          <div
+            className={
+              viewMode === "grid"
+                ? "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 gap-y-20"
+                : "space-y-4"
+            }
+          >
+            {products.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                isListView={viewMode === "list"}
+              />
+            ))}
+          </div>
+        </LoadingOverlay>
         {totalPages > 1 && (
           <div className="flex justify-center items-center mt-10 space-x-2 flex-wrap">
             <Link

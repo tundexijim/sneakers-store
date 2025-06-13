@@ -4,6 +4,7 @@ import { Menu, ShoppingCart, X } from "lucide-react"; // uses lucide icons
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useIsClient } from "@/hooks/useIsClient";
+import Image from "next/image";
 export default function Navbar() {
   const router = useRouter();
   const { cart } = useCart();
@@ -57,7 +58,13 @@ export default function Navbar() {
     <nav className="bg-black shadow-md sticky top-0 left-0 w-full z-50">
       <div className="container mx-auto md:px-16 px-2 py-4 flex justify-between items-center">
         <Link href="/" className="hidden md:flex">
-          <img src="/logo2.png" alt="logo" className="w-14" />
+          <Image
+            src="/logo2.png"
+            alt="logo"
+            width={30}
+            height={30}
+            className="w-14"
+          />
         </Link>
 
         {!MenuOpen ? (
@@ -65,16 +72,24 @@ export default function Navbar() {
             color="#ffffff"
             className="md:hidden"
             onClick={() => setMenuOpen(true)}
+            size={30}
           />
         ) : (
           <X
             color="#ffffff"
             className="md:hidden text-white"
             onClick={() => setMenuOpen(false)}
+            size={30}
           />
         )}
         <Link href="/" className=" md:hidden">
-          <img src="/logo2.png" alt="logo" className="w-14" />
+          <Image
+            src="/logo2.png"
+            alt="logo"
+            width={30}
+            height={30}
+            className="w-14"
+          />
         </Link>
 
         <div
@@ -86,22 +101,22 @@ export default function Navbar() {
             Home
           </Link>
           <Link href="/checkout" className="md:text-white text-gray-700">
-            Checkout
+            About Us
           </Link>
 
           <Link href="/cart" className="relative hidden md:flex">
-            <ShoppingCart className="w-6 h-6 text-white" />
+            <ShoppingCart className=" text-white" size={25} />
             {itemCount > 0 && (
-              <span className="absolute -top-2 -right-2 text-xs bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
+              <span className="absolute -top-2 -right-1 text-xs bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
                 {itemCount}
               </span>
             )}
           </Link>
         </div>
         <Link href="/cart" className="relative md:hidden">
-          <ShoppingCart className="w-6 h-6 text-white" />
+          <ShoppingCart className=" text-white" size={25} />
           {itemCount > 0 && (
-            <span className="absolute -top-2 -right-2 text-xs bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
+            <span className="absolute -top-2 -right-1 text-xs bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center">
               {itemCount}
             </span>
           )}
