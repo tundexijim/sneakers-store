@@ -37,6 +37,8 @@ export default function Document() {
           property="og:image"
           content="https://goclove.com/cdn/shop/articles/how_to_wear_sneakers_1200x.jpg?v=1723492877"
         />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
         <meta property="og:url" content="https://dtwears.ng" />
         <meta property="og:type" content="website" />
         <meta property="og:site_name" content="DTwears" />
