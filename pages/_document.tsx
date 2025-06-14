@@ -35,7 +35,7 @@ export default function Document() {
         />
         <meta
           property="og:image"
-          content="https://goclove.com/cdn/shop/articles/how_to_wear_sneakers_1200x.jpg?v=1723492877"
+          content="https://www.dtwears.ng/images/sneakers.webp"
         />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -50,7 +50,7 @@ export default function Document() {
         />
         <meta
           name="twitter:image"
-          content="https://goclove.com/cdn/shop/articles/how_to_wear_sneakers_1200x.jpg?v=1723492877"
+          content="https://www.dtwears.ng/images/sneakers.webp"
         />
         <link rel="canonical" href="https://dtwears.ng" />
       </Head>
