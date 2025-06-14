@@ -27,6 +27,30 @@ export default function Document() {
           @import
           url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
         </style>
+        <title>DTwears</title>
+        <meta name="description" content="Shop premium sneakers online" />
+        <meta
+          property="og:description"
+          content="Shop premium sneakers online"
+        />
+        <meta
+          property="og:image"
+          content="https://goclove.com/cdn/shop/articles/how_to_wear_sneakers_1200x.jpg?v=1723492877"
+        />
+        <meta property="og:url" content="https://dtwears.ng" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="DTwears" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="DTwears" />
+        <meta
+          name="twitter:description"
+          content="Shop premium sneakers online"
+        />
+        <meta
+          name="twitter:image"
+          content="https://goclove.com/cdn/shop/articles/how_to_wear_sneakers_1200x.jpg?v=1723492877"
+        />
+        <link rel="canonical" href="https://dtwears.ng" />
       </Head>
       <body className="antialiased">
         <Main />
