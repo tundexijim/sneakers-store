@@ -59,7 +59,7 @@ export default function CartPage() {
         />
         <meta
           property="og:image"
-          content="https://www.dtwears.ng/images/sneakers.jpg"
+          content="https://www.dtwears.ng/images/sneakers.webp"
         />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
