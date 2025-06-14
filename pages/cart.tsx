@@ -53,6 +53,32 @@ export default function CartPage() {
       <Head>
         <title>Cart | DTwears</title>
         <meta name="description" content="Your shopping cart" />
+        <meta
+          property="og:description"
+          content="Shop premium sneakers online"
+        />
+        <meta
+          property="og:image"
+          content="https://www.dtwears.ng/images/sneakers.jpg"
+        />
+        <meta property="og:image:width" content="1200" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:url" content="https://dtwears.ng" />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="DTwears" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="DTwears" />
+        <meta
+          name="twitter:description"
+          content="Shop premium sneakers online"
+        />
+        <meta
+          name="twitter:image"
+          content="https://www.dtwears.ng/images/sneakers.jpg"
+        />
+        <meta name="twitter:image:width" content="1200" />
+        <meta name="twitter:image:height" content="628" />
+        <link rel="canonical" href="https://dtwears.ng" />
       </Head>
 
       <main className="container mx-auto md:px-16 px-4 py-8">

@@ -48,7 +48,7 @@ const SneakersHomepage = () => {
         />
         <meta
           property="og:image"
-          content="https://www.dtwears.ng/images/sneakers.webp"
+          content="https://www.dtwears.ng/images/sneakers.jpg"
         />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -63,8 +63,10 @@ const SneakersHomepage = () => {
         />
         <meta
           name="twitter:image"
-          content="https://www.dtwears.ng/images/sneakers.webp"
+          content="https://www.dtwears.ng/images/sneakers.jpg"
         />
+        <meta name="twitter:image:width" content="1200" />
+        <meta name="twitter:image:height" content="628" />
       </Head>
       <div className="min-h-screen bg-white">
         <section className="relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden px-2 md:px-16">

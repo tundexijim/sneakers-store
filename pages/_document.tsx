@@ -35,7 +35,7 @@ export default function Document() {
         />
         <meta
           property="og:image"
-          content="https://www.dtwears.ng/images/sneakers.webp"
+          content="https://www.dtwears.ng/images/sneakers.jpg"
         />
         <meta property="og:image:width" content="1200" />
         <meta property="og:image:height" content="630" />
@@ -50,8 +50,10 @@ export default function Document() {
         />
         <meta
           name="twitter:image"
-          content="https://www.dtwears.ng/images/sneakers.webp"
+          content="https://www.dtwears.ng/images/sneakers.jpg"
         />
+        <meta name="twitter:image:width" content="1200" />
+        <meta name="twitter:image:height" content="628" />
         <link rel="canonical" href="https://dtwears.ng" />
       </Head>
       <body className="antialiased">
