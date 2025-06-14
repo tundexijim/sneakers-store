@@ -40,7 +40,7 @@ const SneakersHomepage = () => {
     <>
       <Head>
         <title>DTwears</title>
-        <meta name="description" content="Shop premium sneakers online" />\
+        <meta name="description" content="Shop premium sneakers online" />
         <meta property="og:title" content="DTwears" />
         <meta
           property="og:description"
