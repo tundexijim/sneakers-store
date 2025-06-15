@@ -65,11 +65,34 @@ const RandomProducts: React.FC<RandomProductsProps> = ({
           You Might Like
         </h2>
       )}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+      {/* Mobile Slider (sm and below) */}
+      <div className="sm:hidden">
+        <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide snap-x snap-mandatory">
+          {products.map((p) => (
+            <div key={p.id} className="flex-none w-72 snap-start">
+              <ProductFeaturedCard product={p} />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Grid Layout (sm and above) */}
+      <div className="hidden sm:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {products.map((p) => (
           <ProductFeaturedCard key={p.id} product={p} />
         ))}
       </div>
+
+      <style jsx>{`
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </section>
   );
 };

@@ -15,6 +15,16 @@ const nextConfig: NextConfig = {
         hostname: "firebasestorage.googleapis.com",
         pathname: "/v0/b/**", // This matches Firebase Storage paths
       },
+      {
+        protocol: "https",
+        hostname: "www.dtwears.ng",
+        pathname: "/**", // This allows all images from all paths
+      },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+        pathname: "/**", // This allows all images from all paths
+      },
     ],
   },
   eslint: {

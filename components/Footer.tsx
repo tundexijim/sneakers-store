@@ -4,7 +4,6 @@ import {
   Instagram,
   Twitter,
   Youtube,
-  Mail,
   Phone,
   MapPin,
 } from "lucide-react";
@@ -22,7 +21,7 @@ const Footer = () => {
   return (
     <footer className="bg-black text-white">
       {/* Newsletter Section */}
-      <div className="border-b border-gray-800">
+      {/* <div className="border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="text-center max-w-2xl mx-auto">
             <h3 className="text-2xl font-bold mb-4">Stay In The Loop</h3>
@@ -42,7 +41,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Main Footer Content */}
       <div className="max-w-7xl mx-auto px-4 py-12">

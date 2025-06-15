@@ -6,7 +6,7 @@ import { Product } from "../../types";
 import { useCart } from "../../context/CartContext";
 import Link from "next/link";
 import { useState } from "react";
-import { Trash2, X } from "lucide-react";
+import { X } from "lucide-react";
 import RandomProducts from "@/components/RandomProducts";
 import { useAuth } from "@/context/authContext";
 import { useRouter } from "next/router";

@@ -1,10 +1,9 @@
 // pages/admin/add-product.tsx
 import { useEffect, useState } from "react";
 import Head from "next/head";
-import { db, storage } from "@/lib/firebaseConfig";
+import { storage } from "@/lib/firebaseConfig";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useRouter } from "next/router";
-import { addDoc, collection, Timestamp } from "firebase/firestore";
 import { useAuth } from "@/context/authContext";
 import Link from "next/link";
 import { ProductSize } from "@/types";

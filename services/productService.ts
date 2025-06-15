@@ -64,7 +64,7 @@ export async function getAllProducts(page = 1, sortBy = "newest") {
     };
   } catch (error) {
     console.error("Error fetching products:", error);
-    throw new Error("Failed to fetch products");
+    throw new Error("Error fetching products");
   }
 }
 

@@ -3,7 +3,6 @@ import Image from "next/image";
 import { useCart } from "../context/CartContext";
 import Link from "next/link";
 import { useIsClient } from "@/hooks/useIsClient";
-import toast from "react-hot-toast";
 import { useEffect, useState } from "react";
 import RandomProducts from "@/components/RandomProducts";
 import {
