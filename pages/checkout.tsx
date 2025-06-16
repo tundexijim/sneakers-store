@@ -48,6 +48,11 @@ export default function CheckoutPage() {
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
   const { paymentMethod, ...rest } = form;
   const isClient = useIsClient();
+  const formatPrice = (price: number) =>
+    `₦${price.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
 
   useEffect(() => {
     if (!hasRestoredForm) {
@@ -282,6 +287,59 @@ export default function CheckoutPage() {
   };
 
   if (!isClient) return null;
+  const OrderSummary = () => (
+    <div className="lg:col-span-2 space-y-6">
+      <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
+        <h2 className="text-xl font-semibold text-slate-900 mb-6 flex items-center">
+          <ShoppingBag className="w-5 h-5 mr-3 text-blue-600" />
+          Order Summary
+        </h2>
+
+        <div className="space-y-4 mb-6">
+          {cart.map((item) => (
+            <Link href={`/product/${item.slug}`}>
+              <div
+                key={`${item.id}-${item.selectedSize}`}
+                className="flex items-center p-4 mb-4 bg-slate-50 rounded-xl border border-slate-100"
+              >
+                <div className="flex-1">
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    width={60}
+                    height={60}
+                    className="rounded-lg"
+                  />
+                </div>
+                <div className="flex-1">
+                  <p className="font-medium text-slate-900 mb-1">{item.name}</p>
+                  <p className="text-sm text-slate-600 flex-1">
+                    Size {item.selectedSize} × {item.qty}
+                  </p>
+                </div>
+                <p className="font-semibold text-slate-900">
+                  {formatPrice(item.price * item.qty)}
+                </p>
+              </div>
+            </Link>
+          ))}
+        </div>
+
+        <div className="space-y-3 pt-4 border-t border-slate-200">
+          <div className="flex justify-between text-slate-600">
+            <span>Shipping</span>
+            <span>
+              {total <= 75000 ? formatPrice(ShippingCost) : formatPrice(0)}
+            </span>
+          </div>
+          <div className="flex justify-between text-xl font-bold text-slate-900 pt-2">
+            <span>Total</span>
+            <span>{formatPrice(Subtotal)}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 
   return (
     <>
@@ -293,19 +351,6 @@ export default function CheckoutPage() {
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.03),transparent_70%)]" />
 
         <main className="relative max-w-5xl mx-auto px-4 py-8 lg:py-12">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-2xl mb-6 shadow-lg shadow-blue-500/25">
-              <ShoppingBag className="w-8 h-8 text-white" />
-            </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-slate-900 to-slate-700 bg-clip-text text-transparent mb-3">
-              Secure Checkout
-            </h1>
-            <p className="text-slate-600 text-lg">
-              Complete your order with confidence
-            </p>
-          </div>
-
           {cart.length === 0 ? (
             <div className="text-center py-16">
               <div className="inline-flex items-center justify-center w-20 h-20 bg-slate-100 rounded-full mb-6">
@@ -327,58 +372,10 @@ export default function CheckoutPage() {
           ) : (
             <div className="grid lg:grid-cols-5 gap-8">
               {/* Order Summary */}
-              <div className="lg:col-span-2 space-y-6">
-                <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
-                  <h2 className="text-xl font-semibold text-slate-900 mb-6 flex items-center">
-                    <ShoppingBag className="w-5 h-5 mr-3 text-blue-600" />
-                    Order Summary
-                  </h2>
 
-                  <div className="space-y-4 mb-6">
-                    {cart.map((item) => (
-                      <Link href={`/product/${item.slug}`}>
-                        <div
-                          key={`${item.id}-${item.selectedSize}`}
-                          className="flex items-center p-4 gap-14 bg-slate-50 rounded-xl border border-slate-100"
-                        >
-                          <Image
-                            src={item.image}
-                            alt={item.name}
-                            width={40}
-                            height={40}
-                            className="w-12 h-12 object-cover rounded-lg"
-                          />
-                          <div className="">
-                            <p className="font-medium text-slate-900 mb-1">
-                              {item.name}
-                            </p>
-                            <p className="text-sm text-slate-600">
-                              Size {item.selectedSize} × {item.qty}
-                            </p>
-                          </div>
-                          <p className="font-semibold text-slate-900">
-                            ₦{(item.price * item.qty).toLocaleString()}
-                          </p>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-
-                  <div className="space-y-3 pt-4 border-t border-slate-200">
-                    <div className="flex justify-between text-slate-600">
-                      <span>Shipping</span>
-                      <span>
-                        ₦{total <= 75000 ? ShippingCost.toLocaleString() : 0}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xl font-bold text-slate-900 pt-2">
-                      <span>Total</span>
-                      <span>₦{Subtotal.toLocaleString()}</span>
-                    </div>
-                  </div>
-                </div>
+              <div className="lg:col-span-2 hidden lg:block space-y-6">
+                <OrderSummary />
               </div>
-
               {/* Checkout Form */}
               <div className="lg:col-span-3">
                 <form onSubmit={handleFormSubmit} className="space-y-8">
@@ -554,7 +551,9 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                   </div>
-
+                  <div className="lg:hidden">
+                    <OrderSummary />
+                  </div>
                   {/* Payment Method */}
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
                     <h3 className="text-xl font-semibold text-slate-900 mb-2 flex items-center">
@@ -748,7 +747,7 @@ export default function CheckoutPage() {
                             <p className="text-sm text-blue-800">
                               All orders will be processed immediately after
                               your payment is confirmed. Please include your
-                              order number as reference for easy confirmation of
+                              order ID as reference for easy confirmation of
                               your payment.
                             </p>
                           </div>
@@ -781,7 +780,7 @@ export default function CheckoutPage() {
                           loading ? "invisible" : ""
                         }`}
                       >
-                        Complete Payment • ₦{Subtotal.toLocaleString()}
+                        Complete Payment • {formatPrice(Subtotal)}
                       </span>
                       {loading && (
                         <div className="absolute inset-0 flex items-center justify-center">

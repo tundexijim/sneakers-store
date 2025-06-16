@@ -10,6 +10,7 @@ import { X } from "lucide-react";
 import RandomProducts from "@/components/RandomProducts";
 import { useAuth } from "@/context/authContext";
 import { useRouter } from "next/router";
+import { DeleteDialog, InfoDialog } from "@/components/DialogBox";
 
 export default function ProductPage({ product }: { product: Product }) {
   const { addToCart, cart } = useCart();
@@ -17,15 +18,22 @@ export default function ProductPage({ product }: { product: Product }) {
   const isInCart = cart.some((item) => item.id === product.id);
   const { user } = useAuth();
   const [stockinsize, setstockInSize] = useState<number | null>(null);
+  const [showDelete, setShowDelete] = useState<boolean>(false);
+  const [showInfo, setShowInfo] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const stock = product.sizes.reduce((sum, size) => sum + size.stock, 0);
   const router = useRouter();
+  const formatPrice = (price: number) =>
+    `₦${price.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
   const handleAddToCart = () => {
     if (isLoading) return;
     setIsLoading(true);
     if (selectedSize === null) {
       setIsLoading(false);
-      return alert("Please select a size");
+      setShowInfo(true);
     } else {
       setTimeout(() => {
         setIsLoading(false);
@@ -39,17 +47,15 @@ export default function ProductPage({ product }: { product: Product }) {
   };
 
   const handleDelete = (productId: string) => {
-    const confirmDelete = window.confirm(
-      "Are you sure you want to delete this product?"
-    );
-    if (!confirmDelete) return;
     deleteProduct(productId)
       .then(() => {
         router.replace("/productslist");
+        setShowDelete(false);
       })
       .catch((err) => {
         console.error(err);
         alert("Failed to delete the product. Please try again.");
+        setShowDelete(false);
       });
   };
 
@@ -74,7 +80,9 @@ export default function ProductPage({ product }: { product: Product }) {
           <div className="w-full md:w-1/2">
             <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
             <p className="text-gray-600 mb-6">{product.description}</p>
-            <div className="text-2xl font-semibold mb-4">₦{product.price}</div>
+            <div className="text-2xl text-blue-600 font-semibold mb-4">
+              {formatPrice(product.price)}
+            </div>
             {stock === 0 && <p className="text-red-500">Out Of Stock</p>}
             {stockinsize && (
               <p className="text-green-600">{stockinsize} left in stock</p>
@@ -140,7 +148,7 @@ export default function ProductPage({ product }: { product: Product }) {
               {isInCart && (
                 <div>
                   <Link href="/cart">
-                    <button className="bg-green-600 text-white px-8 py-3 rounded-xl hover:bg-green-700 cursor-pointer mt-4">
+                    <button className="bg-blue-600 text-white px-8 py-3 rounded-xl hover:bg-blue-700 cursor-pointer mt-4">
                       View Cart
                     </button>
                   </Link>
@@ -150,7 +158,7 @@ export default function ProductPage({ product }: { product: Product }) {
             {user?.email === "ijimakindetunde@gmail.com" && (
               <div className="mt-4">
                 <button
-                  onClick={() => handleDelete(product.id)}
+                  onClick={() => setShowDelete(true)}
                   className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
                 >
                   Delete
@@ -163,6 +171,21 @@ export default function ProductPage({ product }: { product: Product }) {
               </Link>
             </div>
           </div>
+          <DeleteDialog
+            isOpen={showDelete}
+            onClose={() => setShowDelete(false)}
+            onConfirm={handleDelete}
+            productId={product.id}
+            title="Delete Item"
+            message="Are you sure you want to delete this item? This action cannot be undone."
+          />
+
+          <InfoDialog
+            isOpen={showInfo}
+            onClose={() => setShowInfo(false)}
+            title="Information"
+            message="Please Select a size"
+          />
         </div>
         <RandomProducts excludeIds={[product.id]} />
       </main>

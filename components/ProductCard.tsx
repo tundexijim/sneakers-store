@@ -8,6 +8,11 @@ export default function ProductCard({
   product: Product;
   isListView: boolean;
 }) {
+  const formatPrice = (price: number) =>
+    `₦${price.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
   return (
     <Link href={`/product/${product.slug}`}>
       <div
@@ -43,7 +48,7 @@ export default function ProductCard({
                 isListView ? "text-xl" : "text-2xl"
               } font-bold text-blue-600`}
             >
-              ₦{product.price}
+              {formatPrice(product.price)}
             </p>
           </div>
         </div>

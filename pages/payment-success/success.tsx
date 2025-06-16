@@ -66,7 +66,7 @@ export default function SuccessPage() {
           </p>
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
             <p className="text-sm text-gray-700">
-              <strong>Order Number:</strong> {orderNumber}
+              <strong>Order ID:</strong> {orderNumber}
             </p>
           </div>
           <button

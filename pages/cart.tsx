@@ -19,7 +19,11 @@ export default function CartPage() {
   const isClient = useIsClient();
   const [removedItems, setRemovedItems] = useState<string[]>([]);
   const uniqueProductIds = Array.from(new Set(cart.map((item) => item.id)));
-  const formatPrice = (price: number) => `₦${price.toFixed(2)}`;
+  const formatPrice = (price: number) =>
+    `₦${price.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
 
   useEffect(() => {
     if (!isClient) return;

@@ -2,6 +2,11 @@ import Link from "next/link";
 import { Product } from "@/types";
 
 export default function ProductFeaturedCard({ product }: { product: Product }) {
+  const formatPrice = (price: number) =>
+    `₦${price.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
   return (
     <div className="group cursor-pointer">
       <Link href={`/product/${product.slug}`}>
@@ -14,10 +19,12 @@ export default function ProductFeaturedCard({ product }: { product: Product }) {
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
         </div>
         <div className="space-y-2">
-          <h3 className="text-xl font-semibold group-hover:text-purple-600 transition-colors">
+          <h3 className="text-xl font-semibold group-hover:text-blue-600 transition-colors">
             {product.name}
           </h3>
-          <p className="text-2xl font-bold text-purple-600">₦{product.price}</p>
+          <p className="text-2xl font-bold text-blue-600">
+            {formatPrice(product.price)}
+          </p>
         </div>
       </Link>
     </div>
