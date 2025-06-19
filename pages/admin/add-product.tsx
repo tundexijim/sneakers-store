@@ -6,39 +6,56 @@ import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/authContext";
 import Link from "next/link";
-import { ProductSize } from "@/types";
-import { generateSlug } from "@/util/slugGenerator";
+import { Product, ProductSize } from "@/types";
 import { useIsClient } from "@/hooks/useIsClient";
-import { saveProduct } from "@/services/productService";
+import {
+  getProductBySlug,
+  saveProduct,
+  updateProduct,
+} from "@/services/productService";
+import { GetServerSideProps } from "next";
 
-export default function AddProductPage() {
+export default function AddProductPage({ product }: { product?: Product }) {
   const [form, setForm] = useState({
-    name: "",
-    price: 0,
-    description: "",
-    image: "",
-    sizes: [] as ProductSize[],
+    name: product ? product.name : "",
+    price: product ? product.price : 0,
+    description: product ? product.description : "",
+    image: product ? product.image : "",
+    sizes: product ? product.sizes : ([] as ProductSize[]),
   });
 
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
+  const [loading, setloading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [sizeInput, setSizeInput] = useState({ size: "", stock: "" });
   const [error, setError] = useState("");
-  const { user, loading, logOut } = useAuth();
+  const [success, setSuccess] = useState("");
+  const { user, loading: authloading, logOut } = useAuth();
   const router = useRouter();
   const isClient = useIsClient();
 
   useEffect(() => {
     if (!isClient) return;
-    if (!loading && !user) {
+    if (!authloading && !user) {
       router.push("/admin/login");
     }
-  }, [user, loading]);
+  }, [user, authloading]);
+
+  const getPathFromUrl = (url: string) => {
+    const decodedUrl = decodeURIComponent(url);
+    const pathStart = decodedUrl.indexOf("/o/") + 3;
+    const pathEnd = decodedUrl.indexOf("?alt=");
+    return decodedUrl.substring(pathStart, pathEnd);
+  };
+  const imagePath = getPathFromUrl(product ? product.image : "");
+  console.log(imagePath);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
+    if (error) setError(""); // Clear error when user starts typing
   };
 
   const handlesizeInputchange = (
@@ -50,6 +67,7 @@ export default function AddProductPage() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setImageFile(e.target.files[0]);
+      if (error) setError("");
     }
   };
 
@@ -78,6 +96,7 @@ export default function AddProductPage() {
         const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
         setForm((prev) => ({ ...prev, image: downloadURL }));
         setUploading(false);
+        setUploadProgress(0);
       }
     );
   };
@@ -108,157 +127,492 @@ export default function AddProductPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
+    setloading(true);
+    if (!form.name) {
+      setError("Please input product name.");
+      setloading(false);
+      return;
+    }
     if (!form.image) {
       setError("Please upload an image before submitting.");
+      setloading(false);
       return;
     }
     if (form.sizes.length === 0) {
       setError("Add at least one size.");
+      setloading(false);
       return;
     }
 
     try {
-      const slug = await generateSlug(form.name);
-      await saveProduct({ ...form, price: Number(form.price) }, slug);
-      window.alert("Product added successfully");
-      setForm({
-        name: "",
-        price: 0,
-        description: "",
-        image: "",
-        sizes: [],
-      });
+      if (product) {
+        if (imageFile) {
+          await updateProduct(
+            product.id,
+            { ...form, price: Number(form.price) },
+            imagePath
+          );
+        } else {
+          await updateProduct(product.id, {
+            ...form,
+            price: Number(form.price),
+          });
+        }
+        setSuccess("Product updated successfully!");
+      } else {
+        await saveProduct({ ...form, price: Number(form.price) });
+        setSuccess("Product added successfully!");
+        setForm({
+          name: "",
+          price: 0,
+          description: "",
+          image: "",
+          sizes: [],
+        });
+        setImageFile(null);
+      }
     } catch (err) {
       setError("Failed to save product.");
+    } finally {
+      setloading(false);
     }
   };
   if (!isClient) return null;
   if (user?.email !== "ijimakindetunde@gmail.com") return null;
-  if (loading) return <p>Loading...</p>;
+  if (authloading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
 
   return (
     <>
       <Head>
-        <title>Add Product</title>
+        <title>Add Product - Admin Panel</title>
+        <meta name="description" content="Add new product to inventory" />
       </Head>
-      <main className="max-w-xl mx-auto pt-16">
-        <div className="flex justify-between items-center">
-          <h1 className="text-2xl font-bold mb-4">Add New Product</h1>
-          <Link href="/admin/AdminPanel">
-            <button>Panel</button>
-          </Link>
-          <button onClick={logOut}>Log Out</button>
-        </div>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <input
-            type="text"
-            name="name"
-            placeholder="Product Name"
-            value={form.name}
-            onChange={handleChange}
-            required
-            className="w-full border px-4 py-2 rounded"
-          />
-          <input
-            type="number"
-            name="price"
-            placeholder="Price"
-            value={form.price}
-            onChange={handleChange}
-            required
-            className="w-full border px-4 py-2 rounded"
-          />
-          <textarea
-            name="description"
-            placeholder="Description"
-            value={form.description}
-            onChange={handleChange}
-            className="w-full border px-4 py-2 rounded"
-          />
 
-          {/* Sizes */}
-          <div className="space-y-2">
-            <label className="font-medium">Sizes and Stock</label>
-            <div className="flex gap-2">
-              <input
-                name="size"
-                type="number"
-                value={sizeInput.size}
-                onChange={handlesizeInputchange}
-                className="border px-3 py-1 rounded w-full"
-                placeholder="e.g. 42"
-              />
-              <input
-                name="stock"
-                type="number"
-                value={sizeInput.stock}
-                onChange={handlesizeInputchange}
-                className="border px-3 py-1 rounded w-full"
-                placeholder="e.g. 2"
-              />
-              <button
-                type="button"
-                onClick={addSize}
-                className="bg-gray-800 text-white px-3 py-1 rounded"
-              >
-                Add
-              </button>
-            </div>
-            {form.sizes.length > 0 && (
-              <div className="flex gap-2 flex-wrap">
-                {form.sizes.map((size) => (
-                  <span
-                    key={size.size}
-                    className="bg-gray-200 px-3 py-1 rounded-full text-sm flex items-center"
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <header className="bg-white shadow-sm border-b">
+          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center py-4">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">
+                  Add New Product
+                </h1>
+                <p className="text-sm text-gray-600 mt-1">
+                  Create a new product for your inventory
+                </p>
+              </div>
+              <div className="flex items-center space-x-3">
+                <Link
+                  href="/admin/AdminPanel"
+                  className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                >
+                  <svg
+                    className="w-4 h-4 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    {size.size}, {size.stock}
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M9 5l7 7-7 7"
+                    />
+                  </svg>
+                  Admin Panel
+                </Link>
+                <button
+                  onClick={logOut}
+                  className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors"
+                >
+                  <svg
+                    className="w-4 h-4 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                    />
+                  </svg>
+                  Log Out
+                </button>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Main Content */}
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div className="px-6 py-4 bg-gray-50 border-b border-gray-200">
+              <h2 className="text-lg font-medium text-gray-900">
+                Product Information
+              </h2>
+              <p className="text-sm text-gray-600">
+                Fill in the details for your new product
+              </p>
+            </div>
+
+            <form onSubmit={handleSubmit} className="p-6 space-y-6">
+              {/* Success Message */}
+              {success && (
+                <div className="rounded-md bg-green-50 p-4 border border-green-200">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg
+                        className="h-5 w-5 text-green-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-green-800">
+                        {success}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Error Message */}
+              {error && (
+                <div className="rounded-md bg-red-50 p-4 border border-red-200">
+                  <div className="flex">
+                    <div className="flex-shrink-0">
+                      <svg
+                        className="h-5 w-5 text-red-400"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    </div>
+                    <div className="ml-3">
+                      <p className="text-sm font-medium text-red-800">
+                        {error}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Basic Information */}
+              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Product Name <span className="text-red-500">*</span>
+                  </label>
+                  <input
+                    type="text"
+                    id="name"
+                    name="name"
+                    placeholder="Enter product name"
+                    value={form.name}
+                    onChange={handleChange}
+                    required
+                    className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    htmlFor="price"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Price <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <span className="text-gray-500 sm:text-sm">₦</span>
+                    </div>
+                    <input
+                      type="number"
+                      id="price"
+                      name="price"
+                      placeholder="0.00"
+                      value={form.price}
+                      onChange={handleChange}
+                      required
+                      min="0"
+                      step="0.01"
+                      className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Description */}
+              <div>
+                <label
+                  htmlFor="description"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Description
+                </label>
+                <textarea
+                  id="description"
+                  name="description"
+                  placeholder="Describe your product..."
+                  value={form.description}
+                  onChange={handleChange}
+                  rows={4}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
+                />
+              </div>
+
+              {/* Sizes */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-4">
+                  Sizes and Stock <span className="text-red-500">*</span>
+                </label>
+                <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                  <div className="flex gap-3 mb-4">
+                    <div className="flex-1">
+                      <input
+                        name="size"
+                        type="number"
+                        value={sizeInput.size}
+                        onChange={handlesizeInputchange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="Size (e.g. 42)"
+                      />
+                    </div>
+                    <div className="flex-1">
+                      <input
+                        name="stock"
+                        type="number"
+                        value={sizeInput.stock}
+                        onChange={handlesizeInputchange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder="Stock (e.g. 10)"
+                        min="0"
+                      />
+                    </div>
                     <button
                       type="button"
-                      onClick={() => removeSize(size)}
-                      className="ml-2 text-red-500 font-bold"
+                      onClick={addSize}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors font-medium"
                     >
-                      &times;
+                      Add Size
                     </button>
-                  </span>
-                ))}
+                  </div>
+
+                  {form.sizes.length > 0 && (
+                    <div>
+                      <h4 className="text-sm font-medium text-gray-700 mb-2">
+                        Added Sizes:
+                      </h4>
+                      <div className="flex gap-2 flex-wrap">
+                        {form.sizes.map((size) => (
+                          <span
+                            key={size.size}
+                            className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200"
+                          >
+                            Size {size.size} - Stock: {size.stock}
+                            <button
+                              type="button"
+                              onClick={() => removeSize(size)}
+                              className="ml-2 inline-flex items-center justify-center w-4 h-4 rounded-full text-blue-600 hover:bg-blue-200 hover:text-blue-800 focus:outline-none transition-colors"
+                            >
+                              <svg
+                                className="w-3 h-3"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
               </div>
-            )}
+
+              {/* Image Upload */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-4">
+                  Product Image <span className="text-red-500">*</span>
+                </label>
+                <div className="bg-gray-50 rounded-lg p-6 border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors">
+                  <div className="text-center">
+                    <svg
+                      className="mx-auto h-12 w-12 text-gray-400"
+                      stroke="currentColor"
+                      fill="none"
+                      viewBox="0 0 48 48"
+                    >
+                      <path
+                        d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                    <div className="mt-4">
+                      <label htmlFor="file-upload" className="cursor-pointer">
+                        <span className="mt-2 block text-sm font-medium text-gray-900">
+                          {imageFile ? imageFile.name : "Choose image file"}
+                        </span>
+                        <input
+                          id="file-upload"
+                          type="file"
+                          onChange={handleFileChange}
+                          accept="image/*"
+                          className="sr-only"
+                        />
+                      </label>
+                      <p className="mt-2 text-xs text-gray-500">
+                        PNG, JPG, GIF up to 10MB
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Upload Progress */}
+                {uploading && (
+                  <div className="mt-4">
+                    <div className="flex justify-between text-sm text-gray-600 mb-1">
+                      <span>Uploading...</span>
+                      <span>{uploadProgress.toFixed(0)}%</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                        style={{ width: `${uploadProgress}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Upload Button */}
+                {imageFile && !uploading && (
+                  <div className="mt-4">
+                    <button
+                      type="button"
+                      onClick={handleUpload}
+                      className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    >
+                      <svg
+                        className="w-4 h-4 mr-2"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                        />
+                      </svg>
+                      Upload Image
+                    </button>
+                  </div>
+                )}
+
+                {/* Image Preview */}
+                {form.image && (
+                  <div className="mt-4">
+                    <p className="text-sm font-medium text-gray-700 mb-2">
+                      Preview:
+                    </p>
+                    <div className="relative inline-block">
+                      <img
+                        src={form.image}
+                        alt="Product preview"
+                        className="w-40 h-40 object-cover rounded-lg border border-gray-200 shadow-sm"
+                      />
+                      <div className="absolute top-2 right-2">
+                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          <svg
+                            className="w-3 h-3 mr-1"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                          Uploaded
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Submit Button */}
+              <div className="flex justify-end pt-6 border-t border-gray-200">
+                <button
+                  type="submit"
+                  disabled={uploading || loading}
+                  className="inline-flex items-center px-6 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-black hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                >
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                    />
+                  </svg>
+                  {uploading
+                    ? "Uploading..."
+                    : loading
+                    ? "Loading..."
+                    : "Save Product"}
+                </button>
+              </div>
+            </form>
           </div>
-
-          {/* Image Upload */}
-          <input type="file" onChange={handleFileChange} />
-          {uploading ? (
-            <p>Uploading: {uploadProgress.toFixed(0)}%</p>
-          ) : (
-            <button
-              type="button"
-              onClick={handleUpload}
-              className="bg-blue-600 text-white px-4 py-2 rounded"
-            >
-              Upload Image
-            </button>
-          )}
-
-          {form.image && (
-            <div className="mt-2">
-              <img
-                src={form.image}
-                alt="Preview"
-                className="w-32 h-32 object-cover rounded"
-              />
-            </div>
-          )}
-
-          {error && <p className="text-red-500">{error}</p>}
-
-          <button
-            type="submit"
-            className="bg-black text-white px-6 py-2 rounded hover:bg-gray-800"
-          >
-            Save Product
-          </button>
-        </form>
-      </main>
+        </main>
+      </div>
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const slug = query.product as string;
+  const product = await getProductBySlug(slug);
+  return { props: { product } };
+};

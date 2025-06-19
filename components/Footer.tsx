@@ -8,6 +8,8 @@ import {
   MapPin,
 } from "lucide-react";
 import { useIsClient } from "@/hooks/useIsClient";
+import { url } from "inspector";
+import Link from "next/link";
 
 const Footer = () => {
   const isClient = useIsClient();
@@ -130,19 +132,24 @@ const Footer = () => {
               <h5 className="font-semibold mb-4">Follow Us</h5>
               <div className="flex gap-4">
                 {[
-                  { icon: Instagram, label: "Instagram" },
-                  { icon: Facebook, label: "Facebook" },
-                  { icon: Twitter, label: "Twitter" },
-                  { icon: Youtube, label: "YouTube" },
-                ].map(({ icon: Icon, label }) => (
-                  <a
+                  {
+                    icon: Instagram,
+                    label: "Instagram",
+                    url: "https://www.instagram.com/dtwearsshoes/",
+                  },
+                  { icon: Facebook, label: "Facebook", url: "#" },
+                  { icon: Twitter, label: "Twitter", url: "#" },
+                ].map(({ icon: Icon, label, url }) => (
+                  <Link
                     key={label}
-                    href="#"
+                    href={url}
                     aria-label={label}
+                    target={label === "Instagram" ? "_blank" : ""}
+                    rel="noopener noreferrer"
                     className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center hover:bg-gray-700 transition-colors"
                   >
                     <Icon size={18} />
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>

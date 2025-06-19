@@ -75,7 +75,9 @@ export const placeOrder = async (
         const productSnap = await getDoc(productRef);
 
         if (!productSnap.exists()) {
-          setError(`Product ${item.id} not found`);
+          setError(
+            `${item.name} (${item.selectedSize}) is no longer available. Please remove from cart.`
+          );
           return false;
         }
         productDataMap[item.id] = {
@@ -131,7 +133,9 @@ export const validateStockAvailability = async (
     const productSnap = await getDoc(productRef);
 
     if (!productSnap.exists()) {
-      throw new Error(`Product ${item.id} not found`);
+      throw new Error(
+        `${item.name} (${item.selectedSize}) is no longer available. Please remove from cart.`
+      );
     }
 
     const sizes = productSnap.data().sizes;

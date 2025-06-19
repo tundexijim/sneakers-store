@@ -144,7 +144,7 @@ export default function ProductsList({
           <div
             className={
               viewMode === "grid"
-                ? "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 gap-y-20"
+                ? "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-6 gap-y-10"
                 : "space-y-4"
             }
           >

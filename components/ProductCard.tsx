@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Product } from "@/types";
+import Image from "next/image";
 
 export default function ProductCard({
   product,
@@ -24,13 +25,14 @@ export default function ProductCard({
       >
         <div
           className={`relative overflow-hidden ${
-            isListView ? "w-24 h-24 flex-shrink-0" : "w-full h-64"
+            isListView ? "w-24 h-24 flex-shrink-0" : "w-full h-60"
           } bg-gray-100 ${isListView ? "rounded-lg" : "rounded-t-xl"}`}
         >
-          <img
+          <Image
             src={product.image}
             alt={product.name}
-            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+            fill
+            className=" object-cover group-hover:scale-110 transition-transform duration-500"
           />
         </div>
 

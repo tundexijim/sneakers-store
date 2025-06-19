@@ -4,10 +4,11 @@ import { Trash2, Info, X } from "lucide-react";
 interface DeleteDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (productId: string) => void;
+  onConfirm: (productId: string, imagePath: string) => void;
   title: string;
   message: string;
   productId: string;
+  imagePath: string;
 }
 
 // Info Dialog Props
@@ -26,6 +27,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
   title,
   message,
   productId,
+  imagePath,
 }) => {
   if (!isOpen) return null;
 
@@ -57,7 +59,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
             Cancel
           </button>
           <button
-            onClick={() => onConfirm(productId)}
+            onClick={() => onConfirm(productId, imagePath)}
             className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-md"
           >
             Delete

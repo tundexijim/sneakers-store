@@ -28,6 +28,14 @@ export default function ProductPage({ product }: { product: Product }) {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })}`;
+
+  const getPathFromUrl = (url: string) => {
+    const decodedUrl = decodeURIComponent(url);
+    const pathStart = decodedUrl.indexOf("/o/") + 3;
+    const pathEnd = decodedUrl.indexOf("?alt=");
+    return decodedUrl.substring(pathStart, pathEnd);
+  };
+  const imagePath = getPathFromUrl(product.image);
   const handleAddToCart = () => {
     if (isLoading) return;
     setIsLoading(true);
@@ -46,8 +54,8 @@ export default function ProductPage({ product }: { product: Product }) {
     setstockInSize(stock);
   };
 
-  const handleDelete = (productId: string) => {
-    deleteProduct(productId)
+  const handleDelete = (productId: string, imagePath: string) => {
+    deleteProduct(productId, imagePath)
       .then(() => {
         router.replace("/productslist");
         setShowDelete(false);
@@ -74,7 +82,8 @@ export default function ProductPage({ product }: { product: Product }) {
               alt={product.name}
               width={600}
               height={600}
-              className="rounded-xl object-contain"
+              priority
+              className="rounded-xl object-contain "
             />
           </div>
           <div className="w-full md:w-1/2">
@@ -156,13 +165,26 @@ export default function ProductPage({ product }: { product: Product }) {
               )}
             </div>
             {user?.email === "ijimakindetunde@gmail.com" && (
-              <div className="mt-4">
-                <button
-                  onClick={() => setShowDelete(true)}
-                  className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
-                >
-                  Delete
-                </button>
+              <div>
+                <div className="mt-4">
+                  <button
+                    onClick={() => setShowDelete(true)}
+                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                  >
+                    Delete
+                  </button>
+                </div>
+
+                <div className="mt-4">
+                  <button
+                    onClick={() =>
+                      router.push(`/admin/add-product?product=${product.slug}`)
+                    }
+                    className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+                  >
+                    Update
+                  </button>
+                </div>
               </div>
             )}
             <div className="mt-4">
@@ -175,6 +197,7 @@ export default function ProductPage({ product }: { product: Product }) {
             isOpen={showDelete}
             onClose={() => setShowDelete(false)}
             onConfirm={handleDelete}
+            imagePath={imagePath}
             productId={product.id}
             title="Delete Item"
             message="Are you sure you want to delete this item? This action cannot be undone."

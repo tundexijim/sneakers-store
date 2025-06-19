@@ -27,6 +27,11 @@ export default function AdminPanel() {
   const isClient = useIsClient();
   const { user, loading: authloading, logOut } = useAuth();
   const router = useRouter();
+  const formatPrice = (price: number) =>
+    `₦${price.toLocaleString("en-US", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })}`;
 
   useEffect(() => {
     if (!authloading && !user) {
@@ -127,7 +132,7 @@ export default function AdminPanel() {
 
       {/* Modal for Order Details */}
       {selectedOrder && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
+        <div className="fixed inset-0  bg-opacity-40 flex items-center justify-center z-50">
           <div className="bg-white max-w-lg w-full p-6 rounded shadow-lg relative">
             <button
               onClick={() => setSelectedOrder(null)}
@@ -160,13 +165,14 @@ export default function AdminPanel() {
               <strong>Payment:</strong> {selectedOrder.paymentMethod}
             </p>
             <p>
-              <strong>Total:</strong> ₦{selectedOrder.total}
+              <strong>Total:</strong> {formatPrice(selectedOrder.total)}
             </p>
             <p>
-              <strong>Shipping Cost:</strong> ₦{selectedOrder.ShippingCost}
+              <strong>Shipping Cost:</strong>{" "}
+              {formatPrice(selectedOrder.ShippingCost)}
             </p>
             <p>
-              <strong>Subtotal:</strong> ₦{selectedOrder.Subtotal}
+              <strong>Subtotal:</strong> {formatPrice(selectedOrder.Subtotal)}
             </p>
 
             <div className="mt-4">
