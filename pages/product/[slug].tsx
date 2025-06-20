@@ -5,7 +5,7 @@ import { deleteProduct, getProductBySlug } from "../../services/productService";
 import { Product } from "../../types";
 import { useCart } from "../../context/CartContext";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { X, ArrowLeft, Shield, Truck, RefreshCw, Heart } from "lucide-react";
 import RandomProducts from "@/components/RandomProducts";
 import { useAuth } from "@/context/authContext";
@@ -15,7 +15,6 @@ import { DeleteDialog, InfoDialog } from "@/components/DialogBox";
 export default function ProductPage({ product }: { product: Product }) {
   const { addToCart, cart } = useCart();
   const [selectedSize, setSelectedSize] = useState<number | null>(null);
-  const [isWishlisted, setIsWishlisted] = useState<boolean>(false);
   const isInCart = cart.some((item) => item.id === product.id);
   const { user } = useAuth();
   const [stockinsize, setstockInSize] = useState<number | null>(null);
@@ -39,6 +38,14 @@ export default function ProductPage({ product }: { product: Product }) {
   };
 
   const imagePath = getPathFromUrl(product.image);
+
+  useEffect(() => {
+    const productChange = () => {
+      setSelectedSize(null);
+      setstockInSize(null);
+    };
+    productChange();
+  }, [product.id]);
 
   const handleAddToCart = () => {
     if (isLoading) return;
@@ -70,10 +77,6 @@ export default function ProductPage({ product }: { product: Product }) {
         alert("Failed to delete the product. Please try again.");
         setShowDelete(false);
       });
-  };
-
-  const toggleWishlist = () => {
-    setIsWishlisted(!isWishlisted);
   };
 
   return (

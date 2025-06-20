@@ -279,7 +279,7 @@ export default function CheckoutPage() {
       return;
     }
 
-    if (form.paymentMethod === "bank") {
+    if (form.paymentMethod === "bank" || "pay on delivery") {
       handleSubmit();
     } else if (form.paymentMethod === "paystack") {
       handlePay();
@@ -702,6 +702,36 @@ export default function CheckoutPage() {
                           </div>
                         </div>
                       </label>
+                      <label
+                        className={`relative block cursor-pointer rounded-xl border-2 transition-all duration-200 ${
+                          form.paymentMethod === "pay on delivery"
+                            ? "border-blue-500 bg-blue-50 shadow-lg shadow-blue-500/10"
+                            : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                        }`}
+                      >
+                        <div className="p-6">
+                          <div className="flex items-center space-x-4">
+                            <input
+                              type="radio"
+                              name="paymentMethod"
+                              value="pay on delivery"
+                              checked={form.paymentMethod === "pay on delivery"}
+                              onChange={handleChange}
+                              className="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <div className="flex items-center space-x-3">
+                              <div>
+                                <p className="font-semibold text-slate-900">
+                                  Pay on Delivery (POD)
+                                </p>
+                                <p className="text-sm text-slate-600">
+                                  Direct bank transfer
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </label>
 
                       {/* Bank Details (shown when bank transfer is selected) */}
                       {form.paymentMethod === "bank" && (
@@ -750,6 +780,23 @@ export default function CheckoutPage() {
                               order ID as reference for easy confirmation of
                               your payment.
                             </p>
+                          </div>
+                        </div>
+                      )}
+                      {form.paymentMethod === "pay on delivery" && (
+                        <div className="mt-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200">
+                          <div className="flex items-start space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                            <div className="text-sm text-blue-800 space-y-4">
+                              <p>
+                                1. Payment on delivery is only available for
+                                Lagos state only.
+                              </p>
+                              <p>
+                                {" "}
+                                2. We reserve the right to decline POD order
+                                based on location and order value.
+                              </p>
+                            </div>
                           </div>
                         </div>
                       )}

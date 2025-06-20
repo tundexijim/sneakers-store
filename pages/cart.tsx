@@ -43,10 +43,6 @@ export default function CartPage() {
 
     if (newMessages.length > 0) {
       setRemovedItems(newMessages);
-
-      setTimeout(() => {
-        setRemovedItems([]);
-      }, 5000);
     }
   }, [isClient, cart, updateQty]);
 
