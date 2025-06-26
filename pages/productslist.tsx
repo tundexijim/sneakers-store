@@ -93,8 +93,17 @@ export default function ProductsList({
   const paginationNumbers = getPaginationNumbers();
   if (error) {
     return (
-      <div className="flex items-center justify-center text-red-500">
-        <p>{error}</p>
+      <div className="flex items-center justify-center min-h-[400px] px-4">
+        <div className="text-center">
+          <div className="text-red-500 text-6xl mb-4">⚠️</div>
+          <p className="text-red-500 text-lg font-medium">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="mt-4 px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
       </div>
     );
   }

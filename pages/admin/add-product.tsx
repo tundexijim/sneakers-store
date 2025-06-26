@@ -176,6 +176,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
     } catch (err) {
       setError("Failed to save product.");
     } finally {
+      window.scrollTo({ top: 0, behavior: "smooth" });
       setloading(false);
     }
   };

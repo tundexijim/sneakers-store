@@ -14,6 +14,7 @@ type CartContextType = {
   updateQty: (id: string, size: number, qty: number) => void;
   clearCart: () => void;
   total: number;
+  setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
 };
 
 export const CartContext = createContext<CartContextType>(
@@ -59,7 +60,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const updateQty = (id: string, size: number, qty: number) => {
-    if (qty < 1) return;
+    // if (qty < 1) return;
     setCart((prev) =>
       prev.map((item) =>
         item.id === id && item.selectedSize === size ? { ...item, qty } : item
@@ -71,7 +72,15 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <CartContext.Provider
-      value={{ cart, addToCart, removeFromCart, updateQty, clearCart, total }}
+      value={{
+        cart,
+        addToCart,
+        removeFromCart,
+        updateQty,
+        clearCart,
+        total,
+        setCart,
+      }}
     >
       {children}
     </CartContext.Provider>

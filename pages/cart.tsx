@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useCart } from "../context/CartContext";
 import Link from "next/link";
 import { useIsClient } from "@/hooks/useIsClient";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import RandomProducts from "@/components/RandomProducts";
 import {
   AlertTriangle,
@@ -13,9 +13,10 @@ import {
   ShoppingBag,
   Trash2,
 } from "lucide-react";
+import { fetchProductsByIds } from "@/services/productService";
 
 export default function CartPage() {
-  const { cart, updateQty, removeFromCart, total } = useCart();
+  const { cart, updateQty, removeFromCart, total, setCart } = useCart();
   const isClient = useIsClient();
   const [removedItems, setRemovedItems] = useState<string[]>([]);
   const uniqueProductIds = Array.from(new Set(cart.map((item) => item.id)));
@@ -24,6 +25,55 @@ export default function CartPage() {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     })}`;
+
+  const cartIds = useMemo(
+    () => cart?.map((item) => item.id).join(",") || "",
+    [cart]
+  );
+
+  useEffect(() => {
+    const refreshCart = async () => {
+      const ids = [...new Set(cart.map((item) => item.id))];
+      if (!ids.length) return;
+
+      const products = await fetchProductsByIds(ids);
+
+      const updatedCart = cart
+        .filter((item) => {
+          const product = products.find((p) => p.id === item.id);
+          if (!product) {
+            removeFromCart(item.id, item.selectedSize);
+            return false; // Remove from array
+          }
+          return true; // Keep in array
+        })
+        .map((item) => {
+          const product = products.find((p) => p.id === item.id);
+          const sizeData = product?.sizes?.find(
+            (s) => s.size === item.selectedSize
+          );
+
+          if (!product) {
+            removeFromCart(item.id, item.selectedSize);
+          }
+
+          return {
+            ...item,
+            price: product?.price ?? item.price,
+            image: product?.image ?? item.image,
+            name: product?.name ?? item.name,
+            description: product?.description ?? item.description,
+            sizes: product?.sizes ?? item.sizes,
+            stock: sizeData?.stock ?? 0,
+            slug: product?.slug ?? item.slug,
+          };
+        });
+
+      setCart(updatedCart);
+    };
+
+    refreshCart();
+  }, [cartIds]);
 
   useEffect(() => {
     if (!isClient) return;
@@ -44,6 +94,9 @@ export default function CartPage() {
     if (newMessages.length > 0) {
       setRemovedItems(newMessages);
     }
+    setTimeout(() => {
+      setRemovedItems([]);
+    }, 2000);
   }, [isClient, cart, updateQty]);
 
   if (!isClient) return null;
@@ -141,6 +194,10 @@ export default function CartPage() {
                 const displayQty = item.qty > stock ? stock : item.qty;
 
                 const lowStock = stock > 0 && stock <= 3;
+
+                if (item.qty === 0) {
+                  removeFromCart(item.id, item.selectedSize);
+                }
 
                 return (
                   <div

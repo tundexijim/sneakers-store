@@ -6,7 +6,7 @@ import { Product } from "../../types";
 import { useCart } from "../../context/CartContext";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { X, ArrowLeft, Shield, Truck, RefreshCw, Heart } from "lucide-react";
+import { X, ArrowLeft, Shield, Truck } from "lucide-react";
 import RandomProducts from "@/components/RandomProducts";
 import { useAuth } from "@/context/authContext";
 import { useRouter } from "next/router";
@@ -44,6 +44,7 @@ export default function ProductPage({ product }: { product: Product }) {
       setSelectedSize(null);
       setstockInSize(null);
     };
+
     productChange();
   }, [product.id]);
 
@@ -118,8 +119,6 @@ export default function ProductPage({ product }: { product: Product }) {
                     </div>
                   </div>
                 )}
-
-                {/* Wishlist Button */}
               </div>
             </div>
 
@@ -166,31 +165,35 @@ export default function ProductPage({ product }: { product: Product }) {
                   </h3>
                 </div>
                 <div className="grid grid-cols-4 gap-3">
-                  {product.sizes.map((size, i) => (
-                    <div className="relative" key={i}>
-                      <button
-                        onClick={() => handleSelectSize(size.size, size.stock)}
-                        disabled={size.stock === 0}
-                        className={`w-full h-14 border-2 rounded-xl font-bold text-lg transition-all duration-300 relative overflow-hidden ${
-                          selectedSize === size.size
-                            ? "bg-black text-white border-black shadow-lg scale-105"
-                            : size.stock === 0
-                            ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-                            : "bg-white text-gray-900 border-gray-300 hover:border-black hover:shadow-md hover:scale-105"
-                        }`}
-                      >
-                        {size.size}
-                        {size.stock === 0 && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <X
-                              className="w-8 h-8 text-red-500"
-                              strokeWidth={3}
-                            />
-                          </div>
-                        )}
-                      </button>
-                    </div>
-                  ))}
+                  {product.sizes
+                    .sort((a, b) => a.size - b.size)
+                    .map((size, i) => (
+                      <div className="relative" key={i}>
+                        <button
+                          onClick={() =>
+                            handleSelectSize(size.size, size.stock)
+                          }
+                          disabled={size.stock === 0}
+                          className={`w-full h-14 border-2 rounded-xl font-bold text-lg transition-all duration-300 relative overflow-hidden ${
+                            selectedSize === size.size
+                              ? "bg-black text-white border-black shadow-lg scale-105"
+                              : size.stock === 0
+                              ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                              : "bg-white text-gray-900 border-gray-300 hover:border-black hover:shadow-md hover:scale-105"
+                          }`}
+                        >
+                          {size.size}
+                          {size.stock === 0 && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <X
+                                className="w-8 h-8 text-red-500"
+                                strokeWidth={3}
+                              />
+                            </div>
+                          )}
+                        </button>
+                      </div>
+                    ))}
                 </div>
               </div>
 

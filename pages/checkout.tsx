@@ -2,11 +2,10 @@ import { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 import { placeOrder, saveOrder } from "@/util/saveOrder";
 import { useRouter } from "next/router";
-import { payWithPaystack } from "@/util/paystack";
+import { PaystackButtonComponent } from "@/util/paystack";
 import Head from "next/head";
 import { getStateCode } from "@/util/getStateCode";
 import { nigerianStates } from "@/data/nigerianStates";
-import toast from "react-hot-toast";
 import { useIsClient } from "@/hooks/useIsClient";
 import Link from "next/link";
 import { validateStockAvailability } from "@/util/saveOrder";
@@ -26,7 +25,7 @@ import { httpsCallable } from "firebase/functions";
 import { functions } from "@/lib/firebaseConfig";
 
 export default function CheckoutPage() {
-  const { cart, total, clearCart, updateQty } = useCart();
+  const { cart, total, clearCart } = useCart();
   const router = useRouter();
 
   const [ShippingCost, setShippingCost] = useState(0);
@@ -41,12 +40,10 @@ export default function CheckoutPage() {
     address: "",
     paymentMethod: "paystack",
   });
-  const [orderNumber, setOrderNumber] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [hasRestoredForm, setHasRestoredForm] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
-  const { paymentMethod, ...rest } = form;
   const isClient = useIsClient();
   const formatPrice = (price: number) =>
     `₦${price.toLocaleString("en-US", {
@@ -62,44 +59,15 @@ export default function CheckoutPage() {
       }
       setHasRestoredForm(true);
     }
-
-    const existingOrder = localStorage.getItem("orderNumber");
-    if (existingOrder) {
-      setOrderNumber(existingOrder);
-    } else {
-      const random = Math.floor(100000 + Math.random() * 900000);
-      const date = new Date().getTime().toString().slice(-4);
-      const newOrder = `ORD-${date}-${random}`;
-      localStorage.setItem("orderNumber", newOrder);
-      setOrderNumber(newOrder);
-    }
   }, [hasRestoredForm]);
 
   // Save form to localStorage whenever it changes
   useEffect(() => {
-    if (hasRestoredForm) {
-      localStorage.setItem("checkoutForm", JSON.stringify(rest));
-    }
-  }, [rest, hasRestoredForm]);
-
-  //check for cart item quantity
-  useEffect(() => {
     if (!isClient) return;
-    cart.forEach((item) => {
-      const stock =
-        item.sizes?.find((s) => s.size === item.selectedSize)?.stock ?? 0;
-      if (item.qty > stock) {
-        updateQty(item.id, item.selectedSize, stock);
-        toast(
-          `"${item.name}" (size ${item.selectedSize}) quantity reduced to available stock (${stock}).`,
-          {
-            icon: "⚠️",
-            duration: 5000,
-          }
-        );
-      }
-    });
-  }, [isClient, cart, updateQty]);
+    if (hasRestoredForm) {
+      localStorage.setItem("checkoutForm", JSON.stringify(form));
+    }
+  }, [form, hasRestoredForm, isClient]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -140,7 +108,7 @@ export default function CheckoutPage() {
   };
 
   const orderData = {
-    orderNumber,
+    orderNumber: `${Date.now()}`,
     items: cart.map(({ id, name, qty, price, selectedSize }) => ({
       productId: id,
       name,
@@ -161,107 +129,72 @@ export default function CheckoutPage() {
     ShippingCost,
     Subtotal,
   };
+  /*paystack props */
+  const paystackProps = {
+    email: form.email,
+    amount: Subtotal * 100, // Convert to kobo
+    reference: `${Date.now()}`,
+    text: `Complete Payment • ${formatPrice(Subtotal)}`,
+    className: "paystack-button",
+    onSuccess: async (response: any) => {
+      try {
+        setLoading(true);
 
-  const handleSubmit = async () => {
-    try {
-      setLoading(true);
-      const success = await placeOrder(cart, orderData, setLoading, setError);
-      if (success) {
-        localStorage.removeItem("orderNumber");
-        localStorage.removeItem("checkoutForm");
-        router.push(`/payment-success/success?orderNumber=${orderNumber}`);
-        clearCart();
-      }
-      setLoading(false);
-    } catch (error: any) {
-      console.log(error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+        // Call Firebase Cloud Function to verify payment
+        const verifyPayment = httpsCallable(functions, "verifyPayment");
+        const result: any = await verifyPayment({
+          reference: response.reference,
+        });
+        if (result.data.success && result.data.status === "success") {
+          // Payment verified successfully - now place the order
+          const success = await placeOrder(
+            cart,
+            { ...orderData, orderNumber: result.data.reference },
+            setLoading,
+            setError
+          );
 
-  const handlePay = async () => {
-    try {
-      const random = Math.floor(100000 + Math.random() * 900000);
-      const date = new Date().getTime().toString().slice(-4);
-      const reference = `ORD-${date}-${random}`;
+          if (success) {
+            localStorage.removeItem("checkoutForm");
+            router.push(
+              `/payment-success/success?orderNumber=${result.data.reference}`
+            );
+            clearCart();
+          } else {
+            await saveOrder(
+              {
+                ...orderData,
+                paymentMethod: "Failed to submit",
+                orderNumber: result.data.reference,
+              },
+              setLoading,
+              setError
+            );
+            router.push(
+              `/payment-success/payment-success-pending?reference=${result.data.reference}`
+            );
 
-      setLoading(true);
-
-      payWithPaystack({
-        email: form.email,
-        amount: Subtotal * 100,
-        reference: reference,
-        metadata: {
-          firstname: form.firstname,
-          lastname: form.lastname,
-          phone: form.phone,
-        },
-        onSuccess: async (response) => {
-          try {
-            setLoading(true);
-
-            // Call Firebase Cloud Function to verify payment
-            const verifyPayment = httpsCallable(functions, "verifyPayment");
-            const result: any = await verifyPayment({
-              reference: response.reference,
-            });
-
-            if (result.data.success && result.data.status === "success") {
-              // Payment verified successfully - now place the order
-              const success = await placeOrder(
-                cart,
-                { ...orderData, orderNumber: reference },
-                setLoading,
-                setError
-              );
-
-              if (success) {
-                localStorage.removeItem("checkoutForm");
-                router.push(
-                  `/payment-success/success?orderNumber=${reference}`
-                );
-                clearCart();
-              } else {
-                await saveOrder(
-                  {
-                    ...orderData,
-                    paymentMethod: "Failed to submit",
-                    orderNumber: reference,
-                  },
-                  setLoading,
-                  setError
-                );
-                router.push(
-                  `/payment-success/payment-success-pending?reference=${reference}`
-                );
-
-                setError(
-                  `Order placement failed after successful payment. Please contact support with your reference number: ${reference}`
-                );
-              }
-            } else {
-              setError("Payment verification failed. Please contact support.");
-            }
-          } catch (verificationError) {
-            console.error("Verification error:", verificationError);
-            setError("Payment verification failed. Please contact support.");
+            setError(
+              `Order placement failed after successful payment. Please contact support with your reference number: ${result.data.reference}`
+            );
           }
-        },
-        onClose: () => {
-          console.log("Payment popup closed.");
-          setLoading(false);
-        },
-      });
-    } catch (error) {
-      console.error("Payment error:", error);
-      setError("An unexpected error occurred. Please try again.");
-    } finally {
-      setLoading(false);
-    }
+        } else {
+          setError("Payment verification failed. Please contact support.");
+        }
+      } catch (verificationError) {
+        console.error("Verification error:", verificationError);
+        setError("Payment verification failed. Please contact support.");
+      } finally {
+        setLoading(false);
+      }
+    },
+    onClose: () => {
+      console.log("Payment cancelled");
+    },
+    loading: loading,
   };
 
-  const handleFormSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const isValid = validateForm();
     if (!isValid) {
@@ -278,15 +211,51 @@ export default function CheckoutPage() {
       setLoading(false);
       return;
     }
-
     if (form.paymentMethod === "bank" || "pay on delivery") {
-      handleSubmit();
-    } else if (form.paymentMethod === "paystack") {
-      handlePay();
+      try {
+        setLoading(true);
+        const success = await placeOrder(cart, orderData, setLoading, setError);
+        if (success) {
+          localStorage.removeItem("checkoutForm");
+          router.push(
+            `/payment-success/success?orderNumber=${orderData.orderNumber}`
+          );
+          clearCart();
+        }
+        setLoading(false);
+      } catch (error: any) {
+        console.log(error.message);
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
+  const handlePaystacksubmit = async (e: React.MouseEvent) => {
+    e.preventDefault;
+    e.preventDefault;
+    const isValid = validateForm();
+    if (!isValid) {
+      setError("Please fill out all required fields correctly.");
+      return;
+    }
+    try {
+      await validateStockAvailability(cart);
+    } catch (error: any) {
+      setError(error.message);
+      setLoading(false);
+      return;
+    }
+    const PaystackButton = document.querySelector(
+      ".paystack-button"
+    ) as HTMLButtonElement;
+    if (PaystackButton) {
+      PaystackButton.click();
+    }
+  };
   if (!isClient) return null;
+
+  // Order summary component
   const OrderSummary = () => (
     <div className="lg:col-span-2 space-y-6">
       <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
@@ -297,11 +266,11 @@ export default function CheckoutPage() {
 
         <div className="space-y-4 mb-6">
           {cart.map((item) => (
-            <Link href={`/product/${item.slug}`}>
-              <div
-                key={`${item.id}-${item.selectedSize}`}
-                className="flex items-center p-4 mb-4 bg-slate-50 rounded-xl border border-slate-100"
-              >
+            <Link
+              href={`/product/${item.slug}`}
+              key={`${item.id}-${item.selectedSize}`}
+            >
+              <div className="flex items-center p-4 mb-4 bg-slate-50 rounded-xl border border-slate-100">
                 <div className="flex-1">
                   <Image
                     src={item.image}
@@ -345,6 +314,7 @@ export default function CheckoutPage() {
     <>
       <Head>
         <title>Checkout - DTwears</title>
+        <meta name="description" content="Checkout your cart" />
       </Head>
 
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100">
@@ -378,7 +348,7 @@ export default function CheckoutPage() {
               </div>
               {/* Checkout Form */}
               <div className="lg:col-span-3">
-                <form onSubmit={handleFormSubmit} className="space-y-8">
+                <form onSubmit={handleSubmit} className="space-y-8">
                   {/* Customer Information */}
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
                     <h3 className="text-xl font-semibold text-slate-900 mb-6 flex items-center">
@@ -490,7 +460,6 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                   </div>
-
                   {/* Shipping Information */}
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
                     <h3 className="text-xl font-semibold text-slate-900 mb-6 flex items-center">
@@ -551,9 +520,31 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                   </div>
+                  <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50 md:hidden block">
+                    <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                      Shipping
+                    </h3>
+                    <p className="text-slate-600 ">
+                      Flat rate of {formatPrice(5000)} applies for delivery
+                      outside Lagos state. Rate of {formatPrice(3000)} applies
+                      within Lagos state.
+                    </p>
+                  </div>
                   <div className="lg:hidden">
                     <OrderSummary />
                   </div>
+                  {/* shipping method for desktop */}
+                  <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50 hidden md:block">
+                    <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                      Shipping
+                    </h3>
+                    <p className="text-slate-600 ">
+                      Flat rate of {formatPrice(5000)} applies for delivery
+                      outside Lagos state. Rate of {formatPrice(3000)} applies
+                      within Lagos state.
+                    </p>
+                  </div>
+
                   {/* Payment Method */}
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
                     <h3 className="text-xl font-semibold text-slate-900 mb-2 flex items-center">
@@ -563,11 +554,6 @@ export default function CheckoutPage() {
                     <p className="text-slate-600 mb-6">
                       All transactions are secure and encrypted.
                     </p>
-                    {errors.paymentMethod && (
-                      <p className="text-red-500 mb-4">
-                        Please Select a payment Method
-                      </p>
-                    )}
 
                     <div className="space-y-4">
                       {/* Paystack Option */}
@@ -599,7 +585,7 @@ export default function CheckoutPage() {
                                 </p>
                               </div>
                             </div>
-                            <div className="flex items-center space-x-2">
+                            <div className="flex items-center gap-0.5">
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 x="0px"
@@ -660,6 +646,31 @@ export default function CheckoutPage() {
                                   d="M12.212,24.945l-0.966-4.748c0,0-0.437-1.029-1.573-1.029c-1.136,0-4.44,0-4.44,0S10.894,20.84,12.212,24.945z"
                                 ></path>
                               </svg>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="24"
+                                height="24"
+                                viewBox="0 0 462 161"
+                              >
+                                <g
+                                  fill="none"
+                                  fill-rule="evenodd"
+                                  transform="rotate(-90 80.5 80)"
+                                >
+                                  <path
+                                    fill="#ED342B"
+                                    d="M79.9417,159.8534 C36.0001,159.8534 0.3786,124.2319 0.3786,80.2903 C0.3786,36.3467 36.0001,0.7242 79.9417,0.7242 C123.8833,0.7242 159.5048,36.3467 159.5048,80.2903 C159.5048,124.2319 123.8833,159.8534 79.9417,159.8534"
+                                  />
+                                  <path
+                                    fill="#FEFEFE"
+                                    d="M45.8608,80.2892 C86.2011,62.4925 123.8866,49.4435 123.8866,49.4435 L123.8866,22.1612 C123.8866,22.1612 75.5171,38.7665 15.0281,69.6112 L15.0281,90.9673 C75.5171,121.812 123.8866,138.4162 123.8866,138.4162 L123.8866,111.1339 C123.8866,111.1339 86.2011,98.086 45.8608,80.2892"
+                                  />
+                                  <path
+                                    fill="#03435F"
+                                    d="M84.0912 422.9398C84.0912 407.5169 67.4829 406.3325 67.4829 406.3325L67.4829 439.5441C67.4829 439.5441 84.0912 438.3596 84.0912 422.9398M50.8776 459.7117L50.8776 406.3325C50.8776 406.3325 33.0818 407.5169 33.0818 431.2439 33.0818 443.1044 36.6442 454.9669 36.6442 454.9669L17.665 457.3408C17.665 457.3408 12.9172 445.4783 12.9172 428.87 12.9172 405.146 24.7807 383.7939 57.9943 383.7939 84.0912 383.7939 100.6985 400.4022 100.6985 424.1262 100.6985 459.7117 65.112 462.0826 50.8776 459.7117M78.9061 278.2023L98.492 281.8756C98.492 281.8756 107.098 253.5138 91.1494 230.4615L12.8057 230.4615 12.8057 254.9431 76.4602 254.9431C83.8018 264.7356 78.9061 278.2023 78.9061 278.2023M84.0912 176.1558C84.0912 160.736 67.4829 159.5505 67.4829 159.5505L67.4829 192.7631C67.4829 192.7631 84.0912 191.5787 84.0912 176.1558M50.8776 212.9278L50.8776 159.5505C50.8776 159.5505 33.0818 160.736 33.0818 184.46 33.0818 196.3195 36.6442 208.183 36.6442 208.183L17.665 210.5569C17.665 210.5569 12.9172 198.6934 12.9172 182.0861 12.9172 158.3621 24.7807 137.009 57.9943 137.009 84.0912 137.009 100.6985 153.6173 100.6985 177.3413 100.6985 212.9278 65.112 215.2987 50.8776 212.9278M42.7481 337.948C72.5852 325.5168 100.6842 319.3036 100.6842 319.3036L100.6812 294.4462C100.6812 294.4462 52.6944 306.8764 12.9319 328.0086L12.9319 347.8874C52.6944 369.0206 100.6742 381.4508 100.6742 381.4508L100.6742 356.5923C100.6742 356.5923 72.5852 350.3792 42.7481 337.948"
+                                  />
+                                </g>
+                              </svg>
                               <span className="text-blue-600 font-medium text-sm">
                                 +4
                               </span>
@@ -702,38 +713,8 @@ export default function CheckoutPage() {
                           </div>
                         </div>
                       </label>
-                      <label
-                        className={`relative block cursor-pointer rounded-xl border-2 transition-all duration-200 ${
-                          form.paymentMethod === "pay on delivery"
-                            ? "border-blue-500 bg-blue-50 shadow-lg shadow-blue-500/10"
-                            : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                        }`}
-                      >
-                        <div className="p-6">
-                          <div className="flex items-center space-x-4">
-                            <input
-                              type="radio"
-                              name="paymentMethod"
-                              value="pay on delivery"
-                              checked={form.paymentMethod === "pay on delivery"}
-                              onChange={handleChange}
-                              className="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-500"
-                            />
-                            <div className="flex items-center space-x-3">
-                              <div>
-                                <p className="font-semibold text-slate-900">
-                                  Pay on Delivery (POD)
-                                </p>
-                                <p className="text-sm text-slate-600">
-                                  Direct bank transfer
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </label>
-
                       {/* Bank Details (shown when bank transfer is selected) */}
+
                       {form.paymentMethod === "bank" && (
                         <div className="mt-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200">
                           <div className="flex items-center mb-4">
@@ -783,6 +764,37 @@ export default function CheckoutPage() {
                           </div>
                         </div>
                       )}
+                      <label
+                        className={`relative block cursor-pointer rounded-xl border-2 transition-all duration-200 ${
+                          form.paymentMethod === "pay on delivery"
+                            ? "border-blue-500 bg-blue-50 shadow-lg shadow-blue-500/10"
+                            : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
+                        }`}
+                      >
+                        <div className="p-6">
+                          <div className="flex items-center space-x-4">
+                            <input
+                              type="radio"
+                              name="paymentMethod"
+                              value="pay on delivery"
+                              checked={form.paymentMethod === "pay on delivery"}
+                              onChange={handleChange}
+                              className="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-500"
+                            />
+                            <div className="flex items-center space-x-3">
+                              <div>
+                                <p className="font-semibold text-slate-900">
+                                  Pay on Delivery (POD)
+                                </p>
+                                <p className="text-sm text-slate-600">
+                                  Direct bank transfer
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </label>
+
                       {form.paymentMethod === "pay on delivery" && (
                         <div className="mt-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200">
                           <div className="flex items-start space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
@@ -802,7 +814,6 @@ export default function CheckoutPage() {
                       )}
                     </div>
                   </div>
-
                   {/* Error Message */}
                   {error && (
                     <div className="bg-red-50 border border-red-200 rounded-xl p-4">
@@ -814,11 +825,34 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                   )}
-
                   {/* Submit Button */}
-                  <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
+                  {["pay on delivery", "bank"].includes(form.paymentMethod) && (
+                    <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
+                      <button
+                        type="submit"
+                        disabled={loading}
+                        className="w-full relative bg-gradient-to-r cursor-pointer from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
+                      >
+                        <span
+                          className={`flex items-center justify-center ${
+                            loading ? "invisible" : ""
+                          }`}
+                        >
+                          Complete Payment • {formatPrice(Subtotal)}
+                        </span>
+                        {loading && (
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <Loading />
+                          </div>
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </form>
+                {form.paymentMethod === "paystack" && (
+                  <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50 mt-6">
                     <button
-                      type="submit"
+                      onClick={handlePaystacksubmit}
                       disabled={loading}
                       className="w-full relative bg-gradient-to-r cursor-pointer from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
                     >
@@ -836,7 +870,10 @@ export default function CheckoutPage() {
                       )}
                     </button>
                   </div>
-                </form>
+                )}
+                <div className="hidden">
+                  <PaystackButtonComponent {...paystackProps} />
+                </div>
               </div>
             </div>
           )}

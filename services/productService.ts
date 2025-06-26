@@ -11,6 +11,9 @@ import {
   deleteDoc,
   doc,
   updateDoc,
+  documentId,
+  QueryDocumentSnapshot,
+  DocumentData,
 } from "firebase/firestore";
 import { db, storage } from "@/lib/firebaseConfig";
 import { Product, ProductSize } from "../types";
@@ -42,7 +45,6 @@ export async function getAllProducts(page = 1, sortBy = "newest") {
       orderBy(sortField, direction),
       limit(itemsToFetch)
     );
-
     const snapshot = await getDocs(q);
     const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
     const products = snapshot.docs
@@ -68,6 +70,70 @@ export async function getAllProducts(page = 1, sortBy = "newest") {
   } catch (error) {
     console.error("Error fetching products:", error);
     throw new Error("Error fetching products");
+  }
+}
+
+// Get some products with ids
+
+function chunkArray<T>(array: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < array.length; i += size) {
+    chunks.push(array.slice(i, i + size));
+  }
+  return chunks;
+}
+
+/**
+ * Fetches multiple products from Firestore by their document IDs.
+ * Handles batching automatically (Firestore allows max 30 IDs per query with documentId()).
+ */
+export async function fetchProductsByIds(ids: string[]): Promise<Product[]> {
+  if (!ids.length) return [];
+
+  // Remove duplicates and filter out empty strings
+  const uniqueIds = [...new Set(ids.filter((id) => id && id.trim()))];
+
+  if (!uniqueIds.length) return [];
+
+  // Firestore allows up to 30 values in an 'in' query when using documentId()
+  const chunks = chunkArray(uniqueIds, 30);
+  const products: Product[] = [];
+
+  try {
+    for (const chunk of chunks) {
+      const q = query(
+        collection(db, "products"),
+        where(documentId(), "in", chunk)
+      );
+
+      const snapshot = await getDocs(q);
+
+      snapshot.forEach((doc: QueryDocumentSnapshot<DocumentData>) => {
+        const data = doc.data();
+
+        // Validate that required fields exist
+        if (data.name && data.price !== undefined && data.image && data.slug) {
+          products.push({
+            id: doc.id,
+            name: data.name,
+            price: data.price,
+            image: data.image,
+            slug: data.slug,
+            randomValue: data.randomValue,
+            sizes: data.sizes || [],
+            description: data.description || "",
+            createdAt: data.createdAt?.toDate?.()?.toISOString() || null,
+          });
+        } else {
+          console.warn(`Product ${doc.id} is missing required fields:`, data);
+        }
+      });
+    }
+
+    return products;
+  } catch (error) {
+    console.error("Error fetching products by IDs:", error);
+    throw new Error("Failed to fetch products");
   }
 }
 
@@ -141,7 +207,6 @@ type UpdateProductData = {
   description?: string;
   image?: string;
   sizes?: { size: number; stock: number }[];
-  slug?: string;
   [key: string]: any; // Allow other dynamic fields
 };
 
