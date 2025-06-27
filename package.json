@@ -6,7 +6,6 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "install:legacy": "npm install --legacy-peer-deps",
     "lint": "next lint"
   },
   "dependencies": {
@@ -15,15 +14,15 @@
     "firebase": "^11.7.1",
     "lucide-react": "^0.509.0",
     "next": "15.3.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-hot-toast": "^2.5.2",
-    "react-paystack": "^6.0.0"
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hot-toast": "^2.5.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
+    "@types/paystack__inline-js": "^1.0.2",
     "@types/react": "^18.3.23",
     "@types/react-dom": "^18.3.7",
     "eslint": "^9",

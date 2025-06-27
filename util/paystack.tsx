@@ -1,21 +1,14 @@
-// First install: npm install react-paystack
-import dynamic from "next/dynamic";
-
-const PaystackButton = dynamic(
-  () => import("react-paystack").then((mod) => mod.PaystackButton),
-  { ssr: false }
-);
-
 interface PaystackOptions {
   email: string;
   amount: number; // in kobo (e.g. 5000 NGN = 500000)
   reference: string;
   metadata?: any;
-  currency?: string;
+  currency?: string; // Make currency configurable
   onSuccess: (response: PaystackResponse) => void;
   onClose: () => void;
 }
 
+// Define a type for the Paystack response
 export interface PaystackResponse {
   reference: string;
   trans: string;
@@ -23,58 +16,66 @@ export interface PaystackResponse {
   message: string;
   transaction: string;
   trxref: string;
-  [key: string]: any;
+  [key: string]: any; // For any other properties
+}
+
+// Define a type for the PaystackPop object
+interface PaystackPopInterface {
+  setup: (options: any) => { openIframe: () => void };
 }
 
 /**
- * PaystackButton Component with custom styling and props
+ * Initializes and opens a Paystack payment iframe
+ * @throws Error if PaystackPop is not available in the window object
  */
-export interface PaystackButtonComponentProps extends PaystackOptions {
-  text?: string;
-  className?: string;
-  disabled?: boolean;
-  children?: React.ReactNode;
-}
-
-export const PaystackButtonComponent: React.FC<
-  PaystackButtonComponentProps
-> = ({
+export const payWithPaystack = ({
   email,
   amount,
   reference,
   metadata,
-  currency = "NGN",
+  currency = "NGN", // Default to NGN but allow override
   onSuccess,
   onClose,
-  text = "Pay Now",
-  className = "",
-  disabled = false,
-  children,
-}) => {
-  const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
+}: PaystackOptions): void => {
+  try {
+    // Check if PaystackPop is available
+    const PaystackPop = (window as any).PaystackPop as
+      | PaystackPopInterface
+      | undefined;
 
-  if (!publicKey) {
-    console.error("Paystack public key not found in environment variables.");
-    return (
-      <div className="bg-red-50 border border-red-200 rounded-md p-3 text-red-600 text-sm">
-        Payment Unavailable
-      </div>
-    );
+    if (!PaystackPop) {
+      console.error(
+        "Paystack script not loaded. Make sure to include the Paystack script in your HTML."
+      );
+      return;
+    }
+
+    // Get the public key from environment variables
+    const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
+
+    if (!publicKey) {
+      console.error("Paystack public key not found in environment variables.");
+      return;
+    }
+
+    const handler = PaystackPop.setup({
+      key: publicKey,
+      email,
+      amount,
+      currency,
+      ref: reference,
+      metadata: metadata || {},
+      callback: function (response: PaystackResponse) {
+        onSuccess(response);
+      },
+      onClose: function () {
+        onClose();
+      },
+    });
+
+    handler.openIframe();
+  } catch (error) {
+    console.error("Error initializing Paystack:", error);
+    // You might want to notify the user or implement a fallback here
   }
-
-  const componentProps = {
-    email,
-    amount,
-    publicKey,
-    currency,
-    reference,
-    metadata: metadata || {},
-    text,
-    onSuccess,
-    onClose,
-    className,
-    disabled,
-  };
-
-  return <PaystackButton {...componentProps}>{children}</PaystackButton>;
 };

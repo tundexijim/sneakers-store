@@ -4,7 +4,7 @@ export default function Document() {
   return (
     <Html lang="en">
       <Head>
-        {/* <script src="https://js.paystack.co/v2/inline.js" async></script> */}
+        <script src="https://js.paystack.co/v2/inline.js" async></script>
         <link
           rel="apple-touch-icon"
           sizes="180x180"

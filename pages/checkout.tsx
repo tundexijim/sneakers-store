@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 import { placeOrder, saveOrder } from "@/util/saveOrder";
 import { useRouter } from "next/router";
-import { PaystackButtonComponent } from "@/util/paystack";
+// import { PaystackButtonComponent } from "@/util/paystack";
 import Head from "next/head";
 import { getStateCode } from "@/util/getStateCode";
 import { nigerianStates } from "@/data/nigerianStates";
@@ -23,6 +23,7 @@ import {
 import Image from "next/image";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/lib/firebaseConfig";
+import { payWithPaystack, PaystackResponse } from "@/util/paystack";
 
 export default function CheckoutPage() {
   const { cart, total, clearCart } = useCart();
@@ -130,68 +131,97 @@ export default function CheckoutPage() {
     Subtotal,
   };
   /*paystack props */
-  const paystackProps = {
-    email: form.email,
-    amount: Subtotal * 100, // Convert to kobo
-    reference: `${Date.now()}`,
-    text: `Complete Payment • ${formatPrice(Subtotal)}`,
-    className: "paystack-button",
-    onSuccess: async (response: any) => {
-      try {
-        setLoading(true);
+  const initiateTransaction = async (response: PaystackResponse) => {
+    try {
+      setLoading(true);
 
-        // Call Firebase Cloud Function to verify payment
-        const verifyPayment = httpsCallable(functions, "verifyPayment");
-        const result: any = await verifyPayment({
-          reference: response.reference,
-        });
-        if (result.data.success && result.data.status === "success") {
-          // Payment verified successfully - now place the order
-          const success = await placeOrder(
-            cart,
-            { ...orderData, orderNumber: result.data.reference },
+      // Call Firebase Cloud Function to verify payment
+      const verifyPayment = httpsCallable(functions, "verifyPayment");
+      const result: any = await verifyPayment({
+        reference: response.reference,
+      });
+      if (result.data.success && result.data.status === "success") {
+        // Payment verified successfully - now place the order
+        const success = await placeOrder(
+          cart,
+          { ...orderData, orderNumber: result.data.reference },
+          setLoading,
+          setError
+        );
+
+        if (success) {
+          localStorage.removeItem("checkoutForm");
+          router.push(
+            `/payment-success/success?orderNumber=${result.data.reference}`
+          );
+          clearCart();
+        } else {
+          await saveOrder(
+            {
+              ...orderData,
+              paymentMethod: "Failed to submit",
+              orderNumber: result.data.reference,
+            },
             setLoading,
             setError
           );
+          router.push(
+            `/payment-success/payment-success-pending?reference=${result.data.reference}`
+          );
 
-          if (success) {
-            localStorage.removeItem("checkoutForm");
-            router.push(
-              `/payment-success/success?orderNumber=${result.data.reference}`
-            );
-            clearCart();
-          } else {
-            await saveOrder(
-              {
-                ...orderData,
-                paymentMethod: "Failed to submit",
-                orderNumber: result.data.reference,
-              },
-              setLoading,
-              setError
-            );
-            router.push(
-              `/payment-success/payment-success-pending?reference=${result.data.reference}`
-            );
-
-            setError(
-              `Order placement failed after successful payment. Please contact support with your reference number: ${result.data.reference}`
-            );
-          }
-        } else {
-          setError("Payment verification failed. Please contact support.");
+          setError(
+            `Order placement failed after successful payment. Please contact support with your reference number: ${result.data.reference}`
+          );
         }
-      } catch (verificationError) {
-        console.error("Verification error:", verificationError);
+      } else {
         setError("Payment verification failed. Please contact support.");
-      } finally {
-        setLoading(false);
       }
-    },
-    onClose: () => {
-      console.log("Payment cancelled");
-    },
-    loading: loading,
+    } catch (verificationError) {
+      console.error("Verification error:", verificationError);
+      setError("Payment verification failed. Please contact support.");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const handlePay = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const isValid = validateForm();
+    if (!isValid) {
+      setError("Please fill out all required fields correctly.");
+      return;
+    }
+    setError("");
+    try {
+      await validateStockAvailability(cart);
+    } catch (error: any) {
+      setError(error.message);
+      setLoading(false);
+      return;
+    }
+    try {
+      setLoading(true);
+      payWithPaystack({
+        email: form.email,
+        amount: Subtotal * 100,
+        reference: `${Date.now()}`,
+        metadata: {
+          firstname: form.firstname,
+          lastname: form.lastname,
+          phone: form.phone,
+        },
+        onSuccess: (response) => {
+          initiateTransaction(response);
+        },
+        onClose: () => {
+          console.log("Payment cancelled");
+        },
+      });
+    } catch (error) {
+      console.error("Payment error:", error);
+      setError("An unexpected error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -201,9 +231,7 @@ export default function CheckoutPage() {
       setError("Please fill out all required fields correctly.");
       return;
     }
-    setLoading(true);
     setError("");
-
     try {
       await validateStockAvailability(cart);
     } catch (error: any) {
@@ -230,31 +258,6 @@ export default function CheckoutPage() {
       }
     }
   };
-
-  const handlePaystacksubmit = async (e: React.MouseEvent) => {
-    e.preventDefault;
-    e.preventDefault;
-    const isValid = validateForm();
-    if (!isValid) {
-      setError("Please fill out all required fields correctly.");
-      return;
-    }
-    try {
-      await validateStockAvailability(cart);
-    } catch (error: any) {
-      setError(error.message);
-      setLoading(false);
-      return;
-    }
-    const PaystackButton = document.querySelector(
-      ".paystack-button"
-    ) as HTMLButtonElement;
-    if (PaystackButton) {
-      PaystackButton.click();
-    }
-  };
-  if (!isClient) return null;
-
   // Order summary component
   const OrderSummary = () => (
     <div className="lg:col-span-2 space-y-6">
@@ -309,6 +312,8 @@ export default function CheckoutPage() {
       </div>
     </div>
   );
+
+  if (!isClient) return null;
 
   return (
     <>
@@ -852,7 +857,7 @@ export default function CheckoutPage() {
                 {form.paymentMethod === "paystack" && (
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50 mt-6">
                     <button
-                      onClick={handlePaystacksubmit}
+                      onClick={handlePay}
                       disabled={loading}
                       className="w-full relative bg-gradient-to-r cursor-pointer from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
                     >
@@ -871,9 +876,9 @@ export default function CheckoutPage() {
                     </button>
                   </div>
                 )}
-                <div className="hidden">
+                {/* <div className="hidden">
                   <PaystackButtonComponent {...paystackProps} />
-                </div>
+                </div> */}
               </div>
             </div>
           )}
