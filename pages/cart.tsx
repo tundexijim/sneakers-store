@@ -52,11 +52,6 @@ export default function CartPage() {
           const sizeData = product?.sizes?.find(
             (s) => s.size === item.selectedSize
           );
-
-          if (!product) {
-            removeFromCart(item.id, item.selectedSize);
-          }
-
           return {
             ...item,
             price: product?.price ?? item.price,

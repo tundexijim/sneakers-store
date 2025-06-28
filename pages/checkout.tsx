@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useCart } from "../context/CartContext";
 import { placeOrder, saveOrder } from "@/util/saveOrder";
 import { useRouter } from "next/router";
-// import { PaystackButtonComponent } from "@/util/paystack";
 import Head from "next/head";
 import { getStateCode } from "@/util/getStateCode";
 import { nigerianStates } from "@/data/nigerianStates";
@@ -130,7 +129,7 @@ export default function CheckoutPage() {
     ShippingCost,
     Subtotal,
   };
-  /*paystack props */
+  /*paystack transaction */
   const initiateTransaction = async (response: PaystackResponse) => {
     try {
       setLoading(true);
@@ -239,23 +238,21 @@ export default function CheckoutPage() {
       setLoading(false);
       return;
     }
-    if (form.paymentMethod === "bank" || "pay on delivery") {
-      try {
-        setLoading(true);
-        const success = await placeOrder(cart, orderData, setLoading, setError);
-        if (success) {
-          localStorage.removeItem("checkoutForm");
-          router.push(
-            `/payment-success/success?orderNumber=${orderData.orderNumber}`
-          );
-          clearCart();
-        }
-        setLoading(false);
-      } catch (error: any) {
-        console.log(error.message);
-      } finally {
-        setLoading(false);
+    try {
+      setLoading(true);
+      const success = await placeOrder(cart, orderData, setLoading, setError);
+      if (success) {
+        localStorage.removeItem("checkoutForm");
+        router.push(
+          `/payment-success/success?orderNumber=${orderData.orderNumber}`
+        );
+        clearCart();
       }
+      setLoading(false);
+    } catch (error: any) {
+      console.log(error.message);
+    } finally {
+      setLoading(false);
     }
   };
   // Order summary component
@@ -843,7 +840,7 @@ export default function CheckoutPage() {
                             loading ? "invisible" : ""
                           }`}
                         >
-                          Complete Payment • {formatPrice(Subtotal)}
+                          Place Order
                         </span>
                         {loading && (
                           <div className="absolute inset-0 flex items-center justify-center">
@@ -854,6 +851,7 @@ export default function CheckoutPage() {
                     </div>
                   )}
                 </form>
+                {/* Paystack submit button */}
                 {form.paymentMethod === "paystack" && (
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50 mt-6">
                     <button
@@ -866,7 +864,7 @@ export default function CheckoutPage() {
                           loading ? "invisible" : ""
                         }`}
                       >
-                        Complete Payment • {formatPrice(Subtotal)}
+                        Place Order
                       </span>
                       {loading && (
                         <div className="absolute inset-0 flex items-center justify-center">
@@ -876,9 +874,6 @@ export default function CheckoutPage() {
                     </button>
                   </div>
                 )}
-                {/* <div className="hidden">
-                  <PaystackButtonComponent {...paystackProps} />
-                </div> */}
               </div>
             </div>
           )}

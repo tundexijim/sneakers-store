@@ -14,6 +14,7 @@ import {
   updateProduct,
 } from "@/services/productService";
 import { GetServerSideProps } from "next";
+import Image from "next/image";
 
 export default function AddProductPage({ product }: { product?: Product }) {
   const [form, setForm] = useState({
@@ -551,10 +552,12 @@ export default function AddProductPage({ product }: { product?: Product }) {
                       Preview:
                     </p>
                     <div className="relative inline-block">
-                      <img
+                      <Image
                         src={form.image}
                         alt="Product preview"
-                        className="w-40 h-40 object-cover rounded-lg border border-gray-200 shadow-sm"
+                        width={160}
+                        height={160}
+                        className=" object-cover rounded-lg border border-gray-200 shadow-sm"
                       />
                       <div className="absolute top-2 right-2">
                         <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
