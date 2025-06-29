@@ -159,6 +159,9 @@ export default function AdminPanel() {
               <strong>Address:</strong> {selectedOrder.customer.address}
             </p>
             <p>
+              <strong>City:</strong> {selectedOrder.customer.city}
+            </p>
+            <p>
               <strong>State:</strong> {selectedOrder.customer.selectedState}
             </p>
             <p>

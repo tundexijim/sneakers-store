@@ -38,6 +38,7 @@ export default function CheckoutPage() {
     phone: "",
     email: "",
     address: "",
+    city: "",
     paymentMethod: "paystack",
   });
   const [loading, setLoading] = useState(false);
@@ -101,6 +102,7 @@ export default function CheckoutPage() {
     if (!form.address) newErrors.address = true;
     if (!selectedState) newErrors.state = true;
     if (!form.paymentMethod) newErrors.paymentMethod = true;
+    if (!form.city) newErrors.city = true;
     setErrors(newErrors);
     console.log("Errors:", newErrors);
 
@@ -122,6 +124,7 @@ export default function CheckoutPage() {
       phone: form.phone,
       email: form.email,
       address: form.address,
+      city: form.city,
       selectedState,
     },
     paymentMethod: form.paymentMethod,
@@ -479,7 +482,7 @@ export default function CheckoutPage() {
                           <Home className="absolute left-3 top-4 w-5 h-5 text-slate-400" />
                           <textarea
                             name="address"
-                            rows={3}
+                            rows={1}
                             placeholder="Enter your complete shipping address"
                             value={form.address}
                             onChange={handleChange}
@@ -491,6 +494,30 @@ export default function CheckoutPage() {
                           />
                           {errors.address && (
                             <div className="absolute top-4 right-0 flex items-center pr-3">
+                              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="block text-sm font-medium text-slate-700">
+                          City <span className="text-red-500">*</span>
+                        </label>
+                        <div className="relative">
+                          <input
+                            type="text"
+                            name="city"
+                            placeholder="Enter your city"
+                            value={form.city}
+                            onChange={handleChange}
+                            className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
+                              errors.city
+                                ? "border-red-300 bg-red-50 focus:border-red-500"
+                                : "border-slate-200 bg-white hover:border-slate-300 focus:border-blue-500"
+                            }`}
+                          />
+                          {errors.city && (
+                            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                               <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                             </div>
                           )}
