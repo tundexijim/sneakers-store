@@ -1,8 +1,11 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import ProductCard from "../components/ProductCard";
-import { getAllProducts, PRODUCTS_PER_PAGE } from "../services/productService";
+import ProductCard from "@/components/ProductCard";
+import {
+  getProductsByCategory,
+  PRODUCTS_PER_PAGE,
+} from "@/services/productService";
 import { Product } from "@/types";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -16,6 +19,7 @@ type Props = {
   currentPage: number;
   sortBy: string;
   error: string;
+  catName: string;
 };
 
 export default function ProductsList({
@@ -24,6 +28,7 @@ export default function ProductsList({
   currentPage,
   sortBy,
   error,
+  catName,
 }: Props) {
   const totalPages = Math.ceil(total / PRODUCTS_PER_PAGE);
   const [viewMode, setViewMode] = useState("grid");
@@ -55,7 +60,7 @@ export default function ProductsList({
     const newSort = e.target.value;
     setSelectedSort(newSort);
     router.push({
-      pathname: "/productslist",
+      pathname: `/collections/${catName}`,
       query: { ...router.query, sortBy: newSort, page: 1 },
     });
   };
@@ -111,7 +116,7 @@ export default function ProductsList({
   return (
     <>
       <Head>
-        <title>Sneakers | DTwears</title>
+        <title>{`${catName} | DTwears`}</title>
         <meta name="description" content="Shop premium sneakers online" />
         <meta
           property="og:description"
@@ -172,7 +177,7 @@ export default function ProductsList({
           <div className="flex justify-center items-center mt-10 space-x-2 flex-wrap">
             <Link
               href={{
-                pathname: "/productslist",
+                pathname: `/collections/${catName}`,
                 query: {
                   page: Math.max(1, currentPage - 1),
                   sortBy: router.query.sortBy || "newest",
@@ -198,7 +203,7 @@ export default function ProductsList({
                 ) : (
                   <Link
                     href={{
-                      pathname: "/productslist",
+                      pathname: `/collections/${catName}`,
                       query: {
                         page: page,
                         sortBy: router.query.sortBy || "newest",
@@ -221,7 +226,7 @@ export default function ProductsList({
             ))}
             <Link
               href={{
-                pathname: "/productslist",
+                pathname: `/collections/${catName}`,
                 query: {
                   page: Math.min(totalPages, currentPage + 1),
                   sortBy: router.query.sortBy || "newest",
@@ -255,10 +260,16 @@ export default function ProductsList({
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const page = parseInt(context.query.page as string) || 1;
   const sortBy = (context.query.sortBy as string) || "newest";
+  const catName = context.params?.slug as string;
   try {
-    const { products, total } = await getAllProducts(page, sortBy);
+    const { products, total } = await getProductsByCategory(
+      catName,
+      page,
+      sortBy
+    );
     return {
       props: {
+        catName,
         products,
         total,
         currentPage: page,

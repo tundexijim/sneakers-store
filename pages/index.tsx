@@ -3,35 +3,40 @@ import { ArrowRight, Star, Zap, Shield, Truck } from "lucide-react";
 import RandomProducts from "@/components/RandomProducts";
 import Head from "next/head";
 import Link from "next/link";
-import { useIsClient } from "@/hooks/useIsClient";
+import { getAllCategories } from "@/services/categoriesService";
 import Image from "next/image";
+import { GetServerSideProps } from "next";
+import { Category } from "@/types";
 
-const SneakersHomepage = () => {
-  const categories = [
-    {
-      name: "Running",
-      image:
-        "https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=200&fit=crop",
-    },
-    {
-      name: "Basketball",
-      image:
-        "https://images.unsplash.com/photo-1552346154-21d32810aba3?w=300&h=200&fit=crop",
-    },
-    {
-      name: "Lifestyle",
-      image:
-        "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=300&h=200&fit=crop",
-    },
-    {
-      name: "Training",
-      image:
-        "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop",
-    },
-  ];
-  const isClient = useIsClient();
+type Props = {
+  categories: Category[];
+};
 
-  if (!isClient) return null;
+const SneakersHomepage = ({ categories }: Props) => {
+  // const categories = [
+  //   {
+  //     name: "Running",
+  //     image: "/images/jersies.webp",
+  //   },
+  //   {
+  //     name: "Basketball",
+  //     image:
+  //       "https://images.unsplash.com/photo-1552346154-21d32810aba3?w=300&h=200&fit=crop",
+  //   },
+  //   {
+  //     name: "Lifestyle",
+  //     image:
+  //       "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=300&h=200&fit=crop",
+  //   },
+  //   {
+  //     name: "Training",
+  //     image:
+  //       "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=200&fit=crop",
+  //   },
+  // ];
+  // const isClient = useIsClient();
+
+  // if (!isClient) return null;
 
   return (
     <>
@@ -76,14 +81,14 @@ const SneakersHomepage = () => {
                   <span>New Collection Available</span>
                 </div>
                 <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
-                  Step Into
+                  Step Up Your
                   <span className="block bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                    Excellence
+                    Game
                   </span>
                 </h1>
                 <p className="text-xl text-gray-300 max-w-lg">
-                  Discover premium sneakers that combine cutting-edge technology
-                  with timeless style. Every step matters.
+                  Discover the latest jerseys and sneakers to elevate your style
+                  and performance.
                 </p>
                 <Link href="/productslist">
                   <button className="bg-white text-black px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 flex items-center justify-center space-x-2 group cursor-pointer">
@@ -172,9 +177,9 @@ const SneakersHomepage = () => {
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-6">
               {categories.map((category, index) => (
-                <Link key={index} href="/productslist">
+                <Link key={index} href={`/collections/${category.name}`}>
                   <div className="relative group w-full h-48 cursor-pointer overflow-hidden rounded-xl">
                     <Image
                       src={category.image}
@@ -182,7 +187,7 @@ const SneakersHomepage = () => {
                       fill
                       className=" object-cover group-hover:scale-110 transition-transform duration-500"
                     />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+                    {/* <div className="a.bsolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div> */}
                     <div className="absolute bottom-4 left-4 right-4">
                       <h3 className="text-xl font-bold mb-1">
                         {category.name}
@@ -222,3 +227,16 @@ const SneakersHomepage = () => {
 };
 
 export default SneakersHomepage;
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  try {
+    const categories = await getAllCategories();
+    return {
+      props: { categories },
+    };
+  } catch (error: any) {
+    return {
+      props: { error: error.message },
+    };
+  }
+};

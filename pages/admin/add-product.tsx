@@ -23,6 +23,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
     description: product ? product.description : "",
     image: product ? product.image : "",
     sizes: product ? product.sizes : ([] as ProductSize[]),
+    categorySlug: product ? product.categorySlug : "",
   });
 
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -53,7 +54,9 @@ export default function AddProductPage({ product }: { product?: Product }) {
   console.log(imagePath);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
+    >
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     if (error) setError(""); // Clear error when user starts typing
@@ -171,6 +174,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
           description: "",
           image: "",
           sizes: [],
+          categorySlug: "",
         });
         setImageFile(null);
       }
@@ -385,6 +389,26 @@ export default function AddProductPage({ product }: { product?: Product }) {
                   rows={4}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors resize-none"
                 />
+              </div>
+
+              {/* Category */}
+
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-slate-700">
+                  Category <span className="text-red-500">*</span>
+                </label>
+                <select
+                  value={form.categorySlug}
+                  name="categorySlug"
+                  onChange={handleChange}
+                  className="w-full px-4 py-3 rounded-xl border border-gray-300 transition-all duration-200 focus:outline-none focus:ring-2  focus:ring-blue-500 focus:border-blue-500"
+                >
+                  <option value="" disabled>
+                    Select a Category
+                  </option>
+                  <option value="Sneakers">Sneakers</option>
+                  <option value="Jersey">Jersey</option>
+                </select>
               </div>
 
               {/* Sizes */}

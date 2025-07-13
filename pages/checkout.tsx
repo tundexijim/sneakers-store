@@ -85,7 +85,7 @@ export default function CheckoutPage() {
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const state = e.target.value;
     setSelectedState(state);
-    setShippingCost(getStateCode(state));
+    setShippingCost(total <= 75000 ? getStateCode(state) : 0);
     if (errors.state) {
       setErrors((prev) => ({ ...prev, state: false }));
     }
@@ -480,9 +480,9 @@ export default function CheckoutPage() {
                         </label>
                         <div className="relative">
                           <Home className="absolute left-3 top-4 w-5 h-5 text-slate-400" />
-                          <textarea
+                          <input
+                            type="text"
                             name="address"
-                            rows={1}
                             placeholder="Enter your complete shipping address"
                             value={form.address}
                             onChange={handleChange}

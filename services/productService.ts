@@ -122,6 +122,7 @@ export async function fetchProductsByIds(ids: string[]): Promise<Product[]> {
             randomValue: data.randomValue,
             sizes: data.sizes || [],
             description: data.description || "",
+            categorySlug: data.categorySlug,
             createdAt: data.createdAt?.toDate?.()?.toISOString() || null,
           });
         } else {
@@ -163,6 +164,55 @@ export const getProductBySlug = async (
   }
 };
 
+// get products by category
+export async function getProductsByCategory(
+  categoryName: string,
+  page = 1,
+  sortBy = "newest"
+) {
+  try {
+    const [sortField, direction] = getSortParams(sortBy);
+    const itemsToFetch = page * PRODUCTS_PER_PAGE;
+
+    const q = query(
+      collection(db, "products"),
+      where("categorySlug", "==", categoryName),
+      orderBy(sortField, direction),
+      limit(itemsToFetch)
+    );
+    const snapshot = await getDocs(q);
+    const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
+    const products = snapshot.docs
+      .slice(startIndex, startIndex + PRODUCTS_PER_PAGE)
+      .map((doc) => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          createdAt: data.createdAt?.toDate().toISOString() || null,
+        };
+      });
+
+    const countQuery = query(
+      collection(db, "products"),
+      where("categoryName", "==", categoryName)
+    );
+    const countSnapshot = await getCountFromServer(countQuery);
+    const total = countSnapshot.data().count;
+
+    return {
+      products,
+      total,
+      hasNextPage:
+        snapshot.docs.length === itemsToFetch &&
+        products.length === PRODUCTS_PER_PAGE,
+      currentPage: page,
+    };
+  } catch (error) {
+    console.error("Error fetching products by category:", error);
+    throw new Error("Error fetching products by category");
+  }
+}
 //add product
 
 export async function saveProduct(product: {
@@ -171,6 +221,7 @@ export async function saveProduct(product: {
   description: string;
   image: string;
   sizes: ProductSize[];
+  categorySlug: string;
 }) {
   const slug = await generateSlug(product.name);
   const productRef = collection(db, "products");
@@ -206,6 +257,7 @@ type UpdateProductData = {
   price?: number;
   description?: string;
   image?: string;
+  categorySlug?: string;
   sizes?: { size: number; stock: number }[];
   [key: string]: any; // Allow other dynamic fields
 };
