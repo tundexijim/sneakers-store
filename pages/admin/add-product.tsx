@@ -406,8 +406,8 @@ export default function AddProductPage({ product }: { product?: Product }) {
                   <option value="" disabled>
                     Select a Category
                   </option>
-                  <option value="Sneakers">Sneakers</option>
-                  <option value="Jerseys">Jerseys</option>
+                  <option value="sneakers">Sneakers</option>
+                  <option value="jerseys">Jerseys</option>
                 </select>
               </div>
 

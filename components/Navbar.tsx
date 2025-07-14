@@ -228,7 +228,8 @@ export default function Navbar() {
           <div className="hidden md:flex items-center space-x-8">
             {combinedNavigationLinks.map(({ href, label }) => (
               <NavLink key={href} href={href}>
-                {label}
+                {label.charAt(0).toLocaleUpperCase() +
+                  label.slice(1).toLocaleLowerCase()}
               </NavLink>
             ))}
             <CartBadge />
@@ -265,7 +266,8 @@ export default function Navbar() {
             <nav className="space-y-2">
               {combinedNavigationLinks.map(({ href, label }) => (
                 <NavLink key={href} href={href} mobile>
-                  {label}
+                  {label.charAt(0).toLocaleUpperCase() +
+                    label.slice(1).toLocaleLowerCase()}
                 </NavLink>
               ))}
             </nav>

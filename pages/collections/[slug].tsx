@@ -116,7 +116,10 @@ export default function ProductsList({
   return (
     <>
       <Head>
-        <title>{`${catName} | DTwears`}</title>
+        <title>{`${
+          catName.charAt(0).toLocaleUpperCase() +
+          catName.slice(1).toLocaleLowerCase()
+        } | DTwears`}</title>
         <meta name="description" content="Shop premium sneakers online" />
         <meta
           property="og:description"
@@ -147,7 +150,10 @@ export default function ProductsList({
       </Head>
 
       <main className="container mx-auto md:px-16 px-2 py-8">
-        <h1 className="text-3xl font-bold mb-6">{catName}</h1>
+        <h1 className="text-3xl font-bold mb-6">
+          {catName.charAt(0).toLocaleUpperCase() +
+            catName.slice(1).toLocaleLowerCase()}
+        </h1>
         <ProductListPanel
           viewMode={viewMode}
           setViewMode={setViewMode}

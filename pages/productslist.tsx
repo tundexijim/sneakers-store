@@ -142,7 +142,7 @@ export default function ProductsList({
       </Head>
 
       <main className="container mx-auto md:px-16 px-2 py-8">
-        <h1 className="text-3xl font-bold mb-6">Sneakers</h1>
+        <h1 className="text-3xl font-bold mb-6">Shop All</h1>
         <ProductListPanel
           viewMode={viewMode}
           setViewMode={setViewMode}
