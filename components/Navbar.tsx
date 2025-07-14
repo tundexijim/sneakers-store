@@ -5,16 +5,7 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/router";
 import { useIsClient } from "@/hooks/useIsClient";
 import Image from "next/image";
-
-// Scroll position persistence
-let scrollY = 0;
-
-// Navigation links configuration
-const navigationLinks = [
-  { href: "/", label: "Home", icon: Home },
-  { href: "/productslist", label: "Shop", icon: Store },
-  { href: "/AboutUs", label: "About Us", icon: Users },
-];
+import { getAllCategories } from "@/services/categoriesService";
 
 export default function Navbar() {
   const router = useRouter();
@@ -22,12 +13,38 @@ export default function Navbar() {
   const itemCount = cart.reduce((sum, item) => sum + item.qty, 0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [categories, setCategories] = useState<any[]>([]);
+
   const isClient = useIsClient();
 
   // Refs
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
+  // Fetch categories on component mount
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const fetchedCategories = await getAllCategories();
+        setCategories(fetchedCategories);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategories();
+  }, []);
+
+  // Combine static links with category links
+  const combinedNavigationLinks = [
+    { href: "/productslist", label: "Shop" },
+    ...categories.map((cat) => ({
+      href: `/collections/${cat.name}`,
+      label: cat.name,
+      // No icon for categories
+    })),
+  ];
+  console.log(categories);
   // Handle scroll effect for navbar
   useEffect(() => {
     const handleScroll = () => {
@@ -209,7 +226,7 @@ export default function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            {navigationLinks.map(({ href, label }) => (
+            {combinedNavigationLinks.map(({ href, label }) => (
               <NavLink key={href} href={href}>
                 {label}
               </NavLink>
@@ -246,9 +263,8 @@ export default function Navbar() {
         >
           <div className="p-6">
             <nav className="space-y-2">
-              {navigationLinks.map(({ href, label, icon: Icon }) => (
+              {combinedNavigationLinks.map(({ href, label }) => (
                 <NavLink key={href} href={href} mobile>
-                  <Icon size={20} />
                   {label}
                 </NavLink>
               ))}
