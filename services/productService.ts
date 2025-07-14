@@ -195,7 +195,7 @@ export async function getProductsByCategory(
 
     const countQuery = query(
       collection(db, "products"),
-      where("categoryName", "==", categoryName)
+      where("categorySlug", "==", categoryName)
     );
     const countSnapshot = await getCountFromServer(countQuery);
     const total = countSnapshot.data().count;
