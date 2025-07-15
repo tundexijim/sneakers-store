@@ -14,7 +14,9 @@ import { DeleteDialog, InfoDialog } from "@/components/DialogBox";
 
 export default function ProductPage({ product }: { product: Product }) {
   const { addToCart, cart } = useCart();
-  const [selectedSize, setSelectedSize] = useState<number | null>(null);
+  const [selectedSize, setSelectedSize] = useState<number | string | null>(
+    null
+  );
   const isInCart = cart.some((item) => item.id === product.id);
   const { user } = useAuth();
   const [stockinsize, setstockInSize] = useState<number | null>(null);
@@ -62,7 +64,7 @@ export default function ProductPage({ product }: { product: Product }) {
     }
   };
 
-  const handleSelectSize = (size: number, stock: number) => {
+  const handleSelectSize = (size: number | string, stock: number) => {
     setSelectedSize(size);
     setstockInSize(stock);
   };
@@ -166,7 +168,7 @@ export default function ProductPage({ product }: { product: Product }) {
                 </div>
                 <div className="grid grid-cols-4 gap-3">
                   {product.sizes
-                    .sort((a, b) => a.size - b.size)
+                    .sort((a: any, b: any) => a.size - b.size)
                     .map((size, i) => (
                       <div className="relative" key={i}>
                         <button

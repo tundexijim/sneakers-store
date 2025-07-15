@@ -1,11 +1,10 @@
 import Link from "next/link";
 import { useCart } from "../context/CartContext";
-import { Menu, ShoppingCart, X, Home, Store, Users } from "lucide-react";
+import { Menu, ShoppingCart, X } from "lucide-react";
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useRouter } from "next/router";
 import { useIsClient } from "@/hooks/useIsClient";
 import Image from "next/image";
-import { getAllCategories } from "@/services/categoriesService";
 
 export default function Navbar() {
   const router = useRouter();
@@ -13,38 +12,18 @@ export default function Navbar() {
   const itemCount = cart.reduce((sum, item) => sum + item.qty, 0);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
-  const [categories, setCategories] = useState<any[]>([]);
-
   const isClient = useIsClient();
 
   // Refs
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-
-  // Fetch categories on component mount
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const fetchedCategories = await getAllCategories();
-        setCategories(fetchedCategories);
-      } catch (error) {
-        console.error("Error fetching categories:", error);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
   // Combine static links with category links
   const combinedNavigationLinks = [
     { href: "/productslist", label: "Shop" },
-    ...categories.map((cat) => ({
-      href: `/collections/${cat.name}`,
-      label: cat.name,
-      // No icon for categories
-    })),
+    { href: "/collections/jerseys", label: "Jerseys" },
+    { href: "/collections/sneakers", label: "Sneakers" },
   ];
-  console.log(categories);
+
   // Handle scroll effect for navbar
   useEffect(() => {
     const handleScroll = () => {
@@ -84,32 +63,6 @@ export default function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isMenuOpen, handleClickOutside]);
 
-  // Body scroll lock for mobile menu
-  useEffect(() => {
-    if (isMenuOpen) {
-      scrollY = window.scrollY;
-      const scrollBarWidth =
-        window.innerWidth - document.documentElement.clientWidth;
-
-      document.body.style.cssText = `
-        overflow: hidden;
-        padding-right: ${scrollBarWidth}px;
-        position: fixed;
-        top: -${scrollY}px;
-        left: 0;
-        right: 0;
-        width: 100%;
-      `;
-    } else {
-      document.body.style.cssText = "";
-      window.scrollTo(0, scrollY);
-    }
-
-    return () => {
-      document.body.style.cssText = "";
-    };
-  }, [isMenuOpen]);
-
   // Toggle menu function
   const toggleMenu = useCallback(() => {
     setIsMenuOpen((prev) => !prev);
@@ -142,7 +95,7 @@ export default function Navbar() {
     className?: string;
     mobile?: boolean;
   }) => {
-    const isActive = router.pathname === href;
+    const isActive = router.asPath === href || router.asPath.startsWith(href);
 
     return (
       <Link

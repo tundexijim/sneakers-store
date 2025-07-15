@@ -1,6 +1,6 @@
 // types/Product.ts
 export type ProductSize = {
-  size: number;
+  size: number | string;
   stock: number;
 };
 export type Product = {
@@ -23,4 +23,4 @@ export type Category = {
   // createdAt: string;
 };
 
-export type CartItem = Product & { qty: number; selectedSize: number };
+export type CartItem = Product & { qty: number; selectedSize: number | string };

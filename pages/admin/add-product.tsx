@@ -106,14 +106,13 @@ export default function AddProductPage({ product }: { product?: Product }) {
   };
 
   const addSize = () => {
-    const size = parseInt(sizeInput.size.trim(), 10);
+    const trimmedSize = sizeInput.size.trim();
+    const size = /^\d+$/.test(trimmedSize)
+      ? parseInt(trimmedSize, 10)
+      : trimmedSize;
     const stock = parseInt(sizeInput.stock.trim(), 10);
 
-    if (
-      !isNaN(size) &&
-      !isNaN(stock) &&
-      !form.sizes.some((s) => s.size === size)
-    ) {
+    if (!isNaN(stock) && !form.sizes.some((s) => s.size === size)) {
       setForm((prev) => ({
         ...prev,
         sizes: [...prev.sizes, { size, stock }],
@@ -421,7 +420,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
                     <div className="flex-1">
                       <input
                         name="size"
-                        type="number"
+                        type="text"
                         value={sizeInput.size}
                         onChange={handlesizeInputchange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"

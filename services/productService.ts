@@ -258,7 +258,7 @@ type UpdateProductData = {
   description?: string;
   image?: string;
   categorySlug?: string;
-  sizes?: { size: number; stock: number }[];
+  sizes?: { size: number | string; stock: number }[];
   [key: string]: any; // Allow other dynamic fields
 };
 

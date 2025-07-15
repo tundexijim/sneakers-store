@@ -59,9 +59,10 @@ export default function ProductsList({
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newSort = e.target.value;
     setSelectedSort(newSort);
+    const { slug, ...queryParams } = router.query;
     router.push({
       pathname: `/collections/${catName}`,
-      query: { ...router.query, sortBy: newSort, page: 1 },
+      query: { ...queryParams, sortBy: newSort, page: 1 },
     });
   };
 
@@ -267,12 +268,18 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   const page = parseInt(context.query.page as string) || 1;
   const sortBy = (context.query.sortBy as string) || "newest";
   const catName = context.params?.slug as string;
+
   try {
     const { products, total } = await getProductsByCategory(
       catName,
       page,
       sortBy
     );
+
+    if (!products || products.length === 0) {
+      return { notFound: true };
+    }
+
     return {
       props: {
         catName,
