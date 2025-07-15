@@ -10,8 +10,8 @@ import { CartItem } from "../types";
 type CartContextType = {
   cart: CartItem[];
   addToCart: (item: CartItem) => void;
-  removeFromCart: (id: string, size: number) => void;
-  updateQty: (id: string, size: number, qty: number) => void;
+  removeFromCart: (id: string, size: number | string) => void;
+  updateQty: (id: string, size: number | string, qty: number) => void;
   clearCart: () => void;
   total: number;
   setCart: React.Dispatch<React.SetStateAction<CartItem[]>>;
@@ -53,13 +53,13 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const removeFromCart = (id: string, size: number) => {
+  const removeFromCart = (id: string, size: number | string) => {
     setCart((prev) =>
       prev.filter((item) => item.id !== id || item.selectedSize !== size)
     );
   };
 
-  const updateQty = (id: string, size: number, qty: number) => {
+  const updateQty = (id: string, size: number | string, qty: number) => {
     // if (qty < 1) return;
     setCart((prev) =>
       prev.map((item) =>

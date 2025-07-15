@@ -17,7 +17,7 @@ export interface OrderData {
     name: string;
     qty: number;
     price: number;
-    selectedSize: number;
+    selectedSize: number | string;
   }[];
   customer: {
     firstname: string;
