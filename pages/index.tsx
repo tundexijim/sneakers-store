@@ -66,7 +66,7 @@ const SneakersHomepageContent = ({
         />
         <meta
           name="twitter:image"
-          content="https://www.dtwears.ng/images/sneakers.webp"
+          content="https://www.dtwears.ng/images/heroimage.jpg"
         />
         <meta name="twitter:image:width" content="1200" />
         <meta name="twitter:image:height" content="628" />
@@ -74,10 +74,21 @@ const SneakersHomepageContent = ({
 
       <div className="min-h-screen bg-white">
         {/* Hero Section */}
-        <section className="relative bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 overflow-hidden px-2 md:px-16">
-          <div className="absolute inset-0 bg-black/20"></div>
-          <div className="relative container mx-auto px-4 py-16 lg:py-24">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
+        <section
+          className="relative min-h-screen bg-cover bg-center bg-no-repeat overflow-hidden px-2 md:px-16"
+          style={{
+            backgroundImage:
+              "url('https://www.dtwears.ng/images/heroimage.jpg')",
+          }}
+        >
+          {/* Dark overlay for better text readability */}
+          <div className="absolute inset-0 bg-black/60"></div>
+
+          {/* Gradient overlay for extra depth */}
+          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/40 via-transparent to-slate-900/40"></div>
+
+          <div className="relative container mx-auto px-4 py-16 lg:py-24 min-h-screen flex items-center">
+            <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
               <div className="text-white space-y-6">
                 <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm">
                   <Zap className="w-4 h-4 text-yellow-400" />
@@ -100,15 +111,18 @@ const SneakersHomepageContent = ({
                   </button>
                 </Link>
               </div>
-              <div className="relative w-full h-96">
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl blur-3xl opacity-30 animate-pulse"></div>
-                <Image
-                  src="https://www.dtwears.ng/images/sneakers.webp"
-                  alt="Featured Sneaker"
-                  className="relative w-full h-96 object-cover rounded-3xl shadow-2xl"
-                  fill
-                  priority
-                />
+
+              {/* Optional: Keep some visual element on the right side */}
+              <div className="relative w-full h-96 lg:block hidden">
+                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl blur-3xl opacity-20 animate-pulse"></div>
+                <div className="relative w-full h-96 bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 flex items-center justify-center">
+                  <div className="text-center text-white/70">
+                    <h3 className="text-2xl font-bold mb-2">
+                      Premium Collection
+                    </h3>
+                    <p className="text-sm">Curated just for you</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -187,7 +201,7 @@ const SneakersHomepageContent = ({
                     key={category.id || index}
                     href={`collections/${category.name}`}
                   >
-                    <div className="relative group w-full h-48 cursor-pointer overflow-hidden rounded-xl">
+                    <div className="relative group w-full h-80 cursor-pointer overflow-hidden rounded-xl">
                       <Image
                         src={category.image}
                         alt={category.name}
