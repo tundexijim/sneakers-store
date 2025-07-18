@@ -52,8 +52,8 @@ const Footer = () => {
           <div className="lg:col-span-1">
             <h2 className="text-2xl font-bold mb-4">DTWEARS</h2>
             <p className="text-gray-300 mb-6 text-sm leading-relaxed">
-              Your ultimate destination for authentic sneakers. From classic
-              retros to the latest drops, we've got your feet covered.
+              Your ultimate destination for authentic sneakers and jerseys. From
+              classic retros to the latest drops, we've got your feet covered.
             </p>
 
             <div className="space-y-3 text-sm">

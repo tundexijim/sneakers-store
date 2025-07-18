@@ -1,4 +1,5 @@
 import { db } from "@/lib/firebaseConfig";
+import { Category } from "@/types";
 import { collection, getDocs } from "firebase/firestore";
 
 // get all categories
@@ -10,9 +11,7 @@ export async function getAllCategories() {
       return {
         id: doc.id,
         ...data,
-        // createdAt: data.createdAt?.toDate().toISOString() || null,
-        // updatedAt: data.updatedAt?.toDate().toISOString() || null,
-      };
+      } as Category;
     });
 
     return categories;

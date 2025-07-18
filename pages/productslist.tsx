@@ -9,6 +9,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductListPanel from "@/components/ProductListPanel";
 import { useRouter } from "next/router";
 import { LoadingOverlay } from "@/components/Loading";
+import CategoryBadge from "@/components/Categorybadge";
 
 type Props = {
   products: Product[];
@@ -141,8 +142,8 @@ export default function ProductsList({
         <link rel="canonical" href="https://dtwears.ng" />
       </Head>
 
-      <main className="container mx-auto md:px-16 px-2 py-8">
-        <h1 className="text-3xl font-bold mb-6">Shop All</h1>
+      <main className="container mx-auto md:px-16 px-2 pb-8">
+        <CategoryBadge category="Shop" />{" "}
         <ProductListPanel
           viewMode={viewMode}
           setViewMode={setViewMode}
@@ -166,7 +167,6 @@ export default function ProductsList({
             ))}
           </div>
         </LoadingOverlay>
-
         {/* pagination */}
         {totalPages > 1 && (
           <div className="flex justify-center items-center mt-10 space-x-2 flex-wrap">
@@ -242,7 +242,6 @@ export default function ProductsList({
             </Link>
           </div>
         )}
-
         <div className="text-center mt-4 text-sm text-gray-600">
           Showing {(currentPage - 1) * PRODUCTS_PER_PAGE + 1} to{" "}
           {Math.min(currentPage * PRODUCTS_PER_PAGE, total)} of {total}

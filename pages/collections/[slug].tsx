@@ -12,6 +12,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import ProductListPanel from "@/components/ProductListPanel";
 import { useRouter } from "next/router";
 import { LoadingOverlay } from "@/components/Loading";
+import CategoryBadge from "@/components/Categorybadge";
 
 type Props = {
   products: Product[];
@@ -35,6 +36,9 @@ export default function ProductsList({
   const [selectedSort, setSelectedSort] = useState(sortBy);
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  const category =
+    catName.charAt(0).toLocaleUpperCase() +
+    catName.slice(1).toLocaleLowerCase();
 
   useEffect(() => {
     const handleRouteChangeStart = () => setIsLoading(true);
@@ -150,11 +154,8 @@ export default function ProductsList({
         <link rel="canonical" href="https://dtwears.ng" />
       </Head>
 
-      <main className="container mx-auto md:px-16 px-2 py-8">
-        <h1 className="text-3xl font-bold mb-6">
-          {catName.charAt(0).toLocaleUpperCase() +
-            catName.slice(1).toLocaleLowerCase()}
-        </h1>
+      <main className="container mx-auto md:px-16 px-2 pb-8">
+        <CategoryBadge category={category} />
         <ProductListPanel
           viewMode={viewMode}
           setViewMode={setViewMode}

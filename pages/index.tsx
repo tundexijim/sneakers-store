@@ -112,7 +112,7 @@ const SneakersHomepageContent = ({
                 </Link>
               </div>
 
-              {/* Optional: Keep some visual element on the right side */}
+              {/* Visual element on the right side */}
               <div className="relative w-full h-96 lg:block hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl blur-3xl opacity-20 animate-pulse"></div>
                 <div className="relative w-full h-96 bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 flex items-center justify-center">
@@ -138,7 +138,7 @@ const SneakersHomepageContent = ({
                 </div>
                 <h3 className="text-xl font-semibold">Free Shipping</h3>
                 <p className="text-gray-600">
-                  Free delivery on orders over ₦75,000. Fast and reliable
+                  Free delivery on orders over ₦100,000. Fast and reliable
                   shipping nationwide.
                 </p>
               </div>
@@ -158,8 +158,8 @@ const SneakersHomepageContent = ({
                 </div>
                 <h3 className="text-xl font-semibold">Premium Quality</h3>
                 <p className="text-gray-600">
-                  Carefully curated selection of the finest sneakers from top
-                  brands.
+                  Carefully curated selection of the finest sneakers and
+                  jerseys.
                 </p>
               </div>
             </div>
@@ -189,8 +189,8 @@ const SneakersHomepageContent = ({
                 Shop by Category
               </h2>
               <p className="text-gray-300 max-w-2xl mx-auto">
-                Find the perfect sneakers for every activity and lifestyle. From
-                performance to fashion.
+                Find the perfect sneakers and jerseys for every activity and
+                lifestyle. From performance to fashion.
               </p>
             </div>
 

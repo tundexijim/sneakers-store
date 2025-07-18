@@ -29,7 +29,7 @@ export default function CheckoutPage() {
   const router = useRouter();
 
   const [ShippingCost, setShippingCost] = useState(0);
-  const Subtotal = total + (total <= 75000 ? ShippingCost : 0);
+  const Subtotal = total + (total <= 100000 ? ShippingCost : 0);
 
   const [selectedState, setSelectedState] = useState("");
   const [form, setForm] = useState({
@@ -301,7 +301,7 @@ export default function CheckoutPage() {
           <div className="flex justify-between text-slate-600">
             <span>Shipping</span>
             <span>
-              {total <= 75000 ? formatPrice(ShippingCost) : formatPrice(0)}
+              {total <= 100000 ? formatPrice(ShippingCost) : formatPrice(0)}
             </span>
           </div>
           <div className="flex justify-between text-xl font-bold text-slate-900 pt-2">
@@ -569,8 +569,10 @@ export default function CheckoutPage() {
                     </h3>
                     <p className="text-slate-600 ">
                       Flat rate of {formatPrice(5000)} applies for delivery
-                      outside Lagos state. Rate of {formatPrice(3000)} applies
-                      within Lagos state.
+                      outside Lagos state.
+                      <br /> Rate of {formatPrice(3000)} applies within Lagos
+                      state. <br />
+                      Free shipping on orders above {formatPrice(100000)}.
                     </p>
                   </div>
 

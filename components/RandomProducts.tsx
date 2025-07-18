@@ -56,8 +56,8 @@ const RandomProducts: React.FC<RandomProductsProps> = ({
             Featured Releases
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Discover our handpicked selection of the latest and most coveted
-            sneakers from the world's top brands.
+            Discover our handpicked selection of the most coveted sneakers and
+            jerseys.
           </p>
         </div>
       ) : (
