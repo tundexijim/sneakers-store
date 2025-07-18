@@ -85,7 +85,7 @@ export default function CheckoutPage() {
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const state = e.target.value;
     setSelectedState(state);
-    setShippingCost(total <= 75000 ? getStateCode(state) : 0);
+    setShippingCost(total <= 100000 ? getStateCode(state) : 0);
     if (errors.state) {
       setErrors((prev) => ({ ...prev, state: false }));
     }
