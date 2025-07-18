@@ -18,6 +18,7 @@ import {
   Mail,
   Phone,
   Home,
+  CircleSmall,
 } from "lucide-react";
 import Image from "next/image";
 import { httpsCallable } from "firebase/functions";
@@ -27,10 +28,7 @@ import { payWithPaystack, PaystackResponse } from "@/util/paystack";
 export default function CheckoutPage() {
   const { cart, total, clearCart } = useCart();
   const router = useRouter();
-
   const [ShippingCost, setShippingCost] = useState(0);
-  const Subtotal = total + (total <= 100000 ? ShippingCost : 0);
-
   const [selectedState, setSelectedState] = useState("");
   const [form, setForm] = useState({
     firstname: "",
@@ -46,6 +44,13 @@ export default function CheckoutPage() {
   const [hasRestoredForm, setHasRestoredForm] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
   const isClient = useIsClient();
+  const Subtotal =
+    total +
+    (form.paymentMethod === "pay on delivery"
+      ? ShippingCost
+      : total <= 100000
+      ? ShippingCost
+      : 0);
   const formatPrice = (price: number) =>
     `₦${price.toLocaleString("en-US", {
       minimumFractionDigits: 2,
@@ -70,6 +75,10 @@ export default function CheckoutPage() {
     }
   }, [form, hasRestoredForm, isClient]);
 
+  useEffect(() => {
+    setShippingCost(getStateCode(selectedState));
+  }, [form.paymentMethod]);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -85,7 +94,14 @@ export default function CheckoutPage() {
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const state = e.target.value;
     setSelectedState(state);
-    setShippingCost(total <= 100000 ? getStateCode(state) : 0);
+    setShippingCost(
+      form.paymentMethod === "pay on delivery"
+        ? getStateCode(state)
+        : total <= 100000
+        ? getStateCode(state)
+        : 0
+    );
+
     if (errors.state) {
       setErrors((prev) => ({ ...prev, state: false }));
     }
@@ -301,7 +317,11 @@ export default function CheckoutPage() {
           <div className="flex justify-between text-slate-600">
             <span>Shipping</span>
             <span>
-              {total <= 100000 ? formatPrice(ShippingCost) : formatPrice(0)}
+              {form.paymentMethod === "pay on delivery"
+                ? formatPrice(ShippingCost)
+                : total <= 100000
+                ? formatPrice(ShippingCost)
+                : formatPrice(0)}
             </span>
           </div>
           <div className="flex justify-between text-xl font-bold text-slate-900 pt-2">
@@ -549,15 +569,27 @@ export default function CheckoutPage() {
                       </div>
                     </div>
                   </div>
+                  {/* shipping method for mobile */}
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50 md:hidden block">
                     <h3 className="text-xl font-semibold text-slate-900 mb-2">
                       Shipping
                     </h3>
-                    <p className="text-slate-600 ">
-                      Flat rate of {formatPrice(5000)} applies for delivery
-                      outside Lagos state. Rate of {formatPrice(3000)} applies
-                      within Lagos state.
-                    </p>
+                    <div className="flex flex-col gap-2">
+                      <p className="text-slate-600 flex items-center gap-2">
+                        <CircleSmall size={10} /> Flat rate of{" "}
+                        {formatPrice(5000)} applies for delivery outside Lagos
+                        state.
+                      </p>
+                      <p className="text-slate-600 flex items-center gap-2">
+                        <CircleSmall size={10} /> Rate of {formatPrice(3000)}{" "}
+                        applies within Lagos state.
+                      </p>
+                      <p className="text-slate-600 flex items-center gap-2">
+                        <CircleSmall size={10} /> Free shipping on orders above{" "}
+                        {formatPrice(100000)}. This does not apply if paying on
+                        delivery.
+                      </p>
+                    </div>
                   </div>
                   <div className="lg:hidden">
                     <OrderSummary />
@@ -567,13 +599,22 @@ export default function CheckoutPage() {
                     <h3 className="text-xl font-semibold text-slate-900 mb-2">
                       Shipping
                     </h3>
-                    <p className="text-slate-600 ">
-                      Flat rate of {formatPrice(5000)} applies for delivery
-                      outside Lagos state.
-                      <br /> Rate of {formatPrice(3000)} applies within Lagos
-                      state. <br />
-                      Free shipping on orders above {formatPrice(100000)}.
-                    </p>
+                    <div className="flex flex-col gap-2">
+                      <p className="text-slate-600 flex items-center gap-2">
+                        <CircleSmall size={10} /> Flat rate of{" "}
+                        {formatPrice(5000)} applies for delivery outside Lagos
+                        state.
+                      </p>
+                      <p className="text-slate-600 flex items-center gap-2">
+                        <CircleSmall size={10} /> Rate of {formatPrice(3000)}{" "}
+                        applies within Lagos state.
+                      </p>
+                      <p className="text-slate-600 flex items-center gap-2">
+                        <CircleSmall size={10} /> Free shipping on orders above{" "}
+                        {formatPrice(100000)}. This does not apply if paying on
+                        delivery.
+                      </p>
+                    </div>
                   </div>
 
                   {/* Payment Method */}
@@ -702,9 +743,6 @@ export default function CheckoutPage() {
                                   />
                                 </g>
                               </svg>
-                              <span className="text-blue-600 font-medium text-sm">
-                                +4
-                              </span>
                             </div>
                           </div>
                         </div>
