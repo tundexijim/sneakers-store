@@ -40,16 +40,12 @@ export default function ProductCard({
           <h3
             className={`${
               isListView ? "text-lg" : "text-xl"
-            } font-semibold group-hover:text-blue-600 transition-colors line-clamp-2`}
+            } font-semibold transition-colors line-clamp-2`}
           >
             {product.name}
           </h3>
           <div className="flex items-center justify-between">
-            <p
-              className={`${
-                isListView ? "text-xl" : "text-2xl"
-              } font-bold text-blue-600`}
-            >
+            <p className="text-[17px] font-semibold text-gray-500">
               {formatPrice(product.price)}
             </p>
           </div>

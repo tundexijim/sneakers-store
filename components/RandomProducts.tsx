@@ -49,7 +49,7 @@ const RandomProducts: React.FC<RandomProductsProps> = ({
     );
 
   return (
-    <section className="py-8">
+    <section>
       {type ? (
         <div className="mb-12 text-center">
           <h2 className="text-3xl lg:text-4xl font-bold mb-4">
@@ -61,24 +61,26 @@ const RandomProducts: React.FC<RandomProductsProps> = ({
           </p>
         </div>
       ) : (
-        <h2 className="text-3xl lg:text-4xl font-bold mb-8 mt-12">
+        <h2 className="text-3xl lg:text-4xl font-bold mb-8 mt-12 px-4 md:px-0">
           You Might Like
         </h2>
       )}
 
       {/* Mobile Slider (sm and below) */}
       <div className="sm:hidden">
-        <div className="flex overflow-x-auto gap-4 pb-4 scrollbar-hide snap-x snap-mandatory">
-          {products.map((p) => (
-            <div key={p.id} className="flex-none w-72 snap-start">
-              <ProductFeaturedCard product={p} />
-            </div>
-          ))}
+        <div className="px-4 overflow-x-auto scrollbar-hide">
+          <div className="flex gap-2 snap-x snap-mandatory w-max">
+            {products.map((p) => (
+              <div key={p.id} className="flex-none w-72 snap-start">
+                <ProductFeaturedCard product={p} />
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
       {/* Grid Layout (sm and above) */}
-      <div className="hidden sm:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="hidden sm:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {products.map((p) => (
           <ProductFeaturedCard key={p.id} product={p} />
         ))}

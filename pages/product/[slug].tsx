@@ -128,11 +128,11 @@ export default function ProductPage({ product }: { product: Product }) {
             <div className="space-y-8">
               {/* Header */}
               <div className="space-y-4">
-                <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight">
+                <h1 className="text-2xl lg:text-3xl font-semibold text-gray-900 leading-tight">
                   {product.name}
                 </h1>
                 <div className="flex items-center gap-4">
-                  <div className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                  <div className="text-xl font-semibold bg-gradient-to-r text-gray-600 bg-clip-text">
                     {formatPrice(product.price)}
                   </div>
                   {stock > 0 && (
@@ -162,11 +162,9 @@ export default function ProductPage({ product }: { product: Product }) {
               {/* Size Selection */}
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-xl font-bold text-gray-900">
-                    Select Size
-                  </h3>
+                  <h3 className="text-xl  text-gray-900">Select Size:</h3>
                 </div>
-                <div className="grid grid-cols-4 gap-3">
+                <div className="flex gap-2">
                   {product.sizes
                     .sort((a: any, b: any) => a.size - b.size)
                     .map((size, i) => (
@@ -176,7 +174,7 @@ export default function ProductPage({ product }: { product: Product }) {
                             handleSelectSize(size.size, size.stock)
                           }
                           disabled={size.stock === 0}
-                          className={`w-full h-14 border-2 rounded-xl font-bold text-lg transition-all duration-300 relative overflow-hidden ${
+                          className={`p-2 border-2 font-semibold text-lg transition-all duration-300 relative overflow-hidden ${
                             selectedSize === size.size
                               ? "bg-black text-white border-black shadow-lg scale-105"
                               : size.stock === 0
@@ -281,10 +279,8 @@ export default function ProductPage({ product }: { product: Product }) {
         </div>
 
         {/* Related Products */}
-        <div className="border-t border-gray-200 bg-white">
-          <div className="container mx-auto px-4 md:px-16">
-            <RandomProducts excludeIds={[product.id]} />
-          </div>
+        <div className="border-t border-gray-200 bg-white md:px-16 py-16">
+          <RandomProducts excludeIds={[product.id]} />
         </div>
 
         {/* Dialogs */}

@@ -167,17 +167,15 @@ const SneakersHomepageContent = ({
         </section>
 
         {/* Featured Products */}
-        <section className="py-16 px-2 md:px-16">
-          <div className="container mx-auto px-4">
-            <RandomProducts type="featured" />
-            <div className="text-center">
-              <Link href="/productslist">
-                <button className="bg-black text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-800 transition-colors duration-300 inline-flex items-center space-x-2 cursor-pointer">
-                  <span>View All Products</span>
-                  <ArrowRight className="w-5 h-5" />
-                </button>
-              </Link>
-            </div>
+        <section className="py-16 md:px-16">
+          <RandomProducts type="featured" />
+          <div className="text-center mt-4">
+            <Link href="/productslist">
+              <button className="bg-black text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-800 transition-colors duration-300 inline-flex items-center space-x-2 cursor-pointer">
+                <span>View All Products</span>
+                <ArrowRight className="w-5 h-5" />
+              </button>
+            </Link>
           </div>
         </section>
 

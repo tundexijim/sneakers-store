@@ -340,7 +340,9 @@ export default function CartPage() {
             </div>
           </>
         )}
-        <RandomProducts excludeIds={uniqueProductIds} />
+        <div className="py-16 md:m-0 -m-4">
+          <RandomProducts excludeIds={uniqueProductIds} />
+        </div>
       </main>
     </>
   );
