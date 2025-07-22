@@ -10,6 +10,7 @@ import {
 import { useIsClient } from "@/hooks/useIsClient";
 import { url } from "inspector";
 import Link from "next/link";
+import Image from "next/image";
 
 const Footer = () => {
   const isClient = useIsClient();
@@ -164,7 +165,12 @@ const Footer = () => {
             {/* Payment Methods */}
             <div className="flex items-center gap-4">
               <span className="text-sm text-gray-400">We Accept:</span>
-              <img src="/paystack.png" alt="Paystack" className="w-[300px]" />
+              <Image
+                src="/paystack.png"
+                alt="Paystack"
+                width={300}
+                height={50}
+              />
             </div>
 
             {/* Copyright */}

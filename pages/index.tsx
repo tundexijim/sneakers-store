@@ -131,7 +131,7 @@ const SneakersHomepageContent = ({
         {/* Features Section */}
         <section className="py-16 bg-gray-50 px-2 md:px-16">
           <div className="container mx-auto px-4">
-            <div className="grid md:grid-cols-3 gap-8">
+            <div className="grid md:grid-cols-2 gap-8">
               <div className="text-center space-y-4">
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
                   <Truck className="w-8 h-8 text-blue-600" />
@@ -140,16 +140,6 @@ const SneakersHomepageContent = ({
                 <p className="text-gray-600">
                   Free delivery on orders over ₦100,000. Fast and reliable
                   shipping nationwide.
-                </p>
-              </div>
-              <div className="text-center space-y-4">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                  <Shield className="w-8 h-8 text-green-600" />
-                </div>
-                <h3 className="text-xl font-semibold">Authentic Guarantee</h3>
-                <p className="text-gray-600">
-                  100% authentic products with official brand warranty and
-                  support.
                 </p>
               </div>
               <div className="text-center space-y-4">

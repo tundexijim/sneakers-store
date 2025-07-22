@@ -236,7 +236,7 @@ export default function ProductPage({ product }: { product: Product }) {
                       Free Shipping
                     </div>
                     <div className="text-sm text-gray-600">
-                      On orders over ₦75,000
+                      On orders over ₦100,000
                     </div>
                   </div>
                 </div>

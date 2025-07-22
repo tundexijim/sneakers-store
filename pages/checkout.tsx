@@ -10,7 +10,6 @@ import Link from "next/link";
 import { validateStockAvailability } from "@/util/saveOrder";
 import { Loading } from "@/components/Loading";
 import {
-  Building2,
   ShoppingBag,
   CreditCard,
   MapPin,
@@ -19,6 +18,7 @@ import {
   Phone,
   Home,
   CircleSmall,
+  Lock,
 } from "lucide-react";
 import Image from "next/image";
 import { httpsCallable } from "firebase/functions";
@@ -289,13 +289,12 @@ export default function CheckoutPage() {
               href={`/product/${item.slug}`}
               key={`${item.id}-${item.selectedSize}`}
             >
-              <div className="flex items-center p-4 mb-4 bg-slate-50 rounded-xl border border-slate-100">
-                <div className="flex-1">
+              <div className="grid grid-cols-3 p-4 mb-4 bg-slate-50 rounded-xl border border-slate-100">
+                <div className="w-12 h-12 relative">
                   <Image
                     src={item.image}
                     alt={item.name}
-                    width={60}
-                    height={60}
+                    fill
                     className="rounded-lg"
                   />
                 </div>
@@ -313,7 +312,7 @@ export default function CheckoutPage() {
           ))}
         </div>
 
-        <div className="space-y-3 pt-4 border-t border-slate-200">
+        <div className=" space-y-3 pt-4 border-t border-slate-200">
           <div className="flex justify-between text-slate-600">
             <span>Shipping</span>
             <span>
@@ -571,50 +570,74 @@ export default function CheckoutPage() {
                   </div>
                   {/* shipping method for mobile */}
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50 md:hidden block">
-                    <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4">
                       Shipping
-                    </h3>
-                    <div className="flex flex-col gap-2">
-                      <p className="text-slate-600 flex items-center gap-2">
-                        <CircleSmall size={10} /> Flat rate of{" "}
-                        {formatPrice(5000)} applies for delivery outside Lagos
-                        state.
-                      </p>
-                      <p className="text-slate-600 flex items-center gap-2">
-                        <CircleSmall size={10} /> Rate of {formatPrice(3000)}{" "}
-                        applies within Lagos state.
-                      </p>
-                      <p className="text-slate-600 flex items-center gap-2">
-                        <CircleSmall size={10} /> Free shipping on orders above{" "}
-                        {formatPrice(100000)}. This does not apply if paying on
-                        delivery.
-                      </p>
-                    </div>
+                    </h2>
+
+                    <ul className="space-y-3 text-gray-700">
+                      <li className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>
+                          Flat rate of{" "}
+                          <span className="font-medium">₦5,000.00</span> applies
+                          for delivery outside Lagos state.
+                        </span>
+                      </li>
+
+                      <li className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>
+                          Rate of <span className="font-medium">₦3,000.00</span>{" "}
+                          applies within Lagos state.
+                        </span>
+                      </li>
+
+                      <li className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>
+                          Free shipping on orders above{" "}
+                          <span className="font-medium">₦100,000.00</span>. This
+                          does not apply if paying on delivery.
+                        </span>
+                      </li>
+                    </ul>
                   </div>
                   <div className="lg:hidden">
                     <OrderSummary />
                   </div>
                   {/* shipping method for desktop */}
-                  <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50 hidden md:block">
-                    <h3 className="text-xl font-semibold text-slate-900 mb-2">
+                  <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border hidden md:block border-slate-200/50 ">
+                    <h2 className="text-xl font-semibold text-gray-900 mb-4">
                       Shipping
-                    </h3>
-                    <div className="flex flex-col gap-2">
-                      <p className="text-slate-600 flex items-center gap-2">
-                        <CircleSmall size={10} /> Flat rate of{" "}
-                        {formatPrice(5000)} applies for delivery outside Lagos
-                        state.
-                      </p>
-                      <p className="text-slate-600 flex items-center gap-2">
-                        <CircleSmall size={10} /> Rate of {formatPrice(3000)}{" "}
-                        applies within Lagos state.
-                      </p>
-                      <p className="text-slate-600 flex items-center gap-2">
-                        <CircleSmall size={10} /> Free shipping on orders above{" "}
-                        {formatPrice(100000)}. This does not apply if paying on
-                        delivery.
-                      </p>
-                    </div>
+                    </h2>
+
+                    <ul className="space-y-3 text-gray-700">
+                      <li className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>
+                          Flat rate of{" "}
+                          <span className="font-medium">₦5,000.00</span> applies
+                          for delivery outside Lagos state.
+                        </span>
+                      </li>
+
+                      <li className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>
+                          Rate of <span className="font-medium">₦3,000.00</span>{" "}
+                          applies within Lagos state.
+                        </span>
+                      </li>
+
+                      <li className="flex items-start gap-3">
+                        <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                        <span>
+                          Free shipping on orders above{" "}
+                          <span className="font-medium">₦100,000.00</span>. This
+                          does not apply if paying on delivery.
+                        </span>
+                      </li>
+                    </ul>
                   </div>
 
                   {/* Payment Method */}
@@ -636,7 +659,7 @@ export default function CheckoutPage() {
                             : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
                         }`}
                       >
-                        <div className="p-6">
+                        <div className="p-4">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center space-x-4">
                               <input
@@ -645,109 +668,28 @@ export default function CheckoutPage() {
                                 value="paystack"
                                 checked={form.paymentMethod === "paystack"}
                                 onChange={handleChange}
-                                className="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-500"
+                                className="w-3 h-3 text-blue-600 border-slate-300 focus:ring-blue-500"
                               />
-
-                              <div>
-                                <p className="font-semibold text-slate-900">
-                                  Paystack
-                                </p>
-                                <p className="text-sm text-slate-600">
-                                  Pay with card, bank transfer, or USSD
-                                </p>
-                              </div>
+                              <p className="font-semibold text-slate-900">
+                                Paystack
+                              </p>
                             </div>
-                            <div className="flex items-center gap-0.5">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                x="0px"
-                                y="0px"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 120 120"
-                              >
-                                <rect
-                                  width="106"
-                                  height="4"
-                                  x="7"
-                                  y="96"
-                                  opacity=".35"
-                                ></rect>
-                                <rect
-                                  width="106"
-                                  height="72"
-                                  x="7"
-                                  y="24"
-                                  fill="#0075ff"
-                                ></rect>
-                                <path
-                                  d="M77,39c-6.567,0-12.539,2.535-17,6.676C55.539,41.535,49.567,39,43,39c-13.807,0-25,11.193-25,25 s11.193,25,25,25c6.567,0,12.539-2.535,17-6.676C64.461,86.465,70.433,89,77,89c13.807,0,25-11.193,25-25S90.807,39,77,39z"
-                                  opacity=".35"
-                                ></path>
-                                <path
-                                  fill="#ff1200"
-                                  d="M52,60c0-7.24,3.081-13.758,8-18.324C55.539,37.535,49.567,35,43,35c-13.807,0-25,11.193-25,25 s11.193,25,25,25c6.567,0,12.539-2.535,17-6.676C55.081,73.758,52,67.24,52,60z"
-                                ></path>
-                                <path
-                                  fill="#ffc400"
-                                  d="M77,35c-6.567,0-12.539,2.535-17,6.676C64.919,46.242,68,52.76,68,60s-3.081,13.758-8,18.324 C64.461,82.465,70.433,85,77,85c13.807,0,25-11.193,25-25S90.807,35,77,35z"
-                                ></path>
-                                <path
-                                  fill="#ff7500"
-                                  d="M68,60c0-7.24-3.081-13.758-8-18.324C55.081,46.242,52,52.76,52,60s3.081,13.758,8,18.324 C64.919,73.758,68,67.24,68,60z"
-                                ></path>
-                              </svg>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                x="0px"
-                                y="0px"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 48 48"
-                              >
-                                <path
-                                  fill="#1565C0"
-                                  d="M45,35c0,2.209-1.791,4-4,4H7c-2.209,0-4-1.791-4-4V13c0-2.209,1.791-4,4-4h34c2.209,0,4,1.791,4,4V35z"
-                                ></path>
-                                <path
-                                  fill="#FFF"
-                                  d="M15.186 19l-2.626 7.832c0 0-.667-3.313-.733-3.729-1.495-3.411-3.701-3.221-3.701-3.221L10.726 30v-.002h3.161L18.258 19H15.186zM17.689 30L20.56 30 22.296 19 19.389 19zM38.008 19h-3.021l-4.71 11h2.852l.588-1.571h3.596L37.619 30h2.613L38.008 19zM34.513 26.328l1.563-4.157.818 4.157H34.513zM26.369 22.206c0-.606.498-1.057 1.926-1.057.928 0 1.991.674 1.991.674l.466-2.309c0 0-1.358-.515-2.691-.515-3.019 0-4.576 1.444-4.576 3.272 0 3.306 3.979 2.853 3.979 4.551 0 .291-.231.964-1.888.964-1.662 0-2.759-.609-2.759-.609l-.495 2.216c0 0 1.063.606 3.117.606 2.059 0 4.915-1.54 4.915-3.752C30.354 23.586 26.369 23.394 26.369 22.206z"
-                                ></path>
-                                <path
-                                  fill="#FFC107"
-                                  d="M12.212,24.945l-0.966-4.748c0,0-0.437-1.029-1.573-1.029c-1.136,0-4.44,0-4.44,0S10.894,20.84,12.212,24.945z"
-                                ></path>
-                              </svg>
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="24"
-                                height="24"
-                                viewBox="0 0 462 161"
-                              >
-                                <g
-                                  fill="none"
-                                  fill-rule="evenodd"
-                                  transform="rotate(-90 80.5 80)"
-                                >
-                                  <path
-                                    fill="#ED342B"
-                                    d="M79.9417,159.8534 C36.0001,159.8534 0.3786,124.2319 0.3786,80.2903 C0.3786,36.3467 36.0001,0.7242 79.9417,0.7242 C123.8833,0.7242 159.5048,36.3467 159.5048,80.2903 C159.5048,124.2319 123.8833,159.8534 79.9417,159.8534"
-                                  />
-                                  <path
-                                    fill="#FEFEFE"
-                                    d="M45.8608,80.2892 C86.2011,62.4925 123.8866,49.4435 123.8866,49.4435 L123.8866,22.1612 C123.8866,22.1612 75.5171,38.7665 15.0281,69.6112 L15.0281,90.9673 C75.5171,121.812 123.8866,138.4162 123.8866,138.4162 L123.8866,111.1339 C123.8866,111.1339 86.2011,98.086 45.8608,80.2892"
-                                  />
-                                  <path
-                                    fill="#03435F"
-                                    d="M84.0912 422.9398C84.0912 407.5169 67.4829 406.3325 67.4829 406.3325L67.4829 439.5441C67.4829 439.5441 84.0912 438.3596 84.0912 422.9398M50.8776 459.7117L50.8776 406.3325C50.8776 406.3325 33.0818 407.5169 33.0818 431.2439 33.0818 443.1044 36.6442 454.9669 36.6442 454.9669L17.665 457.3408C17.665 457.3408 12.9172 445.4783 12.9172 428.87 12.9172 405.146 24.7807 383.7939 57.9943 383.7939 84.0912 383.7939 100.6985 400.4022 100.6985 424.1262 100.6985 459.7117 65.112 462.0826 50.8776 459.7117M78.9061 278.2023L98.492 281.8756C98.492 281.8756 107.098 253.5138 91.1494 230.4615L12.8057 230.4615 12.8057 254.9431 76.4602 254.9431C83.8018 264.7356 78.9061 278.2023 78.9061 278.2023M84.0912 176.1558C84.0912 160.736 67.4829 159.5505 67.4829 159.5505L67.4829 192.7631C67.4829 192.7631 84.0912 191.5787 84.0912 176.1558M50.8776 212.9278L50.8776 159.5505C50.8776 159.5505 33.0818 160.736 33.0818 184.46 33.0818 196.3195 36.6442 208.183 36.6442 208.183L17.665 210.5569C17.665 210.5569 12.9172 198.6934 12.9172 182.0861 12.9172 158.3621 24.7807 137.009 57.9943 137.009 84.0912 137.009 100.6985 153.6173 100.6985 177.3413 100.6985 212.9278 65.112 215.2987 50.8776 212.9278M42.7481 337.948C72.5852 325.5168 100.6842 319.3036 100.6842 319.3036L100.6812 294.4462C100.6812 294.4462 52.6944 306.8764 12.9319 328.0086L12.9319 347.8874C52.6944 369.0206 100.6742 381.4508 100.6742 381.4508L100.6742 356.5923C100.6742 356.5923 72.5852 350.3792 42.7481 337.948"
-                                  />
-                                </g>
-                              </svg>
-                            </div>
+                            <Image
+                              src="/paystack.png"
+                              alt="Paystack"
+                              width={150}
+                              height={50}
+                            />
                           </div>
                         </div>
                       </label>
-
+                      {form.paymentMethod === "paystack" && (
+                        <div className="mt-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200">
+                          <p className="text-sm text-slate-600">
+                            Pay with card, bank transfer, or USSD
+                          </p>
+                        </div>
+                      )}
                       {/* Bank Transfer Option */}
                       <label
                         className={`relative block cursor-pointer rounded-xl border-2 transition-all duration-200 ${
@@ -756,7 +698,7 @@ export default function CheckoutPage() {
                             : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
                         }`}
                       >
-                        <div className="p-6">
+                        <div className="p-4">
                           <div className="flex items-center space-x-4">
                             <input
                               type="radio"
@@ -764,19 +706,16 @@ export default function CheckoutPage() {
                               value="bank"
                               checked={form.paymentMethod === "bank"}
                               onChange={handleChange}
-                              className="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-500"
+                              className="w-3 h-3 text-blue-600 border-slate-300 focus:ring-blue-500"
                             />
                             <div className="flex items-center space-x-3">
-                              <div className="w-10 h-10 bg-gradient-to-r from-slate-600 to-slate-700 rounded-lg flex items-center justify-center">
-                                <Building2 className="w-5 h-5 text-white" />
-                              </div>
                               <div>
                                 <p className="font-semibold text-slate-900">
                                   Bank Transfer
                                 </p>
-                                <p className="text-sm text-slate-600">
+                                {/* <p className="text-sm text-slate-600">
                                   Direct bank transfer
-                                </p>
+                                </p> */}
                               </div>
                             </div>
                           </div>
@@ -787,9 +726,6 @@ export default function CheckoutPage() {
                       {form.paymentMethod === "bank" && (
                         <div className="mt-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200">
                           <div className="flex items-center mb-4">
-                            <div className="w-8 h-8 bg-slate-600 rounded-lg flex items-center justify-center mr-3">
-                              <Building2 className="w-4 h-4 text-white" />
-                            </div>
                             <p className="font-semibold text-slate-900">
                               Complete your transfer with these details:
                             </p>
@@ -821,8 +757,8 @@ export default function CheckoutPage() {
                             </div>
                           </div>
                           <div className="flex items-start space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                            <div className="w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                              <div className="w-2 h-2 bg-white rounded-full"></div>
+                            <div className="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
+                              <div className="w-1 h-1 bg-white rounded-full"></div>
                             </div>
                             <p className="text-sm text-blue-800">
                               All orders will be processed immediately after
@@ -840,7 +776,7 @@ export default function CheckoutPage() {
                             : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
                         }`}
                       >
-                        <div className="p-6">
+                        <div className="p-4">
                           <div className="flex items-center space-x-4">
                             <input
                               type="radio"
@@ -848,15 +784,12 @@ export default function CheckoutPage() {
                               value="pay on delivery"
                               checked={form.paymentMethod === "pay on delivery"}
                               onChange={handleChange}
-                              className="w-5 h-5 text-blue-600 border-slate-300 focus:ring-blue-500"
+                              className="w-3 h-3 text-blue-600 border-slate-300 focus:ring-blue-500"
                             />
                             <div className="flex items-center space-x-3">
                               <div>
                                 <p className="font-semibold text-slate-900">
                                   Pay on Delivery (POD)
-                                </p>
-                                <p className="text-sm text-slate-600">
-                                  Direct bank transfer
                                 </p>
                               </div>
                             </div>
@@ -900,14 +833,14 @@ export default function CheckoutPage() {
                       <button
                         type="submit"
                         disabled={loading}
-                        className="w-full relative bg-gradient-to-r cursor-pointer from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
+                        className="w-full relative bg-gradient-to-r rounded-xl cursor-pointer from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
                       >
                         <span
-                          className={`flex items-center justify-center ${
+                          className={`flex items-center justify-center gap-2 ${
                             loading ? "invisible" : ""
                           }`}
                         >
-                          Place Order
+                          <Lock size={15} /> Place Order
                         </span>
                         {loading && (
                           <div className="absolute inset-0 flex items-center justify-center">
@@ -924,14 +857,14 @@ export default function CheckoutPage() {
                     <button
                       onClick={handlePay}
                       disabled={loading}
-                      className="w-full relative bg-gradient-to-r cursor-pointer from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 rounded-xl transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
+                      className="w-full relative bg-gradient-to-r rounded-xl cursor-pointer from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
                     >
                       <span
-                        className={`flex items-center justify-center ${
+                        className={`flex items-center justify-center gap-2 ${
                           loading ? "invisible" : ""
                         }`}
                       >
-                        Place Order
+                        <Lock size={15} /> Place Order
                       </span>
                       {loading && (
                         <div className="absolute inset-0 flex items-center justify-center">
