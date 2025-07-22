@@ -106,7 +106,7 @@ export default function ProductPage({ product }: { product: Product }) {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
             {/* Product Image Section */}
             <div className="relative">
-              <div className="relative aspect-square bg-white rounded-3xl shadow-2xl overflow-hidden group">
+              <div className="relative aspect-square bg-white shadow-2xl overflow-hidden group">
                 <Image
                   src={product.image}
                   alt={product.name}

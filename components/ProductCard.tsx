@@ -17,7 +17,7 @@ export default function ProductCard({
   return (
     <Link href={`/product/${product.slug}`}>
       <div
-        className={`group cursor-pointer bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden ${
+        className={`group cursor-pointer bg-white shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden ${
           isListView
             ? "flex items-center justify-between space-x-4 p-4 mb-4"
             : ""
@@ -26,7 +26,7 @@ export default function ProductCard({
         <div
           className={`relative overflow-hidden ${
             isListView ? "w-24 h-24 flex-shrink-0" : "w-full h-60"
-          } bg-gray-100 ${isListView ? "rounded-lg" : "rounded-t-xl"}`}
+          } bg-gray-100`}
         >
           <Image
             src={product.image}
