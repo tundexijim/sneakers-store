@@ -101,6 +101,7 @@ export default function ProductsList({
     return pages;
   };
   const paginationNumbers = getPaginationNumbers();
+
   if (error) {
     return (
       <div className="flex items-center justify-center min-h-[400px] px-4">
@@ -154,7 +155,7 @@ export default function ProductsList({
         <link rel="canonical" href="https://dtwears.ng" />
       </Head>
 
-      <main className="container mx-auto md:px-16 px-2 pb-8">
+      <main className="container mx-auto md:px-16 px-2">
         <CategoryBadge category={category} />
         <ProductListPanel
           viewMode={viewMode}
@@ -163,25 +164,39 @@ export default function ProductsList({
           onSortChange={handleSortChange}
         />
         <LoadingOverlay isLoading={isLoading}>
-          <div
-            className={
-              viewMode === "grid"
-                ? "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-6 gap-y-10"
-                : "space-y-4"
-            }
-          >
-            {products.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                isListView={viewMode === "list"}
-              />
-            ))}
-          </div>
+          {products.length === 0 ? (
+            <div className="flex items-center justify-center min-h-[400px] px-4">
+              <div className="text-center">
+                <div className="text-gray-400 text-6xl mb-4">📦</div>
+                <p className="text-gray-600 text-lg font-medium">
+                  This product is not available for now
+                </p>
+                <p className="text-gray-500 text-sm mt-2">
+                  Please check back later or explore other categories
+                </p>
+              </div>
+            </div>
+          ) : (
+            <div
+              className={
+                viewMode === "grid"
+                  ? "grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-2 md:gap-6 gap-y-10"
+                  : "space-y-4"
+              }
+            >
+              {products.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  isListView={viewMode === "list"}
+                />
+              ))}
+            </div>
+          )}
         </LoadingOverlay>
 
         {/* pagination */}
-        {totalPages > 1 && (
+        {totalPages > 1 && products.length > 0 && (
           <div className="flex justify-center items-center mt-10 space-x-2 flex-wrap">
             <Link
               href={{
@@ -256,10 +271,12 @@ export default function ProductsList({
           </div>
         )}
 
-        <div className="text-center mt-4 text-sm text-gray-600">
-          Showing {(currentPage - 1) * PRODUCTS_PER_PAGE + 1} to{" "}
-          {Math.min(currentPage * PRODUCTS_PER_PAGE, total)} of {total}
-        </div>
+        {products.length > 0 && (
+          <div className="text-center mt-4 text-sm text-gray-600">
+            Showing {(currentPage - 1) * PRODUCTS_PER_PAGE + 1} to{" "}
+            {Math.min(currentPage * PRODUCTS_PER_PAGE, total)} of {total}
+          </div>
+        )}
       </main>
     </>
   );
@@ -277,7 +294,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       sortBy
     );
 
-    if (!products || products.length === 0) {
+    if (!products) {
       return { notFound: true };
     }
 

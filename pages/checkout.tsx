@@ -573,7 +573,6 @@ export default function CheckoutPage() {
                     <h2 className="text-xl font-semibold text-gray-900 mb-4">
                       Shipping
                     </h2>
-
                     <ul className="space-y-3 text-gray-700">
                       <li className="flex items-start gap-3">
                         <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 
@@ -21,10 +21,14 @@ export default function CategoryBadge({ category }: { category: string }) {
       <h1 className="text-4xl font-bold">{category}</h1>
       <p
         onClick={() => setShowDropdown(!showdropdown)}
-        className="flex cursor-pointer"
+        className="flex items-center cursor-pointer"
       >
         Categories
-        {showdropdown ? <ChevronUp /> : <ChevronDown />}
+        <ChevronDown
+          className={`w-4 h-4 transition-transform ${
+            showdropdown ? "rotate-180" : ""
+          }`}
+        />
       </p>
       {showdropdown &&
         categories.map(({ href, label }) => (

@@ -236,20 +236,42 @@ export async function saveProduct(product: {
 //delete product
 export async function deleteProduct(
   productId: string,
-  imagePath: string
+  imagePaths: string[]
 ): Promise<void> {
   try {
-    const imageRef = ref(storage, imagePath);
-    await deleteObject(imageRef);
+    // Delete all images with individual error handling
+    const deleteResults = await Promise.allSettled(
+      imagePaths.map(async (imagePath) => {
+        const imageRef = ref(storage, imagePath);
+        return deleteObject(imageRef);
+      })
+    );
+
+    // Log any failed image deletions
+    deleteResults.forEach((result, index) => {
+      if (result.status === "rejected") {
+        console.warn(
+          `Failed to delete image ${imagePaths[index]}:`,
+          result.reason
+        );
+      }
+    });
+
+    // Delete the product document
     const productRef = doc(db, "products", productId);
     await deleteDoc(productRef);
-    console.log(`Product with ID ${productId} deleted successfully.`);
+
+    const successfulDeletes = deleteResults.filter(
+      (r) => r.status === "fulfilled"
+    ).length;
+    console.log(
+      `Product with ID ${productId} deleted successfully. ${successfulDeletes}/${imagePaths.length} images deleted.`
+    );
   } catch (error) {
     console.error("Error deleting product:", error);
     throw new Error("Failed to delete the product.");
   }
 }
-
 //update product
 
 type UpdateProductData = {
@@ -263,19 +285,18 @@ type UpdateProductData = {
 };
 
 export async function updateProduct(
-  productId: string,
-  updatedData: UpdateProductData,
-  imagePath?: string
+  product: Product,
+  updatedData: UpdateProductData
 ) {
   try {
-    if (imagePath) {
-      const imageRef = ref(storage, imagePath);
-      await deleteObject(imageRef);
-    }
     const slug = await generateSlug(updatedData.name);
-    const productRef = doc(db, "products", productId);
-    await updateDoc(productRef, { ...updatedData, slug: slug });
-    console.log(`Product with ID ${productId} successfully updated.`);
+    const productRef = doc(db, "products", product.id);
+    if (product.name === updatedData.name) {
+      await updateDoc(productRef, updatedData);
+    } else {
+      await updateDoc(productRef, { ...updatedData, slug: slug });
+    }
+    console.log(`Product with ID ${product.id} successfully updated.`);
   } catch (error) {
     console.error("Error updating product:", error);
     throw error;

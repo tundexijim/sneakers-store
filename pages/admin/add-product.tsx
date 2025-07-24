@@ -2,7 +2,12 @@
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { storage } from "@/lib/firebaseConfig";
-import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
+import {
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/authContext";
 import Link from "next/link";
@@ -21,15 +26,19 @@ export default function AddProductPage({ product }: { product?: Product }) {
     name: product ? product.name : "",
     price: product ? product.price : 0,
     description: product ? product.description : "",
-    image: product ? product.image : "",
+    images: product ? (product.images as string[]) : ([] as string[]),
     sizes: product ? product.sizes : ([] as ProductSize[]),
     categorySlug: product ? product.categorySlug : "",
   });
 
-  const [imageFile, setImageFile] = useState<File | null>(null);
+  console.log(product);
+
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [loading, setloading] = useState(false);
-  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadProgress, setUploadProgress] = useState<{
+    [key: string]: number;
+  }>({});
   const [sizeInput, setSizeInput] = useState({ size: "", stock: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -50,8 +59,6 @@ export default function AddProductPage({ product }: { product?: Product }) {
     const pathEnd = decodedUrl.indexOf("?alt=");
     return decodedUrl.substring(pathStart, pathEnd);
   };
-  const imagePath = getPathFromUrl(product ? product.image : "");
-  console.log(imagePath);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -69,40 +76,86 @@ export default function AddProductPage({ product }: { product?: Product }) {
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setImageFile(e.target.files[0]);
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setImageFiles((prev) => [...prev, ...newFiles]);
       if (error) setError("");
     }
   };
 
   const handleUpload = async () => {
-    if (!imageFile) return;
-
-    const fileName = `${Date.now()}-${imageFile.name}`;
-    const storageRef = ref(storage, `products/${fileName}`);
-    const uploadTask = uploadBytesResumable(storageRef, imageFile);
+    if (imageFiles.length === 0) return;
 
     setUploading(true);
     setError("");
+    const uploadPromises: Promise<string>[] = [];
 
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setUploadProgress(progress);
-      },
-      (err) => {
-        setError("Upload failed: " + err.message);
-        setUploading(false);
-      },
-      async () => {
-        const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
-        setForm((prev) => ({ ...prev, image: downloadURL }));
-        setUploading(false);
-        setUploadProgress(0);
+    imageFiles.forEach((file, index) => {
+      const fileName = `${Date.now()}-${index}-${file.name}`;
+      const storageRef = ref(storage, `products/${fileName}`);
+      const uploadTask = uploadBytesResumable(storageRef, file);
+
+      const uploadPromise = new Promise<string>((resolve, reject) => {
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadProgress((prev) => ({
+              ...prev,
+              [fileName]: progress,
+            }));
+          },
+          (err) => {
+            reject(err);
+          },
+          async () => {
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            resolve(downloadURL);
+          }
+        );
+      });
+
+      uploadPromises.push(uploadPromise);
+    });
+
+    try {
+      const downloadURLs = await Promise.all(uploadPromises);
+      setForm((prev) => ({
+        ...prev,
+        images: [...prev.images, ...downloadURLs],
+      }));
+      setImageFiles([]);
+      setUploadProgress({});
+    } catch (err: any) {
+      setError("Upload failed: " + err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const removeImage = async (imageUrl: string, index: number) => {
+    try {
+      // If it's an existing image from the database, we might want to delete it from storage
+      const imagePath = getPathFromUrl(imageUrl);
+      if (imagePath) {
+        const imageRef = ref(storage, imagePath);
+        await deleteObject(imageRef);
       }
-    );
+    } catch (err) {
+      console.log("Error deleting image from storage:", err);
+      // Continue with removing from state even if storage deletion fails
+    }
+
+    // Remove from form state
+    setForm((prev) => ({
+      ...prev,
+      images: prev.images.filter((_, i) => i !== index),
+    }));
+  };
+
+  const removeFileFromQueue = (index: number) => {
+    setImageFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
   const addSize = () => {
@@ -133,13 +186,14 @@ export default function AddProductPage({ product }: { product?: Product }) {
     setError("");
     setSuccess("");
     setloading(true);
+
     if (!form.name) {
       setError("Please input product name.");
       setloading(false);
       return;
     }
-    if (!form.image) {
-      setError("Please upload an image before submitting.");
+    if (form.images.length === 0) {
+      setError("Please upload at least one image before submitting.");
       setloading(false);
       return;
     }
@@ -150,32 +204,30 @@ export default function AddProductPage({ product }: { product?: Product }) {
     }
 
     try {
+      // Prepare form data with images array
+      const formData = {
+        ...form,
+        price: Number(form.price),
+        image: form.images[0], // Keep backward compatibility by setting first image as main image
+        images: form.images,
+      };
+
       if (product) {
-        if (imageFile) {
-          await updateProduct(
-            product.id,
-            { ...form, price: Number(form.price) },
-            imagePath
-          );
-        } else {
-          await updateProduct(product.id, {
-            ...form,
-            price: Number(form.price),
-          });
-        }
+        // For updates, we'll handle the old image paths if needed
+        await updateProduct(product, formData); // Pass first old image path for compatibility
         setSuccess("Product updated successfully!");
       } else {
-        await saveProduct({ ...form, price: Number(form.price) });
+        await saveProduct(formData);
         setSuccess("Product added successfully!");
         setForm({
           name: "",
           price: 0,
           description: "",
-          image: "",
+          images: [],
           sizes: [],
           categorySlug: "",
         });
-        setImageFile(null);
+        setImageFiles([]);
       }
     } catch (err) {
       setError("Failed to save product.");
@@ -184,6 +236,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
       setloading(false);
     }
   };
+
   if (!isClient) return null;
   if (user?.email !== "ijimakindetunde@gmail.com") return null;
   if (authloading) {
@@ -208,10 +261,12 @@ export default function AddProductPage({ product }: { product?: Product }) {
             <div className="flex justify-between items-center py-4">
               <div>
                 <h1 className="text-2xl font-bold text-gray-900">
-                  Add New Product
+                  {product ? "Edit Product" : "Add New Product"}
                 </h1>
                 <p className="text-sm text-gray-600 mt-1">
-                  Create a new product for your inventory
+                  {product
+                    ? "Update product information"
+                    : "Create a new product for your inventory"}
                 </p>
               </div>
               <div className="flex items-center space-x-3">
@@ -266,7 +321,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
                 Product Information
               </h2>
               <p className="text-sm text-gray-600">
-                Fill in the details for your new product
+                Fill in the details for your product
               </p>
             </div>
 
@@ -391,7 +446,6 @@ export default function AddProductPage({ product }: { product?: Product }) {
               </div>
 
               {/* Category */}
-
               <div className="space-y-2">
                 <label className="block text-sm font-medium text-slate-700">
                   Category <span className="text-red-500">*</span>
@@ -489,8 +543,10 @@ export default function AddProductPage({ product }: { product?: Product }) {
               {/* Image Upload */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-4">
-                  Product Image <span className="text-red-500">*</span>
+                  Product Images <span className="text-red-500">*</span>
                 </label>
+
+                {/* File Upload Area */}
                 <div className="bg-gray-50 rounded-lg p-6 border-2 border-dashed border-gray-300 hover:border-gray-400 transition-colors">
                   <div className="text-center">
                     <svg
@@ -509,41 +565,95 @@ export default function AddProductPage({ product }: { product?: Product }) {
                     <div className="mt-4">
                       <label htmlFor="file-upload" className="cursor-pointer">
                         <span className="mt-2 block text-sm font-medium text-gray-900">
-                          {imageFile ? imageFile.name : "Choose image file"}
+                          {imageFiles.length > 0
+                            ? `${imageFiles.length} files selected`
+                            : "Choose image files"}
                         </span>
                         <input
                           id="file-upload"
                           type="file"
                           onChange={handleFileChange}
                           accept="image/*"
+                          multiple
                           className="sr-only"
                         />
                       </label>
                       <p className="mt-2 text-xs text-gray-500">
-                        PNG, JPG, GIF up to 10MB
+                        PNG, JPG, GIF up to 10MB each. Select multiple files.
                       </p>
                     </div>
                   </div>
                 </div>
 
-                {/* Upload Progress */}
-                {uploading && (
+                {/* Files in Upload Queue */}
+                {imageFiles.length > 0 && (
                   <div className="mt-4">
-                    <div className="flex justify-between text-sm text-gray-600 mb-1">
-                      <span>Uploading...</span>
-                      <span>{uploadProgress.toFixed(0)}%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div
-                        className="bg-blue-600 h-2 rounded-full transition-all duration-300"
-                        style={{ width: `${uploadProgress}%` }}
-                      ></div>
+                    <h4 className="text-sm font-medium text-gray-700 mb-2">
+                      Files ready to upload:
+                    </h4>
+                    <div className="space-y-2">
+                      {imageFiles.map((file, index) => (
+                        <div
+                          key={index}
+                          className="flex items-center justify-between p-2 bg-gray-50 rounded-lg"
+                        >
+                          <span className="text-sm text-gray-600">
+                            {file.name}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => removeFileFromQueue(index)}
+                            className="text-red-600 hover:text-red-800"
+                          >
+                            <svg
+                              className="w-4 h-4"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M6 18L18 6M6 6l12 12"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
 
+                {/* Upload Progress */}
+                {uploading && Object.keys(uploadProgress).length > 0 && (
+                  <div className="mt-4 space-y-2">
+                    <h4 className="text-sm font-medium text-gray-700">
+                      Upload Progress:
+                    </h4>
+                    {Object.entries(uploadProgress).map(
+                      ([fileName, progress]) => (
+                        <div key={fileName} className="space-y-1">
+                          <div className="flex justify-between text-sm text-gray-600">
+                            <span>
+                              {fileName.split("-").slice(2).join("-")}
+                            </span>
+                            <span>{progress.toFixed(0)}%</span>
+                          </div>
+                          <div className="w-full bg-gray-200 rounded-full h-2">
+                            <div
+                              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                              style={{ width: `${progress}%` }}
+                            ></div>
+                          </div>
+                        </div>
+                      )
+                    )}
+                  </div>
+                )}
+
                 {/* Upload Button */}
-                {imageFile && !uploading && (
+                {imageFiles.length > 0 && !uploading && (
                   <div className="mt-4">
                     <button
                       type="button"
@@ -563,41 +673,58 @@ export default function AddProductPage({ product }: { product?: Product }) {
                           d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                         />
                       </svg>
-                      Upload Image
+                      Upload {imageFiles.length} Image
+                      {imageFiles.length > 1 ? "s" : ""}
                     </button>
                   </div>
                 )}
 
-                {/* Image Preview */}
-                {form.image && (
-                  <div className="mt-4">
-                    <p className="text-sm font-medium text-gray-700 mb-2">
-                      Preview:
-                    </p>
-                    <div className="relative inline-block">
-                      <Image
-                        src={form.image}
-                        alt="Product preview"
-                        width={160}
-                        height={160}
-                        className=" object-cover rounded-lg border border-gray-200 shadow-sm"
-                      />
-                      <div className="absolute top-2 right-2">
-                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          <svg
-                            className="w-3 h-3 mr-1"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                          Uploaded
-                        </span>
-                      </div>
+                {/* Image Preview Grid */}
+                {form.images.length > 0 && (
+                  <div className="mt-6">
+                    <h4 className="text-sm font-medium text-gray-700 mb-3">
+                      Uploaded Images ({form.images.length}):
+                    </h4>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                      {form.images.map((imageUrl, index) => (
+                        <div key={index} className="relative group">
+                          <Image
+                            src={imageUrl}
+                            alt={`Product image ${index + 1}`}
+                            width={160}
+                            height={160}
+                            className="w-full h-40 object-cover rounded-lg border border-gray-200 shadow-sm"
+                          />
+                          <div className="absolute top-2 right-2 opacity-50 transition-opacity">
+                            <button
+                              type="button"
+                              onClick={() => removeImage(imageUrl, index)}
+                              className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-red-600 text-white hover:bg-red-700 focus:outline-none transition-colors"
+                            >
+                              <svg
+                                className="w-3 h-3"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                              >
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M6 18L18 6M6 6l12 12"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                          {index === 0 && (
+                            <div className="absolute bottom-2 left-2">
+                              <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                                Main
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      ))}
                     </div>
                   </div>
                 )}
@@ -627,6 +754,8 @@ export default function AddProductPage({ product }: { product?: Product }) {
                     ? "Uploading..."
                     : loading
                     ? "Loading..."
+                    : product
+                    ? "Update Product"
                     : "Save Product"}
                 </button>
               </div>

@@ -4,11 +4,11 @@ import { Trash2, Info, X } from "lucide-react";
 interface DeleteDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (productId: string, imagePath: string) => void;
+  onConfirm: (productId: string, imagePath: string[]) => void;
   title: string;
   message: string;
   productId: string;
-  imagePath: string;
+  imagePath: string[];
 }
 
 // Info Dialog Props

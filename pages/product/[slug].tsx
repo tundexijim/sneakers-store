@@ -6,7 +6,14 @@ import { Product } from "../../types";
 import { useCart } from "../../context/CartContext";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { X, ArrowLeft, Shield, Truck } from "lucide-react";
+import {
+  X,
+  ArrowLeft,
+  Shield,
+  Truck,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import RandomProducts from "@/components/RandomProducts";
 import { useAuth } from "@/context/authContext";
 import { useRouter } from "next/router";
@@ -23,8 +30,21 @@ export default function ProductPage({ product }: { product: Product }) {
   const [showDelete, setShowDelete] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // Gallery states
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
+  const [isImageLoading, setIsImageLoading] = useState<boolean>(true);
+  const [touchStart, setTouchStart] = useState(0);
+  const [touchEnd, setTouchEnd] = useState(0);
+
   const stock = product.sizes.reduce((sum, size) => sum + size.stock, 0);
   const router = useRouter();
+
+  // Convert single image to array or use existing images array
+  const productImages =
+    Array.isArray(product.images) && product.images.length > 0
+      ? product.images
+      : [product.image];
 
   const formatPrice = (price: number) =>
     `₦${price.toLocaleString("en-US", {
@@ -39,12 +59,13 @@ export default function ProductPage({ product }: { product: Product }) {
     return decodedUrl.substring(pathStart, pathEnd);
   };
 
-  const imagePath = getPathFromUrl(product.image);
+  const imagePaths = productImages.map((url) => getPathFromUrl(url));
 
   useEffect(() => {
     const productChange = () => {
       setSelectedSize(null);
       setstockInSize(null);
+      setSelectedImageIndex(0);
     };
 
     productChange();
@@ -69,7 +90,7 @@ export default function ProductPage({ product }: { product: Product }) {
     setstockInSize(stock);
   };
 
-  const handleDelete = (productId: string, imagePath: string) => {
+  const handleDelete = (productId: string, imagePath: string[]) => {
     deleteProduct(productId, imagePath)
       .then(() => {
         router.replace("/productslist");
@@ -81,6 +102,46 @@ export default function ProductPage({ product }: { product: Product }) {
         setShowDelete(false);
       });
   };
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > 50;
+    const isRightSwipe = distance < -50;
+
+    if (isLeftSwipe && selectedImageIndex < productImages.length - 1) {
+      setSelectedImageIndex((prev) => prev + 1);
+    }
+    if (isRightSwipe && selectedImageIndex > 0) {
+      setSelectedImageIndex((prev) => prev - 1);
+    }
+  };
+  const handlePrevImage = () => {
+    setSelectedImageIndex((prev) =>
+      prev === 0 ? productImages.length - 1 : prev - 1
+    );
+    setIsImageLoading(true);
+  };
+
+  const handleNextImage = () => {
+    setSelectedImageIndex((prev) =>
+      prev === productImages.length - 1 ? 0 : prev + 1
+    );
+    setIsImageLoading(true);
+  };
+
+  const handleThumbnailClick = (index: number) => {
+    setSelectedImageIndex(index);
+    setIsImageLoading(true);
+  };
 
   return (
     <>
@@ -89,7 +150,7 @@ export default function ProductPage({ product }: { product: Product }) {
         <meta name="description" content={product.description} />
       </Head>
 
-      <main className="min-h-screen bg-gradient-to-br  from-gray-50 via-white to-gray-100">
+      <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 pb-8">
         {/* Navigation Bar */}
         <div className="container mx-auto px-4 md:px-16 py-6">
           <Link
@@ -104,21 +165,157 @@ export default function ProductPage({ product }: { product: Product }) {
         {/* Main Product Section */}
         <div className="container mx-auto px-4 md:px-16 pb-16">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-start">
-            {/* Product Image Section */}
-            <div className="relative">
-              <div className="relative aspect-square bg-white shadow-2xl overflow-hidden group">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  fill
-                  priority
-                  className="object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                {stock === 0 && (
-                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
-                    <div className="bg-red-500 text-white px-6 py-3 rounded-full font-bold text-lg">
-                      OUT OF STOCK
+            {/* Product Image Gallery Section */}
+            <div className="space-y-4">
+              {/* Mobile Slider View */}
+              <div className="block md:hidden -mx-4">
+                <div
+                  className="relative aspect-square overflow-hidden"
+                  onTouchStart={handleTouchStart}
+                  onTouchMove={handleTouchMove}
+                  onTouchEnd={handleTouchEnd}
+                >
+                  {isImageLoading && (
+                    <div className="absolute inset-0 flex items-center justify-center z-10">
+                      <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
                     </div>
+                  )}
+
+                  {/* Mobile Image Slider */}
+                  <div
+                    className="flex transition-transform duration-300 ease-out h-full"
+                    style={{
+                      transform: `translateX(-${selectedImageIndex * 100}%)`,
+                    }}
+                  >
+                    {productImages.map((image, index) => (
+                      <div
+                        key={index}
+                        className="w-full h-full flex-shrink-0 relative"
+                      >
+                        <Image
+                          src={image}
+                          alt={`${product.name} - Image ${index + 1}`}
+                          fill
+                          priority={index === 0}
+                          className="object-contain"
+                          onLoad={() => setIsImageLoading(false)}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                  {/* Mobile Image Counter */}
+                  {productImages.length > 1 && (
+                    <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 text-white text-sm rounded-full backdrop-blur-sm z-20">
+                      {selectedImageIndex + 1} / {productImages.length}
+                    </div>
+                  )}
+
+                  {/* Mobile Dot Indicators */}
+                  {productImages.length > 1 && (
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-20">
+                      {productImages.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => handleThumbnailClick(index)}
+                          className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                            selectedImageIndex === index
+                              ? "bg-white scale-125"
+                              : "bg-white/50 hover:bg-white/75"
+                          }`}
+                          aria-label={`Go to image ${index + 1}`}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {stock === 0 && (
+                    <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
+                      <div className="bg-red-500 text-white px-6 py-3 rounded-full font-bold text-lg">
+                        OUT OF STOCK
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Desktop Gallery View */}
+              <div className="hidden md:block">
+                {/* Main Image Display */}
+                <div className="relative">
+                  <div className="relative aspect-square overflow-hidden group">
+                    {isImageLoading && (
+                      <div className="absolute inset-0 flex items-center justify-center z-10">
+                        <div className="w-8 h-8 border-2 border-gray-300 border-t-gray-600 rounded-full animate-spin"></div>
+                      </div>
+                    )}
+                    <Image
+                      src={productImages[selectedImageIndex]}
+                      alt={`${product.name} - Image ${selectedImageIndex + 1}`}
+                      fill
+                      priority={selectedImageIndex === 0}
+                      className="object-contain group-hover:scale-105 transition-transform duration-700 w-full"
+                      onLoad={() => setIsImageLoading(false)}
+                    />
+
+                    {/* Desktop Navigation Arrows */}
+                    {productImages.length > 1 && (
+                      <>
+                        <button
+                          onClick={handlePrevImage}
+                          className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-sm z-20"
+                          aria-label="Previous image"
+                        >
+                          <ChevronLeft className="w-6 h-6" />
+                        </button>
+                        <button
+                          onClick={handleNextImage}
+                          className="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-sm z-20"
+                          aria-label="Next image"
+                        >
+                          <ChevronRight className="w-6 h-6" />
+                        </button>
+                      </>
+                    )}
+
+                    {/* Desktop Image Counter */}
+                    {productImages.length > 1 && (
+                      <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 text-white text-sm rounded-full backdrop-blur-sm z-20">
+                        {selectedImageIndex + 1} / {productImages.length}
+                      </div>
+                    )}
+
+                    {stock === 0 && (
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-30">
+                        <div className="bg-red-500 text-white px-6 py-3 rounded-full font-bold text-lg">
+                          OUT OF STOCK
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Desktop Thumbnail Gallery */}
+                {productImages.length > 1 && (
+                  <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                    {productImages.map((image, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleThumbnailClick(index)}
+                        className={`relative flex-shrink-0 w-20 h-20 overflow-hidden border-2 transition-all duration-200 ${
+                          selectedImageIndex === index
+                            ? "border-black shadow-lg scale-110"
+                            : "border-gray-200 hover:border-gray-400 hover:shadow-md"
+                        }`}
+                      >
+                        <Image
+                          src={image}
+                          alt={`${product.name} thumbnail ${index + 1}`}
+                          fill
+                          className="object-contain"
+                        />
+                      </button>
+                    ))}
                   </div>
                 )}
               </div>
@@ -279,8 +476,10 @@ export default function ProductPage({ product }: { product: Product }) {
         </div>
 
         {/* Related Products */}
-        <div className="border-t border-gray-200 bg-white md:px-16 py-16">
-          <RandomProducts excludeIds={[product.id]} />
+        <div className="border-t border-gray-200 bg-white">
+          <div className="container mx-auto px-4 md:px-16">
+            <RandomProducts excludeIds={[product.id]} />
+          </div>
         </div>
 
         {/* Dialogs */}
@@ -288,7 +487,7 @@ export default function ProductPage({ product }: { product: Product }) {
           isOpen={showDelete}
           onClose={() => setShowDelete(false)}
           onConfirm={handleDelete}
-          imagePath={imagePath}
+          imagePath={imagePaths}
           productId={product.id}
           title="Delete Product"
           message="Are you sure you want to delete this product? This action cannot be undone."

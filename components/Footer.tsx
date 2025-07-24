@@ -8,7 +8,6 @@ import {
   MapPin,
 } from "lucide-react";
 import { useIsClient } from "@/hooks/useIsClient";
-import { url } from "inspector";
 import Link from "next/link";
 import Image from "next/image";
 
