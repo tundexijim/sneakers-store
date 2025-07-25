@@ -123,7 +123,7 @@ export default function Navbar() {
   return (
     <nav
       className={`
-      bg-black shadow-lg sticky top-0 left-0 w-full z-50 transition-all duration-300
+      bg-black shadow-lg  w-full transition-all duration-300
       ${isScrolled ? "backdrop-blur-sm bg-black/95" : "bg-black"}
     `}
     >

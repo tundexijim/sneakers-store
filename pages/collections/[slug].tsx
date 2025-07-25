@@ -155,7 +155,7 @@ export default function ProductsList({
         <link rel="canonical" href="https://dtwears.ng" />
       </Head>
 
-      <main className="container mx-auto md:px-16 px-2">
+      <main className="container mx-auto md:px-16 px-2 pb-8">
         <CategoryBadge category={category} />
         <ProductListPanel
           viewMode={viewMode}

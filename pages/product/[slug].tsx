@@ -150,7 +150,7 @@ export default function ProductPage({ product }: { product: Product }) {
         <meta name="description" content={product.description} />
       </Head>
 
-      <main className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 pb-8">
+      <main className=" bg-gradient-to-br from-gray-50 via-white to-gray-100 pb-8">
         {/* Navigation Bar */}
         <div className="container mx-auto px-4 md:px-16 py-6">
           <Link
