@@ -29,6 +29,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
     images: product ? (product.images as string[]) : ([] as string[]),
     sizes: product ? product.sizes : ([] as ProductSize[]),
     categorySlug: product ? product.categorySlug : "",
+    isFeatured: product ? product.isFeatured : false,
   });
 
   console.log(product);
@@ -65,8 +66,11 @@ export default function AddProductPage({ product }: { product?: Product }) {
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-    if (error) setError(""); // Clear error when user starts typing
+    const { name, value, type } = e.target;
+    const checked =
+      e.target instanceof HTMLInputElement ? e.target.checked : undefined;
+    setForm({ ...form, [name]: type === "checkbox" ? checked : value });
+    if (error) setError("");
   };
 
   const handlesizeInputchange = (
@@ -226,6 +230,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
           images: [],
           sizes: [],
           categorySlug: "",
+          isFeatured: false,
         });
         setImageFiles([]);
       }
@@ -539,7 +544,16 @@ export default function AddProductPage({ product }: { product?: Product }) {
                   )}
                 </div>
               </div>
-
+              {/* Featured checkbox */}
+              <label className="inline-flex gap-2">
+                <input
+                  type="checkbox"
+                  name="isFeatured"
+                  checked={form.isFeatured}
+                  onChange={handleChange}
+                />
+                Featured
+              </label>
               {/* Image Upload */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-4">

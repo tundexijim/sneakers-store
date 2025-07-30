@@ -1,12 +1,12 @@
 import React from "react";
 import { ArrowRight, Star, Zap, Shield, Truck } from "lucide-react";
-import RandomProducts from "@/components/RandomProducts";
 import Head from "next/head";
 import Link from "next/link";
 import { getAllCategories } from "@/services/categoriesService";
 import Image from "next/image";
 import { GetServerSideProps } from "next";
 import { Category } from "@/types";
+import FeaturedProducts from "@/components/FeaturedProducts";
 
 type Props = {
   categories: Category[];
@@ -158,7 +158,16 @@ const SneakersHomepageContent = ({
 
         {/* Featured Products */}
         <section className="py-16 md:px-16">
-          <RandomProducts type="featured" />
+          <div className="mb-12 text-center px-2">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+              Featured Releases
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Discover our handpicked selection of the most coveted sneakers and
+              jerseys.
+            </p>
+          </div>
+          <FeaturedProducts />
           <div className="text-center mt-4">
             <Link href="/productslist">
               <button className="bg-black text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-800 transition-colors duration-300 inline-flex items-center space-x-2 cursor-pointer">

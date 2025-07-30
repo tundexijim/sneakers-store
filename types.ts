@@ -13,8 +13,8 @@ export type Product = {
   description: string;
   sizes: ProductSize[];
   createdAt: string | null;
-  randomValue: number;
   categorySlug: string;
+  isFeatured: boolean;
 };
 
 export type Category = {

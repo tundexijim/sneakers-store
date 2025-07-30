@@ -17,12 +17,46 @@ export default function Navbar() {
   // Refs
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+
   // Combine static links with category links
   const combinedNavigationLinks = [
     { href: "/productslist", label: "Shop" },
     { href: "/collections/jerseys", label: "Jerseys" },
     { href: "/collections/sneakers", label: "Sneakers" },
   ];
+
+  // Scroll lock utility functions
+  const lockScroll = useCallback(() => {
+    const scrollY = window.scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.width = "100%";
+    document.body.style.overflow = "hidden";
+  }, []);
+
+  const unlockScroll = useCallback(() => {
+    const scrollY = document.body.style.top;
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.width = "";
+    document.body.style.overflow = "";
+    if (scrollY) {
+      window.scrollTo(0, parseInt(scrollY || "0", 10) * -1);
+    }
+  }, []);
+
+  // Handle menu open/close with scroll lock
+  const setMenuState = useCallback(
+    (open: boolean) => {
+      setIsMenuOpen(open);
+      if (open) {
+        lockScroll();
+      } else {
+        unlockScroll();
+      }
+    },
+    [lockScroll, unlockScroll]
+  );
 
   // Handle scroll effect for navbar
   useEffect(() => {
@@ -36,25 +70,28 @@ export default function Navbar() {
 
   // Close menu on route change
   useEffect(() => {
-    const handleRouteChange = () => setIsMenuOpen(false);
+    const handleRouteChange = () => setMenuState(false);
 
     router.events.on("routeChangeStart", handleRouteChange);
     return () => router.events.off("routeChangeStart", handleRouteChange);
-  }, [router.events]);
+  }, [router.events, setMenuState]);
 
   // Handle click outside menu
-  const handleClickOutside = useCallback((event: MouseEvent) => {
-    const target = event.target as Node;
+  const handleClickOutside = useCallback(
+    (event: MouseEvent) => {
+      const target = event.target as Node;
 
-    if (
-      mobileMenuRef.current &&
-      !mobileMenuRef.current.contains(target) &&
-      menuButtonRef.current &&
-      !menuButtonRef.current.contains(target)
-    ) {
-      setIsMenuOpen(false);
-    }
-  }, []);
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(target) &&
+        menuButtonRef.current &&
+        !menuButtonRef.current.contains(target)
+      ) {
+        setMenuState(false);
+      }
+    },
+    [setMenuState]
+  );
 
   useEffect(() => {
     if (isMenuOpen) {
@@ -65,8 +102,32 @@ export default function Navbar() {
 
   // Toggle menu function
   const toggleMenu = useCallback(() => {
-    setIsMenuOpen((prev) => !prev);
-  }, []);
+    setMenuState(!isMenuOpen);
+  }, [isMenuOpen, setMenuState]);
+
+  // Cleanup scroll lock on unmount or when menu is closed
+  useEffect(() => {
+    return () => {
+      if (isMenuOpen) {
+        unlockScroll();
+      }
+    };
+  }, [isMenuOpen, unlockScroll]);
+
+  // Handle escape key to close menu
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape" && isMenuOpen) {
+        setMenuState(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener("keydown", handleEscape);
+    }
+
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [isMenuOpen, setMenuState]);
 
   // Cart badge component
   const CartBadge = ({ className = "" }: { className?: string }) => (
@@ -192,25 +253,12 @@ export default function Navbar() {
           <CartBadge className="md:hidden" />
         </div>
 
-        {/* Mobile Menu Overlay */}
-        <div
-          className={`
-            fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity duration-300 md:hidden
-            ${
-              isMenuOpen
-                ? "opacity-100 pointer-events-auto"
-                : "opacity-0 pointer-events-none"
-            }
-          `}
-          style={{ top: "80px" }}
-          onClick={() => setIsMenuOpen(false)}
-        />
-
         {/* Mobile Menu */}
+
         <div
           ref={mobileMenuRef}
           className={`
-            fixed top-20 left-0 h-[calc(100vh-80px)] w-80 max-w-[85vw] bg-white shadow-2xl
+            fixed top-21.5 left-0 h-[calc(100vh-80px)] w-80 max-w-[85vw] bg-white shadow-2xl z-50
             transition-transform duration-300 ease-out md:hidden overflow-y-auto
             ${isMenuOpen ? "translate-x-0" : "translate-x-[-100%]"}
           `}

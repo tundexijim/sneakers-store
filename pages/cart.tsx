@@ -4,7 +4,6 @@ import { useCart } from "../context/CartContext";
 import Link from "next/link";
 import { useIsClient } from "@/hooks/useIsClient";
 import { useEffect, useMemo, useState } from "react";
-import RandomProducts from "@/components/RandomProducts";
 import {
   AlertTriangle,
   ArrowLeft,
@@ -14,12 +13,12 @@ import {
   Trash2,
 } from "lucide-react";
 import { fetchProductsByIds } from "@/services/productService";
+import FeaturedProducts from "@/components/FeaturedProducts";
 
 export default function CartPage() {
   const { cart, updateQty, removeFromCart, total, setCart } = useCart();
   const isClient = useIsClient();
   const [removedItems, setRemovedItems] = useState<string[]>([]);
-  const uniqueProductIds = Array.from(new Set(cart.map((item) => item.id)));
   const formatPrice = (price: number) =>
     `₦${price.toLocaleString("en-US", {
       minimumFractionDigits: 2,
@@ -341,7 +340,10 @@ export default function CartPage() {
           </>
         )}
         <div className="py-16 md:m-0 -m-4">
-          <RandomProducts excludeIds={uniqueProductIds} />
+          <h2 className="text-3xl lg:text-4xl font-bold mb-8 mt-12 px-4 md:px-0">
+            You Might Like
+          </h2>
+          <FeaturedProducts />
         </div>
       </main>
     </>

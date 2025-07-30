@@ -119,7 +119,7 @@ export async function fetchProductsByIds(ids: string[]): Promise<Product[]> {
             price: data.price,
             image: data.image,
             slug: data.slug,
-            randomValue: data.randomValue,
+            isFeatured: data.isFeatured,
             sizes: data.sizes || [],
             description: data.description || "",
             categorySlug: data.categorySlug,
@@ -213,6 +213,46 @@ export async function getProductsByCategory(
     throw new Error("Error fetching products by category");
   }
 }
+// Get Products with related category
+
+export async function getProductsRelatedCategory(
+  limitCount: number = 10,
+  categoryName: string,
+  excludeProductId?: string
+): Promise<Product[]> {
+  try {
+    const q = query(
+      collection(db, "products"),
+      where("categorySlug", "==", categoryName),
+      orderBy("createdAt", "desc"),
+      limit(limitCount + 1) // Get one extra in case we need to exclude current product
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    const Products: Product[] = querySnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        } as Product)
+    );
+
+    // Filter out the current product if excludeProductId is provided
+    let RelatedProducts = Products;
+    if (excludeProductId) {
+      RelatedProducts = Products.filter(
+        (product) => product.id !== excludeProductId
+      );
+    }
+
+    // Return only the requested number of products
+    return RelatedProducts.slice(0, limitCount);
+  } catch (error) {
+    console.error("Error fetching related products:", error);
+    throw new Error("Failed to fetch related products");
+  }
+}
 //add product
 
 export async function saveProduct(product: {
@@ -228,7 +268,6 @@ export async function saveProduct(product: {
   await addDoc(productRef, {
     ...product,
     slug,
-    randomValue: Math.random(),
     createdAt: Timestamp.now(),
   });
 }
@@ -300,5 +339,34 @@ export async function updateProduct(
   } catch (error) {
     console.error("Error updating product:", error);
     throw error;
+  }
+}
+
+// Featured products
+export async function getFeaturedProducts(
+  limitCount: number
+): Promise<Product[]> {
+  try {
+    const q = query(
+      collection(db, "products"),
+      where("isFeatured", "==", true),
+      orderBy("createdAt", "desc"),
+      limit(limitCount)
+    );
+
+    const querySnapshot = await getDocs(q);
+
+    const featuredProducts: Product[] = querySnapshot.docs.map(
+      (doc) =>
+        ({
+          id: doc.id,
+          ...doc.data(),
+        } as Product)
+    );
+
+    return featuredProducts;
+  } catch (error) {
+    console.error("Error fetching featured products:", error);
+    throw new Error("Failed to fetch featured products");
   }
 }

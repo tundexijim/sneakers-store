@@ -14,10 +14,10 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import RandomProducts from "@/components/RandomProducts";
 import { useAuth } from "@/context/authContext";
 import { useRouter } from "next/router";
 import { DeleteDialog, InfoDialog } from "@/components/DialogBox";
+import ProductsRelatedCategory from "@/components/ProductsRelatedCategory";
 
 export default function ProductPage({ product }: { product: Product }) {
   const { addToCart, cart } = useCart();
@@ -152,7 +152,7 @@ export default function ProductPage({ product }: { product: Product }) {
 
       <main className=" bg-gradient-to-br from-gray-50 via-white to-gray-100 pb-8">
         {/* Navigation Bar */}
-        <div className="container mx-auto px-4 md:px-16 py-6">
+        <div className="container mx-auto px-4 md:px-16 my-8   ">
           <Link
             href="/productslist"
             className="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors group"
@@ -476,10 +476,15 @@ export default function ProductPage({ product }: { product: Product }) {
         </div>
 
         {/* Related Products */}
-        <div className="border-t border-gray-200 bg-white">
-          <div className="container mx-auto px-4 md:px-16">
-            <RandomProducts excludeIds={[product.id]} />
-          </div>
+        <div className="border-t border-gray-200 bg-white md:px-16 py-16">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-8 px-4 md:px-0">
+            You Might Like
+          </h2>
+          <ProductsRelatedCategory
+            key={product.id}
+            categoryName={product.categorySlug}
+            excludeProductId={product.id}
+          />
         </div>
 
         {/* Dialogs */}

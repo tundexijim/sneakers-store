@@ -76,7 +76,7 @@ export default function ProductListPanel({
           </button>
         </div>
       </div>
-
+      {/* Desktop sort view */}
       <div className="flex items-center space-x-4">
         <div className="hidden md:flex items-center space-x-2">
           <label className="text-sm text-gray-600">Sort by:</label>
@@ -92,7 +92,7 @@ export default function ProductListPanel({
             ))}
           </select>
         </div>
-
+        {/* mobile sort view */}
         <div className="md:hidden relative" ref={dropdownRef}>
           <button
             className="p-2 border border-gray-300 rounded-lg bg-white hover:bg-gray-50 flex items-center space-x-2"

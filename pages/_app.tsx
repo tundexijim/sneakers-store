@@ -1,7 +1,7 @@
 // import DTwears from "@/components/DTwears";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
-import Providers from "@/components/Providers";
+import Providers from "@/context/Providers";
 import { Toaster } from "react-hot-toast";
 import "@/styles/globals.css";
 import type { AppProps } from "next/app";
