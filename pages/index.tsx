@@ -13,6 +13,12 @@ type Props = {
   error?: string;
 };
 
+const formatPrice = (price: number) =>
+  `₦${price.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+
 const SneakersHomepage = ({ categories, error }: Props) => {
   // Handle error state
   if (error) {
@@ -138,8 +144,8 @@ const SneakersHomepageContent = ({
                 </div>
                 <h3 className="text-xl font-semibold">Free Shipping</h3>
                 <p className="text-gray-600">
-                  Free delivery on orders over ₦100,000. Fast and reliable
-                  shipping nationwide.
+                  Free delivery on orders over {formatPrice(100000)}. Fast and
+                  reliable shipping nationwide.
                 </p>
               </div>
               <div className="text-center space-y-4">
@@ -232,7 +238,7 @@ const SneakersHomepageContent = ({
           <div className="container mx-auto px-4 text-center">
             <div className="max-w-3xl mx-auto text-white space-y-6">
               <h2 className="text-3xl lg:text-5xl font-bold">
-                Ready to Find Your Perfect Pair?
+                Ready to Find Your Perfect Wears?
               </h2>
               <Link href="/productslist">
                 <button className="bg-white text-purple-600 px-8 py-4 rounded-full cursor-pointer font-semibold hover:bg-gray-100 transition-all duration-300 inline-flex items-center justify-center space-x-2 group">

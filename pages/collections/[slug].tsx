@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import ProductCard from "@/components/ProductCard";
+import ProductCard from "@/components/cards/ProductCard";
 import {
   getProductsByCategory,
   PRODUCTS_PER_PAGE,

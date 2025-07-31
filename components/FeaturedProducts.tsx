@@ -2,7 +2,7 @@ import { getFeaturedProducts } from "@/services/productService";
 import { Product } from "@/types";
 import { useEffect, useState } from "react";
 import { Loading } from "./Loading";
-import ProductFeaturedCard from "./ProductFeaturedCard";
+import ProductFeaturedCard from "./cards/ProductFeaturedCard";
 
 export default function FeaturedProducts() {
   const [featuredProducts, setFeaturedProducts] = useState<Product[]>([]);

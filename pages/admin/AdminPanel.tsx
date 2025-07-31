@@ -137,7 +137,7 @@ export default function AdminPanel() {
                 Manage your orders and products
               </p>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center gap-4 flex-col md:flex-row ">
               <Link href="/admin/add-product">
                 <button className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200">
                   <Plus className="w-5 h-5 mr-2" />
@@ -244,7 +244,7 @@ export default function AdminPanel() {
                       </div>
                     </div>
 
-                    <div className="flex items-center space-x-2 ml-4">
+                    <div className="flex items-center gap-2 ml-4 md:flex-row flex-col">
                       <button
                         onClick={() => setSelectedOrder(order)}
                         className="inline-flex items-center px-3 py-2 bg-blue-50 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors duration-200"

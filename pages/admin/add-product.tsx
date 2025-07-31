@@ -545,7 +545,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
                 </div>
               </div>
               {/* Featured checkbox */}
-              <label className="inline-flex gap-2">
+              <label className="inline-flex items-center gap-2">
                 <input
                   type="checkbox"
                   name="isFeatured"

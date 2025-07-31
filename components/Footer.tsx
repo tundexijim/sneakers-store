@@ -175,6 +175,13 @@ const Footer = () => {
             {/* Copyright */}
             <div className="text-sm text-gray-400 text-center md:text-right">
               <p>&copy; {year} DTWEARS. All rights reserved.</p>
+              <Link
+                target="blank"
+                href={`https://wa.me/2348062474452?text=Hi!, I came across your contact. I am interested in building a website and I'd love to know more about your web development services.`}
+                className="text-[10px] text-blue-500 underline"
+              >
+                Webiste by: DTtech Digital
+              </Link>
             </div>
           </div>
         </div>

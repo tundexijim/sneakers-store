@@ -184,7 +184,7 @@ export default function Navbar() {
   return (
     <nav
       className={`
-      bg-black shadow-lg  w-full transition-all duration-300
+      bg-black shadow-lg w-full transition-all duration-300
       ${isScrolled ? "backdrop-blur-sm bg-black/95" : "bg-black"}
     `}
     >
@@ -214,12 +214,6 @@ export default function Navbar() {
               <Menu
                 className={`absolute inset-0 text-white transition-all duration-300 ${
                   isMenuOpen ? "opacity-0 rotate-90" : "opacity-100 rotate-0"
-                }`}
-                size={24}
-              />
-              <X
-                className={`absolute inset-0 text-white transition-all duration-300 ${
-                  isMenuOpen ? "opacity-100 rotate-0" : "opacity-0 rotate-90"
                 }`}
                 size={24}
               />
@@ -258,13 +252,22 @@ export default function Navbar() {
         <div
           ref={mobileMenuRef}
           className={`
-            fixed top-21.5 left-0 h-[calc(100vh-80px)] w-80 max-w-[85vw] bg-white shadow-2xl z-50
+            fixed top-0 left-0 h-screen w-80 max-w-[85vw] bg-white shadow-2xl z-50
             transition-transform duration-300 ease-out md:hidden overflow-y-auto
             ${isMenuOpen ? "translate-x-0" : "translate-x-[-100%]"}
           `}
         >
-          <div className="p-6">
-            <nav className="space-y-2">
+          <div className="p-6 flex flex-col">
+            <button
+              ref={menuButtonRef}
+              className="p-2 self-end rounded-lg hover:bg-gray-100 transition-colors duration-200 cursor-pointer"
+              onClick={toggleMenu}
+              aria-label="Toggle navigation menu"
+              aria-expanded={isMenuOpen}
+            >
+              <X className="" size={24} />
+            </button>
+            <nav className="space-y-2 mt-14">
               {combinedNavigationLinks.map(({ href, label }) => (
                 <NavLink key={href} href={href} mobile>
                   {label.charAt(0).toLocaleUpperCase() +
@@ -272,7 +275,6 @@ export default function Navbar() {
                 </NavLink>
               ))}
             </nav>
-
             {/* Mobile Menu Footer */}
             <div className="mt-8 pt-6 border-t border-gray-200">
               <div className="flex items-center justify-between text-sm text-gray-500">

@@ -7,6 +7,7 @@ import "@/styles/globals.css";
 import type { AppProps } from "next/app";
 import WhatsAppFloatingButton from "@/components/WhatsApp";
 import { useScrollDirection } from "@/hooks/useScrollDirection"; // Adjust path as needed
+import DTwears from "@/components/DTwears";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { scrollDirection, isAtTop } = useScrollDirection(10);
@@ -24,12 +25,12 @@ export default function App({ Component, pageProps }: AppProps) {
             showNavbar ? "translate-y-0" : "-translate-y-full"
           }`}
         >
-          {/* <DTwears /> */}
+          <DTwears />
           <Navbar />
         </header>
 
         {/* Spacer to prevent content jump - adjust height based on your header height */}
-        <div className="h-16 md:h-20 flex-shrink-0" />
+        <div className="h-32 flex-shrink-0" />
 
         {/* Main Content Area with enhanced spacing and responsive design */}
         <main className="flex-grow relative overflow-hidden">
@@ -72,9 +73,9 @@ export default function App({ Component, pageProps }: AppProps) {
           <div className="fixed bottom-6 right-6 z-40 transition-all duration-300 hover:scale-105">
             <WhatsAppFloatingButton
               phoneNumber="2348106758547"
-              message="Hi! I'm interested in your DTwears products. Can you help me?"
+              message="Hi! I'm interested in your DTwears products."
               position="bottom-right"
-              showTooltip={true}
+              showTooltip={false}
             />
           </div>
         </main>
