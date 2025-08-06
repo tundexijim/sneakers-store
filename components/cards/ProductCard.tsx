@@ -9,11 +9,12 @@ export default function ProductCard({
   product: Product;
   isListView: boolean;
 }) {
-  const formatPrice = (price: number) =>
-    `₦${price.toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+    }).format(price);
+  };
   return (
     <Link href={`/product/${product.slug}`}>
       <div

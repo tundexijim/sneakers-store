@@ -17,7 +17,6 @@ import {
   Mail,
   Phone,
   Home,
-  CircleSmall,
   Lock,
 } from "lucide-react";
 import Image from "next/image";
@@ -51,11 +50,12 @@ export default function CheckoutPage() {
       : total <= 100000
       ? ShippingCost
       : 0);
-  const formatPrice = (price: number) =>
-    `₦${price.toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+    }).format(price);
+  };
 
   useEffect(() => {
     if (!hasRestoredForm) {
@@ -149,7 +149,7 @@ export default function CheckoutPage() {
     Subtotal,
   };
   /*paystack transaction */
-  const initiateTransaction = async (response: PaystackResponse) => {
+  const verifyTransaction = async (response: PaystackResponse) => {
     try {
       setLoading(true);
 
@@ -228,7 +228,7 @@ export default function CheckoutPage() {
           phone: form.phone,
         },
         onSuccess: (response) => {
-          initiateTransaction(response);
+          verifyTransaction(response);
         },
         onClose: () => {
           console.log("Payment cancelled");

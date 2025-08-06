@@ -19,11 +19,12 @@ export default function CartPage() {
   const { cart, updateQty, removeFromCart, total, setCart } = useCart();
   const isClient = useIsClient();
   const [removedItems, setRemovedItems] = useState<string[]>([]);
-  const formatPrice = (price: number) =>
-    `₦${price.toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+    }).format(price);
+  };
 
   const cartIds = useMemo(
     () => cart?.map((item) => item.id).join(",") || "",

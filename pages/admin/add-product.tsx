@@ -32,8 +32,6 @@ export default function AddProductPage({ product }: { product?: Product }) {
     isFeatured: product ? product.isFeatured : false,
   });
 
-  console.log(product);
-
   const [imageFiles, setImageFiles] = useState<File[]>([]);
   const [uploading, setUploading] = useState(false);
   const [loading, setloading] = useState(false);

@@ -3,11 +3,12 @@ import { Product } from "@/types";
 import Image from "next/image";
 
 export default function ProductFeaturedCard({ product }: { product: Product }) {
-  const formatPrice = (price: number) =>
-    `₦${price.toLocaleString("en-US", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })}`;
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+    }).format(price);
+  };
   return (
     <div className="group cursor-pointer">
       <Link href={`/product/${product.slug}`}>
