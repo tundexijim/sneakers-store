@@ -27,7 +27,10 @@ export default function Document() {
           @import
           url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
         </style>
-        <meta name="description" content="Shop premium sneakers online" />
+        <meta
+          name="description"
+          content="Shop premium sneakers and jerseys online"
+        />
         <meta
           property="og:description"
           content="Shop premium sneakers online"

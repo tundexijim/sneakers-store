@@ -296,6 +296,7 @@ export default function CheckoutPage() {
                     alt={item.name}
                     fill
                     className="rounded-lg"
+                    priority
                   />
                 </div>
                 <div className="flex-1">

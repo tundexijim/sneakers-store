@@ -126,7 +126,10 @@ export default function ProductsList({
           catName.charAt(0).toLocaleUpperCase() +
           catName.slice(1).toLocaleLowerCase()
         } | DTwears`}</title>
-        <meta name="description" content="Shop premium sneakers online" />
+        <meta
+          name="description"
+          content="Shop premium sneakers and jerseys online"
+        />
         <meta
           property="og:description"
           content="Shop premium sneakers online"
