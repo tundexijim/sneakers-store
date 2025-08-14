@@ -262,9 +262,15 @@ export default function CheckoutPage() {
       const success = await placeOrder(cart, orderData, setLoading, setError);
       if (success) {
         localStorage.removeItem("checkoutForm");
-        router.push(
-          `/payment-success/success?orderNumber=${orderData.orderNumber}`
-        );
+        if (form.paymentMethod === "pay on delivery") {
+          router.push(
+            `/payment-success/success?orderNumber=${orderData.orderNumber}`
+          );
+        } else if (form.paymentMethod === "bank") {
+          router.push(
+            `/payment-success/success?orderNumber=${orderData.orderNumber}&account=1235`
+          );
+        }
         clearCart();
       }
       setLoading(false);
@@ -725,48 +731,11 @@ export default function CheckoutPage() {
 
                       {form.paymentMethod === "bank" && (
                         <div className="mt-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200">
-                          <div className="flex items-center mb-4">
-                            <p className="font-semibold text-slate-900">
-                              Complete your transfer with these details:
-                            </p>
-                          </div>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                            <div className="bg-white rounded-lg p-4 border border-slate-200">
-                              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">
-                                Account Name
-                              </p>
-                              <p className="font-semibold text-slate-900">
-                                Adeyeye Damilola Caroline
-                              </p>
-                            </div>
-                            <div className="bg-white rounded-lg p-4 border border-slate-200">
-                              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">
-                                Account Number
-                              </p>
-                              <p className="font-semibold text-slate-900">
-                                3156850684
-                              </p>
-                            </div>
-                            <div className="bg-white rounded-lg p-4 border border-slate-200">
-                              <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-1">
-                                Bank Name
-                              </p>
-                              <p className="font-semibold text-slate-900">
-                                First Bank
-                              </p>
-                            </div>
-                          </div>
-                          <div className="flex items-start space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                            <div className="w-3 h-3 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0 mt-0.5">
-                              <div className="w-1 h-1 bg-white rounded-full"></div>
-                            </div>
-                            <p className="text-sm text-blue-800">
-                              All orders will be processed immediately after
-                              your payment is confirmed. Please include your
-                              order ID as reference for easy confirmation of
-                              your payment.
-                            </p>
-                          </div>
+                          <p className="text-sm text-gray-600">
+                            Pay into the account provided after submitting your
+                            order. All orders will be processed immediately
+                            after your payment is confirmed.
+                          </p>
                         </div>
                       )}
                       <label
@@ -799,18 +768,16 @@ export default function CheckoutPage() {
 
                       {form.paymentMethod === "pay on delivery" && (
                         <div className="mt-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200">
-                          <div className="flex items-start space-x-3 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                            <div className="text-sm text-blue-800 space-y-4">
-                              <p>
-                                1. Payment on delivery is only available for
-                                Lagos state only.
-                              </p>
-                              <p>
-                                {" "}
-                                2. We reserve the right to decline POD order
-                                based on location and order value.
-                              </p>
-                            </div>
+                          <div className="text-sm text-gray-600 space-y-4">
+                            <p>
+                              1. Payment on delivery is available for Lagos
+                              state only.
+                            </p>
+                            <p>
+                              {" "}
+                              2. We reserve the right to decline POD order based
+                              on location and other considerations.
+                            </p>
                           </div>
                         </div>
                       )}

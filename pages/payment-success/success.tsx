@@ -6,14 +6,19 @@ import { CheckCircle } from "lucide-react";
 export default function SuccessPage() {
   const router = useRouter();
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
+  const [accountNumber, setAccountNumber] = useState<string | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     if (router.isReady) {
       setIsReady(true);
       const queryOrderNumber = router.query.orderNumber;
+      const queryAccountNumber = router.query.account;
       if (typeof queryOrderNumber === "string") {
         setOrderNumber(queryOrderNumber);
+      }
+      if (typeof queryAccountNumber === "string") {
+        setAccountNumber(queryAccountNumber);
       }
     }
   }, [router.isReady, router.query.orderNumber]);
@@ -69,6 +74,19 @@ export default function SuccessPage() {
               <strong>Order ID:</strong> {orderNumber}
             </p>
           </div>
+          {accountNumber && (
+            <div className="mb-6 text-gray-600">
+              <p>Kindly make payment into this account</p>
+              <p>Account Name: Adeyeye Damilola Caroline</p>
+              <p>Acoount Number: 3156850684</p>
+              <p>Bank: First Bank</p>
+              <p className="mt-2">
+                All orders will be processed immediately after your payment is
+                confirmed. Please include your order ID as reference for easy
+                confirmation of your payment.
+              </p>
+            </div>
+          )}
           <button
             onClick={() => router.push("/productslist")}
             className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors"
