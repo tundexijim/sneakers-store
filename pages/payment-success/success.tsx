@@ -62,9 +62,7 @@ export default function SuccessPage() {
               </div>
             </div>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">
-            Payment Successful
-          </h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">Successful</h1>
           <p className="text-gray-600 mb-4">
             Thank you for your purchase. Your order has been successfully placed
             and is being processed.
@@ -77,9 +75,16 @@ export default function SuccessPage() {
           {accountNumber && (
             <div className="mb-6 text-gray-600">
               <p>Kindly make payment into this account</p>
-              <p>Account Name: Adeyeye Damilola Caroline</p>
-              <p>Acoount Number: 3156850684</p>
-              <p>Bank: First Bank</p>
+              <p>
+                <strong>Account Name:</strong> Adeyeye Damilola Caroline
+              </p>
+              <p>
+                {" "}
+                <strong>Account Number:</strong> 3156850684
+              </p>
+              <p>
+                <strong>Bank:</strong> First Bank
+              </p>
               <p className="mt-2">
                 All orders will be processed immediately after your payment is
                 confirmed. Please include your order ID as reference for easy

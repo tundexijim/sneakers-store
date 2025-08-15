@@ -18,6 +18,7 @@ import {
   Phone,
   Home,
   Lock,
+  ChevronDown,
 } from "lucide-react";
 import Image from "next/image";
 import { httpsCallable } from "firebase/functions";
@@ -554,24 +555,29 @@ export default function CheckoutPage() {
                         <label className="block text-sm font-medium text-slate-700">
                           State <span className="text-red-500">*</span>
                         </label>
-                        <select
-                          value={selectedState}
-                          onChange={handleStateChange}
-                          className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
-                            errors.state
-                              ? "border-red-300 bg-red-50 focus:border-red-500"
-                              : "border-slate-200 bg-white hover:border-slate-300 focus:border-blue-500"
-                          }`}
-                        >
-                          <option value="" disabled>
-                            Select your state
-                          </option>
-                          {nigerianStates.map((state) => (
-                            <option key={state} value={state}>
-                              {state}
+                        <div className="relative">
+                          <select
+                            value={selectedState}
+                            onChange={handleStateChange}
+                            className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 appearance-none ${
+                              errors.state
+                                ? "border-red-300 bg-red-50 focus:border-red-500"
+                                : "border-slate-200 bg-white hover:border-slate-300 focus:border-blue-500"
+                            }`}
+                          >
+                            <option value="" disabled>
+                              Select your state
                             </option>
-                          ))}
-                        </select>
+                            {nigerianStates.map((state) => (
+                              <option key={state} value={state}>
+                                {state}
+                              </option>
+                            ))}
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                            <ChevronDown size={20} color="gray" />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -800,7 +806,7 @@ export default function CheckoutPage() {
                       <button
                         type="submit"
                         disabled={loading}
-                        className="w-full relative bg-gradient-to-r rounded-xl cursor-pointer from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
+                        className="w-full relative bg-gradient-to-r rounded-xl cursor-pointer bg-blue-900 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
                       >
                         <span
                           className={`flex items-center justify-center gap-2 ${
@@ -824,7 +830,7 @@ export default function CheckoutPage() {
                     <button
                       onClick={handlePay}
                       disabled={loading}
-                      className="w-full relative bg-gradient-to-r rounded-xl cursor-pointer from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
+                      className="w-full relative bg-gradient-to-r rounded-xl cursor-pointer bg-blue-900 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
                     >
                       <span
                         className={`flex items-center justify-center gap-2 ${
