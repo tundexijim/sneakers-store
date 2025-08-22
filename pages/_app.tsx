@@ -11,6 +11,7 @@ import DTwears from "@/components/DTwears";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
+import * as fbq from "@/lib/fbpixel";
 
 export default function App({ Component, pageProps }: AppProps) {
   const { scrollDirection, isAtTop } = useScrollDirection(10);
@@ -21,10 +22,12 @@ export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
 
   useEffect(() => {
+    // Track initial page load
+    fbq.pageview();
+
+    // Track on route changes
     const handleRouteChange = () => {
-      if (typeof window !== "undefined" && typeof window.fbq !== "undefined") {
-        window.fbq("track", "PageView");
-      }
+      fbq.pageview();
     };
 
     router.events.on("routeChangeComplete", handleRouteChange);
@@ -47,7 +50,7 @@ export default function App({ Component, pageProps }: AppProps) {
               t.src=v;s=b.getElementsByTagName(e)[0];
               s.parentNode.insertBefore(t,s)}(window, document,'script',
               'https://connect.facebook.net/en_US/fbevents.js');
-              fbq('init', '3738275022983537'); 
+              fbq('init', ${fbq.FB_PIXEL_ID}); 
               fbq('track', 'PageView');
             `,
           }}
