@@ -24,7 +24,7 @@ export default function DTwears() {
 
   return (
     <div className="w-full h-12 bg-amber-400 items-center justify-center flex px-4 md:px-16 text-gray-800">
-      <p className="text-center text-[12px] transition-opacity duration-300">
+      <p className="text-center text-[12px] md:text-[16px] transition-opacity duration-300">
         {text[index]}
       </p>
     </div>

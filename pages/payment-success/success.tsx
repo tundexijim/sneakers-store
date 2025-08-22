@@ -2,11 +2,13 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { CheckCircle } from "lucide-react";
+import PurchaseTracker from "@/components/PurchaseTracker";
 
 export default function SuccessPage() {
   const router = useRouter();
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [accountNumber, setAccountNumber] = useState<string | null>(null);
+  const [amount, setAmount] = useState<number | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
@@ -14,11 +16,15 @@ export default function SuccessPage() {
       setIsReady(true);
       const queryOrderNumber = router.query.orderNumber;
       const queryAccountNumber = router.query.account;
+      const queryAmount = router.query.amount;
       if (typeof queryOrderNumber === "string") {
         setOrderNumber(queryOrderNumber);
       }
       if (typeof queryAccountNumber === "string") {
         setAccountNumber(queryAccountNumber);
+      }
+      if (queryAmount && !isNaN(Number(queryAmount))) {
+        setAmount(Number(queryAmount));
       }
     }
   }, [router.isReady, router.query.orderNumber]);
@@ -99,6 +105,7 @@ export default function SuccessPage() {
             Continue Shopping
           </button>
         </div>
+        <PurchaseTracker value={amount} />
       </div>
     </>
   );

@@ -171,7 +171,7 @@ export default function CheckoutPage() {
         if (success) {
           localStorage.removeItem("checkoutForm");
           router.push(
-            `/payment-success/success?orderNumber=${result.data.reference}`
+            `/payment-success/success?orderNumber=${result.data.reference}&amount=${Subtotal}`
           );
           clearCart();
         } else {
@@ -265,11 +265,11 @@ export default function CheckoutPage() {
         localStorage.removeItem("checkoutForm");
         if (form.paymentMethod === "pay on delivery") {
           router.push(
-            `/payment-success/success?orderNumber=${orderData.orderNumber}`
+            `/payment-success/success?orderNumber=${orderData.orderNumber}&amount=${Subtotal}`
           );
         } else if (form.paymentMethod === "bank") {
           router.push(
-            `/payment-success/success?orderNumber=${orderData.orderNumber}&account=1235`
+            `/payment-success/success?orderNumber=${orderData.orderNumber}&amount=${Subtotal}&account=1235`
           );
         }
         clearCart();
