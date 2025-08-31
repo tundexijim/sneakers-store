@@ -6,6 +6,7 @@ import {
   Youtube,
   Phone,
   MapPin,
+  Mail,
 } from "lucide-react";
 import { useIsClient } from "@/hooks/useIsClient";
 import Link from "next/link";
@@ -66,6 +67,10 @@ const Footer = () => {
               <div className="flex items-center gap-3">
                 <Phone size={16} className="text-gray-400" />
                 <span className="text-gray-300">08062474452</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <Mail size={16} className="text-gray-400" />
+                <span className="text-gray-300">info@dtwears.ng</span>
               </div>
             </div>
           </div>
