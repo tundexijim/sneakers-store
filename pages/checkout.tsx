@@ -9,17 +9,7 @@ import { useIsClient } from "@/hooks/useIsClient";
 import Link from "next/link";
 import { validateStockAvailability } from "@/util/saveOrder";
 import { Loading } from "@/components/Loading";
-import {
-  ShoppingBag,
-  CreditCard,
-  MapPin,
-  User,
-  Mail,
-  Phone,
-  Home,
-  Lock,
-  ChevronDown,
-} from "lucide-react";
+import { ShoppingBag, Lock, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/lib/firebaseConfig";
@@ -286,7 +276,6 @@ export default function CheckoutPage() {
     <div className="lg:col-span-2 space-y-6">
       <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
         <h2 className="text-xl font-semibold text-slate-900 mb-6 flex items-center">
-          <ShoppingBag className="w-5 h-5 mr-3 text-blue-600" />
           Order Summary
         </h2>
 
@@ -384,7 +373,6 @@ export default function CheckoutPage() {
                   {/* Customer Information */}
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
                     <h3 className="text-xl font-semibold text-slate-900 mb-6 flex items-center">
-                      <User className="w-5 h-5 mr-3 text-blue-600" />
                       Customer Information
                     </h3>
 
@@ -444,14 +432,13 @@ export default function CheckoutPage() {
                           Phone Number <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
-                          <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
                           <input
                             type="text"
                             name="phone"
                             placeholder="Enter your phone number"
                             value={form.phone}
                             onChange={handleChange}
-                            className={`w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
+                            className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
                               errors.phone
                                 ? "border-red-300 bg-red-50 focus:border-red-500"
                                 : "border-slate-200 bg-white hover:border-slate-300 focus:border-blue-500"
@@ -470,14 +457,13 @@ export default function CheckoutPage() {
                           Email Address <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
-                          <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
                           <input
                             type="email"
                             name="email"
                             placeholder="Enter your email address"
                             value={form.email}
                             onChange={handleChange}
-                            className={`w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
+                            className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
                               errors.email
                                 ? "border-red-300 bg-red-50 focus:border-red-500"
                                 : "border-slate-200 bg-white hover:border-slate-300 focus:border-blue-500"
@@ -495,7 +481,6 @@ export default function CheckoutPage() {
                   {/* Shipping Information */}
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
                     <h3 className="text-xl font-semibold text-slate-900 mb-6 flex items-center">
-                      <MapPin className="w-5 h-5 mr-3 text-blue-600" />
                       Shipping Information
                     </h3>
 
@@ -506,14 +491,13 @@ export default function CheckoutPage() {
                           <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
-                          <Home className="absolute left-3 top-4 w-5 h-5 text-slate-400" />
                           <input
                             type="text"
                             name="address"
                             placeholder="Enter your complete shipping address"
                             value={form.address}
                             onChange={handleChange}
-                            className={`w-full pl-12 pr-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none ${
+                            className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 resize-none ${
                               errors.address
                                 ? "border-red-300 bg-red-50 focus:border-red-500"
                                 : "border-slate-200 bg-white hover:border-slate-300 focus:border-blue-500"
@@ -655,7 +639,6 @@ export default function CheckoutPage() {
                   {/* Payment Method */}
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
                     <h3 className="text-xl font-semibold text-slate-900 mb-2 flex items-center">
-                      <CreditCard className="w-5 h-5 mr-3 text-blue-600" />
                       Payment Method
                     </h3>
                     <p className="text-slate-600 mb-6">
