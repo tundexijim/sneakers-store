@@ -8,7 +8,7 @@ import type { AppProps } from "next/app";
 import WhatsAppFloatingButton from "@/components/WhatsApp";
 import { useScrollDirection } from "@/hooks/useScrollDirection"; // Adjust path as needed
 import DTwears from "@/components/DTwears";
-import Head from "next/head";
+import Script from "next/script";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 import * as fbq from "@/lib/fbpixel";
@@ -38,10 +38,9 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <Providers>
-      <Head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
+      <Script
+        dangerouslySetInnerHTML={{
+          __html: `
               !function(f,b,e,v,n,t,s)
               {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
               n.callMethod.apply(n,arguments):n.queue.push(arguments)};
@@ -53,17 +52,17 @@ export default function App({ Component, pageProps }: AppProps) {
               fbq('init', ${fbq.FB_PIXEL_ID}); 
               fbq('track', 'PageView');
             `,
-          }}
+        }}
+      />
+      <noscript>
+        <img
+          height="1"
+          width="1"
+          style={{ display: "none" }}
+          src="https://www.facebook.com/tr?id=3738275022983537&ev=PageView&noscript=1"
         />
-        <noscript>
-          <img
-            height="1"
-            width="1"
-            style={{ display: "none" }}
-            src="https://www.facebook.com/tr?id=3738275022983537&ev=PageView&noscript=1"
-          />
-        </noscript>
-      </Head>
+      </noscript>
+
       <div className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 transition-all duration-300">
         {/* Header Section with scroll-based visibility */}
         <header

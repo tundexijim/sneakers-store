@@ -708,9 +708,6 @@ export default function CheckoutPage() {
                                 <p className="font-semibold text-slate-900">
                                   Bank Transfer
                                 </p>
-                                {/* <p className="text-sm text-slate-600">
-                                  Direct bank transfer
-                                </p> */}
                               </div>
                             </div>
                           </div>
