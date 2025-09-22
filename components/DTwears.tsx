@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import { useState, useEffect } from "react";
 
 const formatPrice = (price: number) => {
@@ -7,7 +8,12 @@ const formatPrice = (price: number) => {
   }).format(price);
 };
 
-export default function DTwears() {
+type Props = {
+  icon: boolean;
+  setIcon: (icon: boolean) => void;
+};
+
+export default function DTwears({ icon, setIcon }: Props) {
   const text = [
     `Free shipping for orders above ${formatPrice(100000)}.`,
     "Welcome to DTwears",
@@ -23,10 +29,20 @@ export default function DTwears() {
   }, [text.length]);
 
   return (
-    <div className="w-full h-12 bg-amber-400 items-center justify-center flex px-4 md:px-16 text-gray-800">
-      <p className="text-center text-[12px] md:text-[16px] transition-opacity duration-300">
-        {text[index]}
-      </p>
-    </div>
+    <>
+      {icon && (
+        <div className="w-full h-12 bg-blue-900 items-center justify-center flex px-4 md:px-16 text-white relative">
+          <p className="text-[12px] md:text-[16px] transition-opacity duration-300">
+            {text[index]}
+          </p>
+          <div
+            onClick={() => setIcon(false)}
+            className="absolute right-4 cursor-pointer"
+          >
+            <X />
+          </div>
+        </div>
+      )}
+    </>
   );
 }

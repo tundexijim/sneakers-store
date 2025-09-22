@@ -10,7 +10,7 @@ import { useScrollDirection } from "@/hooks/useScrollDirection"; // Adjust path 
 import DTwears from "@/components/DTwears";
 import Script from "next/script";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import * as fbq from "@/lib/fbpixel";
 
 export default function App({ Component, pageProps }: AppProps) {
@@ -20,6 +20,7 @@ export default function App({ Component, pageProps }: AppProps) {
   const showNavbar =
     scrollDirection === "up" || isAtTop || scrollDirection === null;
   const router = useRouter();
+  const [icon, setIcon] = useState(true);
 
   useEffect(() => {
     // Track initial page load
@@ -70,12 +71,12 @@ export default function App({ Component, pageProps }: AppProps) {
             showNavbar ? "translate-y-0" : "-translate-y-full"
           }`}
         >
-          <DTwears />
+          <DTwears icon={icon} setIcon={setIcon} />
           <Navbar />
         </header>
 
         {/* Spacer to prevent content jump - adjust height based on your header height */}
-        <div className="h-32 flex-shrink-0" />
+        <div className={`flex-shrink-0 ${icon ? "h-32" : "h-20"}`} />
 
         {/* Main Content Area with enhanced spacing and responsive design */}
         <main className="flex-grow relative overflow-hidden">
@@ -118,7 +119,7 @@ export default function App({ Component, pageProps }: AppProps) {
           <div className="fixed bottom-6 right-6 z-40 transition-all duration-300 hover:scale-105">
             <WhatsAppFloatingButton
               phoneNumber="2348106758547"
-              message="Hi! I'm interested in your DTwears products."
+              message=""
               position="bottom-right"
               showTooltip={false}
             />

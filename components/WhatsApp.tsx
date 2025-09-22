@@ -10,7 +10,7 @@ interface WhatsAppFloatingButtonProps {
 
 export default function WhatsAppFloatingButton({
   phoneNumber,
-  message = "Hello! I'm interested in your products.",
+  message = "",
   position = "bottom-right",
   showTooltip = true,
 }: WhatsAppFloatingButtonProps) {

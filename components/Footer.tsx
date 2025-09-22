@@ -143,7 +143,11 @@ const Footer = () => {
                     label: "Instagram",
                     url: "https://www.instagram.com/dtwearsshoes/",
                   },
-                  { icon: Facebook, label: "Facebook", url: "#" },
+                  {
+                    icon: Facebook,
+                    label: "Facebook",
+                    url: "https://web.facebook.com/profile.php?id=61579780555077",
+                  },
                   { icon: Twitter, label: "Twitter", url: "#" },
                 ].map(({ icon: Icon, label, url }) => (
                   <Link

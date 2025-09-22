@@ -103,7 +103,7 @@ const SneakersHomepageContent = ({
                 </div>
                 <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
                   Step Up Your{" "}
-                  <span className="block bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                  <span className="block bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent">
                     Game
                   </span>
                 </h1>
