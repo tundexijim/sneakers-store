@@ -9,7 +9,7 @@ import { useIsClient } from "@/hooks/useIsClient";
 import Link from "next/link";
 import { validateStockAvailability } from "@/util/saveOrder";
 import { Loading } from "@/components/Loading";
-import { ShoppingBag, Lock, ChevronDown } from "lucide-react";
+import { ShoppingBag, Lock, ChevronDown, X, Plus, Minus } from "lucide-react";
 import Image from "next/image";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/lib/firebaseConfig";
@@ -33,6 +33,7 @@ export default function CheckoutPage() {
   const [error, setError] = useState("");
   const [hasRestoredForm, setHasRestoredForm] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
+  const [showInfo, setShowInfo] = useState(false);
   const isClient = useIsClient();
   const Subtotal =
     total +
@@ -481,14 +482,13 @@ export default function CheckoutPage() {
                   {/* Shipping Information */}
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
                     <h3 className="text-xl font-semibold text-slate-900 mb-6 flex items-center">
-                      Shipping Information
+                      Shipping Address
                     </h3>
 
                     <div className="space-y-6">
                       <div className="space-y-2">
                         <label className="block text-sm font-medium text-slate-700">
-                          Shipping Address{" "}
-                          <span className="text-red-500">*</span>
+                          Address <span className="text-red-500">*</span>
                         </label>
                         <div className="relative">
                           <input
@@ -566,74 +566,96 @@ export default function CheckoutPage() {
                     </div>
                   </div>
                   {/* shipping method for mobile */}
-                  <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50 md:hidden block">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                      Shipping
-                    </h2>
-                    <ul className="space-y-3 text-gray-700">
-                      <li className="flex items-start gap-3">
-                        <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
-                        <span>
-                          Flat rate of{" "}
-                          <span className="font-medium">₦5,000.00</span> applies
-                          for delivery outside Lagos state.
-                        </span>
-                      </li>
 
-                      <li className="flex items-start gap-3">
-                        <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
-                        <span>
-                          Rate of <span className="font-medium">₦3,000.00</span>{" "}
-                          applies within Lagos state.
-                        </span>
-                      </li>
+                  <div className="bg-white rounded-2xl p-4 shadow-lg shadow-slate-200/50 border border-slate-200/50 md:hidden block">
+                    <div
+                      className="flex justify-items-center justify-between cursor-pointer"
+                      onClick={() => setShowInfo(!showInfo)}
+                    >
+                      <h2 className="text-xl font-semibold text-gray-900">
+                        Shipping Information
+                      </h2>
+                      {showInfo ? <Minus size={20} /> : <Plus size={20} />}
+                    </div>
+                    {showInfo && (
+                      <div className="border-t-1 border-gray-300 pt-4 mt-4">
+                        <ul className="space-y-3 text-gray-700">
+                          <li className="flex items-start gap-3">
+                            <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                            <span>
+                              Flat rate of{" "}
+                              <span className="font-medium">₦5,000.00</span>{" "}
+                              applies for delivery outside Lagos state.
+                            </span>
+                          </li>
 
-                      <li className="flex items-start gap-3">
-                        <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
-                        <span>
-                          Free shipping on orders above{" "}
-                          <span className="font-medium">₦100,000.00</span>. This
-                          does not apply if paying on delivery.
-                        </span>
-                      </li>
-                    </ul>
+                          <li className="flex items-start gap-3">
+                            <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                            <span>
+                              Rate of{" "}
+                              <span className="font-medium">₦3,000.00</span>{" "}
+                              applies within Lagos state.
+                            </span>
+                          </li>
+
+                          <li className="flex items-start gap-3">
+                            <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                            <span>
+                              Free shipping on orders above{" "}
+                              <span className="font-medium">₦100,000.00</span>.
+                              This does not apply if paying on delivery.
+                            </span>
+                          </li>
+                        </ul>
+                      </div>
+                    )}
                   </div>
                   <div className="lg:hidden">
                     <OrderSummary />
                   </div>
                   {/* shipping method for desktop */}
-                  <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border hidden md:block border-slate-200/50 ">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-4">
-                      Shipping
-                    </h2>
+                  <div className="bg-white rounded-2xl p-4 shadow-lg shadow-slate-200/50 border border-slate-200/50 hidden md:block">
+                    <div
+                      className="flex justify-items-center justify-between cursor-pointer"
+                      onClick={() => setShowInfo(!showInfo)}
+                    >
+                      <h2 className="text-xl font-semibold text-gray-900">
+                        Shipping Information
+                      </h2>
+                      {showInfo ? <Minus /> : <Plus />}
+                    </div>
+                    {showInfo && (
+                      <div className="border-t-1 border-gray-300 pt-4 mt-4">
+                        <ul className="space-y-3 text-gray-700">
+                          <li className="flex items-start gap-3">
+                            <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                            <span>
+                              Flat rate of{" "}
+                              <span className="font-medium">₦5,000.00</span>{" "}
+                              applies for delivery outside Lagos state.
+                            </span>
+                          </li>
 
-                    <ul className="space-y-3 text-gray-700">
-                      <li className="flex items-start gap-3">
-                        <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
-                        <span>
-                          Flat rate of{" "}
-                          <span className="font-medium">₦5,000.00</span> applies
-                          for delivery outside Lagos state.
-                        </span>
-                      </li>
+                          <li className="flex items-start gap-3">
+                            <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                            <span>
+                              Rate of{" "}
+                              <span className="font-medium">₦3,000.00</span>{" "}
+                              applies within Lagos state.
+                            </span>
+                          </li>
 
-                      <li className="flex items-start gap-3">
-                        <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
-                        <span>
-                          Rate of <span className="font-medium">₦3,000.00</span>{" "}
-                          applies within Lagos state.
-                        </span>
-                      </li>
-
-                      <li className="flex items-start gap-3">
-                        <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
-                        <span>
-                          Free shipping on orders above{" "}
-                          <span className="font-medium">₦100,000.00</span>. This
-                          does not apply if paying on delivery.
-                        </span>
-                      </li>
-                    </ul>
+                          <li className="flex items-start gap-3">
+                            <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                            <span>
+                              Free shipping on orders above{" "}
+                              <span className="font-medium">₦100,000.00</span>.
+                              This does not apply if paying on delivery.
+                            </span>
+                          </li>
+                        </ul>
+                      </div>
+                    )}
                   </div>
 
                   {/* Payment Method */}
