@@ -578,28 +578,24 @@ export default function CheckoutPage() {
                       {showInfo ? <Minus size={20} /> : <Plus size={20} />}
                     </div>
                     {showInfo && (
-                      <div className="border-t-1 border-gray-300 pt-4 mt-4">
+                      <div className="mt-4">
+                        <div className="-mx-4 mb-4 h-[1px] bg-gray-300"></div>
                         <ul className="space-y-3 text-gray-700">
-                          <li className="flex items-start gap-3">
-                            <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                          <li>
                             <span>
                               Flat rate of{" "}
                               <span className="font-medium">₦5,000.00</span>{" "}
                               applies for delivery outside Lagos state.
                             </span>
                           </li>
-
-                          <li className="flex items-start gap-3">
-                            <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                          <li>
                             <span>
                               Rate of{" "}
                               <span className="font-medium">₦3,000.00</span>{" "}
                               applies within Lagos state.
                             </span>
                           </li>
-
-                          <li className="flex items-start gap-3">
-                            <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                          <li>
                             <span>
                               Free shipping on orders above{" "}
                               <span className="font-medium">₦100,000.00</span>.
@@ -625,28 +621,24 @@ export default function CheckoutPage() {
                       {showInfo ? <Minus /> : <Plus />}
                     </div>
                     {showInfo && (
-                      <div className="border-t-1 border-gray-300 pt-4 mt-4">
+                      <div className="mt-4">
+                        <div className="-mx-4 mb-4 h-[1px] bg-gray-300"></div>
                         <ul className="space-y-3 text-gray-700">
-                          <li className="flex items-start gap-3">
-                            <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                          <li>
                             <span>
                               Flat rate of{" "}
                               <span className="font-medium">₦5,000.00</span>{" "}
                               applies for delivery outside Lagos state.
                             </span>
                           </li>
-
-                          <li className="flex items-start gap-3">
-                            <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                          <li>
                             <span>
                               Rate of{" "}
                               <span className="font-medium">₦3,000.00</span>{" "}
                               applies within Lagos state.
                             </span>
                           </li>
-
-                          <li className="flex items-start gap-3">
-                            <span className="w-1.5 h-1.5 bg-gray-600 rounded-full mt-2 flex-shrink-0"></span>
+                          <li>
                             <span>
                               Free shipping on orders above{" "}
                               <span className="font-medium">₦100,000.00</span>.
