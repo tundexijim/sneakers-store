@@ -20,7 +20,7 @@ export default function Navbar() {
 
   // Combine static links with category links
   const combinedNavigationLinks = [
-    { href: "/productslist", label: "Shop" },
+    { href: "/products", label: "Shop" },
     { href: "/collections/jerseys", label: "Jerseys" },
     { href: "/collections/sneakers", label: "Sneakers" },
   ];

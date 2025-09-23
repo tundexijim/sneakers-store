@@ -1,5 +1,5 @@
 import React from "react";
-import { ArrowRight, Star, Zap, Shield, Truck } from "lucide-react";
+import { ArrowRight, Star, Zap, Truck } from "lucide-react";
 import Head from "next/head";
 import Link from "next/link";
 import { getAllCategories } from "@/services/categoriesService";
@@ -40,10 +40,10 @@ const SneakersHomepageContent = ({
   return (
     <>
       <Head>
-        <title>DTwears - Premium Sneakers & Jerseys</title>
+        <title>DTwears - Premium Sneakers & NFL Jerseys</title>
         <meta
           name="description"
-          content="Shop premium sneakers and jerseys online at DTwears. Discover the latest collections to elevate your style and performance."
+          content="Shop premium sneakers and NFL jerseys online at DTwears. Discover the latest collections to elevate your style and performance."
         />
         <meta
           property="og:title"
@@ -111,7 +111,7 @@ const SneakersHomepageContent = ({
                   Discover the latest jerseys and sneakers to elevate your style
                   and performance.
                 </p>
-                <Link href="/productslist">
+                <Link href="/products">
                   <button className="bg-white text-black px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 flex items-center justify-center space-x-2 group cursor-pointer">
                     <span>Shop Now</span>
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
@@ -176,7 +176,7 @@ const SneakersHomepageContent = ({
           </div>
           <FeaturedProducts />
           <div className="text-center mt-4">
-            <Link href="/productslist">
+            <Link href="/products">
               <button className="bg-black text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-800 transition-colors duration-300 inline-flex items-center space-x-2 cursor-pointer">
                 <span>View All Products</span>
                 <ArrowRight className="w-5 h-5" />
@@ -241,7 +241,7 @@ const SneakersHomepageContent = ({
               <h2 className="text-3xl lg:text-5xl font-bold text-gray-700">
                 Ready to Find Your Perfect Wears?
               </h2>
-              <Link href="/productslist">
+              <Link href="/products">
                 <button className="bg-black text-white px-8 py-4 rounded-full cursor-pointer font-semibold hover:bg-gray-800 transition-all duration-300 inline-flex items-center justify-center space-x-2 group">
                   <span>Start Shopping</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

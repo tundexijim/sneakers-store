@@ -1,8 +1,8 @@
 import { GetServerSideProps } from "next";
 import Head from "next/head";
 import Link from "next/link";
-import ProductCard from "../components/cards/ProductCard";
-import { getAllProducts, PRODUCTS_PER_PAGE } from "../services/productService";
+import ProductCard from "@/components/cards/ProductCard";
+import { getAllProducts, PRODUCTS_PER_PAGE } from "@/services/productService";
 import { Product } from "@/types";
 import { useEffect, useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";

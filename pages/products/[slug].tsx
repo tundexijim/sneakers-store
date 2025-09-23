@@ -157,13 +157,41 @@ export default function ProductPage({ product }: { product: Product }) {
       <Head>
         <title>{`${product.name} | DTwears`}</title>
         <meta name="description" content={product.description} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org/",
+              "@type": "Product",
+              name: product.name,
+              image: [product.image],
+              description: product.description,
+              sku: product.id,
+              brand: {
+                "@type": "Brand",
+                name: "DTwears",
+              },
+              offers: {
+                "@type": "Offer",
+                priceCurrency: "NGN",
+                price: product.price,
+                availability: "https://schema.org/InStock",
+                url: `https://dtwears.ng/products/${product.slug}`,
+              },
+            }),
+          }}
+        />
+        <link
+          rel="canonical"
+          href={`https://dtwears.com/products/${product.slug}`}
+        />
       </Head>
 
       <main className=" bg-gradient-to-br from-gray-50 via-white to-gray-100 pb-8">
         {/* Navigation Bar */}
         <div className="container mx-auto px-4 md:px-16 my-8   ">
           <Link
-            href="/productslist"
+            href="/products"
             className="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors group"
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />

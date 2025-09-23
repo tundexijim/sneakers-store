@@ -73,6 +73,22 @@ export async function getAllProducts(page = 1, sortBy = "newest") {
   }
 }
 
+// Get Products for sitemap
+
+export async function getAllProductsForSitemap() {
+  const snapshot = await getDocs(collection(db, "products"));
+
+  const products = snapshot.docs.map((doc) => {
+    const data = doc.data();
+    return {
+      slug: data.slug, // assuming you store slug for product pages
+      updatedAt:
+        data.createdAt?.toDate().toISOString() || new Date().toISOString(),
+    };
+  });
+  return { products };
+}
+
 // Get some products with ids
 
 function chunkArray<T>(array: T[], size: number): T[][] {

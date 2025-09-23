@@ -133,7 +133,7 @@ export default function CartPage() {
           <div className="max-w-6xl mx-auto px-4 py-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <Link href="/productslist">
+                <Link href="/products">
                   <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
                     <ArrowLeft className="w-5 h-5" />
                   </button>
@@ -173,7 +173,7 @@ export default function CartPage() {
               Your cart is empty
             </h2>
             <p className="text-gray-600 mb-8">Add some items to get started</p>
-            <Link href="/productslist">
+            <Link href="/products">
               <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors">
                 Continue Shopping
               </button>
@@ -203,7 +203,7 @@ export default function CartPage() {
                       <div className="flex items-start space-x-4">
                         {/* Product Image */}
                         <Link
-                          href={`/product/${item.slug}`}
+                          href={`/products/${item.slug}`}
                           className="relative"
                         >
                           <Image
@@ -330,7 +330,7 @@ export default function CartPage() {
                     </button>
                   </Link>
 
-                  <Link href="/productslist">
+                  <Link href="/products">
                     <button className="w-full border border-gray-300 cursor-pointer hover:bg-gray-50 text-gray-700 font-medium py-3 px-6 rounded-lg transition-colors">
                       Continue Shopping
                     </button>

@@ -16,7 +16,7 @@ export default function ProductCard({
     }).format(price);
   };
   return (
-    <Link href={`/product/${product.slug}`}>
+    <Link href={`/products/${product.slug}`}>
       <div
         className={`group cursor-pointer bg-white shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden ${
           isListView

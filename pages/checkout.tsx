@@ -283,7 +283,7 @@ export default function CheckoutPage() {
         <div className="space-y-4 mb-6">
           {cart.map((item) => (
             <Link
-              href={`/product/${item.slug}`}
+              href={`/products/${item.slug}`}
               key={`${item.id}-${item.selectedSize}`}
             >
               <div className="grid grid-cols-3 p-4 mb-4 bg-slate-50 rounded-xl border border-slate-100">

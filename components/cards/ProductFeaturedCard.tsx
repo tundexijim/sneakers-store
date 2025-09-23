@@ -11,7 +11,7 @@ export default function ProductFeaturedCard({ product }: { product: Product }) {
   };
   return (
     <div className="group cursor-pointer">
-      <Link href={`/product/${product.slug}`}>
+      <Link href={`/products/${product.slug}`}>
         <div className="relative overflow-hidden bg-gray-100 mb-4 w-full h-64">
           <Image
             src={product.image}
