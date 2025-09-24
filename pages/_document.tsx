@@ -27,6 +27,18 @@ export default function Document() {
           @import
           url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap');
         </style>
+        <script
+          type="application/id+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "Product",
+              name: "DTwears",
+              url: "https://dtwears.ng",
+              logo: "https://dtwears.ng/logo2.png",
+            }),
+          }}
+        />
         <meta
           name="description"
           content="Shop premium sneakers and jerseys online"

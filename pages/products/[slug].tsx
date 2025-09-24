@@ -170,6 +170,7 @@ export default function ProductPage({ product }: { product: Product }) {
               brand: {
                 "@type": "Brand",
                 name: "DTwears",
+                logo: "https://dtwears.ng/logo2.png",
               },
               offers: {
                 "@type": "Offer",
@@ -183,7 +184,7 @@ export default function ProductPage({ product }: { product: Product }) {
         />
         <link
           rel="canonical"
-          href={`https://dtwears.com/products/${product.slug}`}
+          href={`https://dtwears.ng/products/${product.slug}`}
         />
       </Head>
 

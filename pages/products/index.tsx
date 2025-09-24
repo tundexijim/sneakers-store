@@ -56,7 +56,7 @@ export default function ProductsList({
     const newSort = e.target.value;
     setSelectedSort(newSort);
     router.push({
-      pathname: "/productslist",
+      pathname: "/products",
       query: { ...router.query, sortBy: newSort, page: 1 },
     });
   };
@@ -172,7 +172,7 @@ export default function ProductsList({
           <div className="flex justify-center items-center mt-10 space-x-2 flex-wrap">
             <Link
               href={{
-                pathname: "/productslist",
+                pathname: "/products",
                 query: {
                   page: Math.max(1, currentPage - 1),
                   sortBy: router.query.sortBy || "newest",
@@ -198,7 +198,7 @@ export default function ProductsList({
                 ) : (
                   <Link
                     href={{
-                      pathname: "/productslist",
+                      pathname: "/products",
                       query: {
                         page: page,
                         sortBy: router.query.sortBy || "newest",
@@ -221,7 +221,7 @@ export default function ProductsList({
             ))}
             <Link
               href={{
-                pathname: "/productslist",
+                pathname: "/products",
                 query: {
                   page: Math.min(totalPages, currentPage + 1),
                   sortBy: router.query.sortBy || "newest",
