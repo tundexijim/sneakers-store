@@ -170,7 +170,6 @@ export default function ProductPage({ product }: { product: Product }) {
               brand: {
                 "@type": "Brand",
                 name: "DTwears",
-                logo: "https://dtwears.ng/logo2.png",
               },
               offers: {
                 "@type": "Offer",

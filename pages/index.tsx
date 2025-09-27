@@ -82,7 +82,7 @@ const SneakersHomepageContent = ({
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "Product",
+              "@type": "Organization",
               name: "DTwears",
               url: "https://dtwears.ng",
               logo: "https://dtwears.ng/logo2.png",
@@ -196,7 +196,6 @@ const SneakersHomepageContent = ({
               </button>
             </Link>
           </div>
-          0
         </section>
 
         {/* Categories Section */}

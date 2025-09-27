@@ -32,7 +32,7 @@ export default function Document() {
           dangerouslySetInnerHTML={{
             __html: JSON.stringify({
               "@context": "https://schema.org",
-              "@type": "Product",
+              "@type": "Organiztion",
               name: "DTwears",
               url: "https://dtwears.ng",
               logo: "https://dtwears.ng/logo2.png",
