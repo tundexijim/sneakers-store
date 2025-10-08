@@ -94,7 +94,7 @@ export default function ProductsList({
   const paginationNumbers = getPaginationNumbers();
   if (error) {
     return (
-      <div className="flex items-center justify-center min-h-[400px] px-4">
+      <div className="flex items-center justify-center min-h-[500px] px-4">
         <div className="text-center">
           <div className="text-red-500 text-6xl mb-4">⚠️</div>
           <p className="text-red-500 text-lg font-medium">{error}</p>
