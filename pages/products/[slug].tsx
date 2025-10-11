@@ -6,6 +6,7 @@ import { Product } from "../../types";
 import { useCart } from "../../context/CartContext";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import {
   X,
   ArrowLeft,
@@ -379,18 +380,16 @@ export default function ProductPage({ product }: { product: Product }) {
 
               {/* Description */}
               <div className="prose prose-gray max-w-none">
-                <p className="text-lg text-gray-600 leading-relaxed">
-                  {product.description}
-                </p>
+                {/* <p className="text-lg text-gray-600 leading-relaxed"> */}
+                <ReactMarkdown>{product.description}</ReactMarkdown>
+                {/* </p> */}
               </div>
 
               {/* Stock Info */}
               {stockinsize && (
-                <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
-                  <p className="text-amber-800 font-medium">
-                    ⚡ Only {stockinsize} left in this size!
-                  </p>
-                </div>
+                <p className="text-amber-800 font-medium">
+                  Only {stockinsize} left of this size!
+                </p>
               )}
 
               {/* Size Selection */}
