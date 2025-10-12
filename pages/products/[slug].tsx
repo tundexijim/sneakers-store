@@ -379,11 +379,6 @@ export default function ProductPage({ product }: { product: Product }) {
               </div>
 
               {/* Description */}
-              <div className="prose prose-gray max-w-none">
-                {/* <p className="text-lg text-gray-600 leading-relaxed"> */}
-                <ReactMarkdown>{product.description}</ReactMarkdown>
-                {/* </p> */}
-              </div>
 
               {/* Stock Info */}
               {stockinsize && (
@@ -457,6 +452,12 @@ export default function ProductPage({ product }: { product: Product }) {
                   </Link>
                 )}
               </div>
+
+              {product.description !== "" && (
+                <div className="border-t border-gray-200 bg-white md:px-0 px-2 py-4 mb-0">
+                  <ReactMarkdown>{product.description}</ReactMarkdown>
+                </div>
+              )}
 
               {/* Features */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-gray-200">
