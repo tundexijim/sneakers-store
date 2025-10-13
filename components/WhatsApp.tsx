@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
+import { time } from "console";
 
 interface WhatsAppFloatingButtonProps {
   phoneNumber: string; // Phone number in international format (e.g., "2348123456789")
@@ -31,6 +32,12 @@ export default function WhatsAppFloatingButton({
   }, [showTooltip]);
 
   const handleWhatsAppClick = () => {
+    if (typeof window !== "undefined" && typeof window.fbq !== "undefined") {
+      window.fbq("track", "WhatsAppClick", {
+        location: "floating_button",
+        timestamp: new Date().toISOString(),
+      });
+    }
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
     window.open(whatsappUrl, "_blank");

@@ -454,7 +454,7 @@ export default function ProductPage({ product }: { product: Product }) {
               </div>
 
               {product.description !== "" && (
-                <div className="border-t border-gray-200 bg-white md:px-0 px-2 py-4 mb-0">
+                <div className="border-t border-gray-200 bg-white md:px-0 px-2 py-4 mb-0 font-[250]">
                   <ReactMarkdown>{product.description}</ReactMarkdown>
                 </div>
               )}
