@@ -19,6 +19,7 @@ import { useAuth } from "@/context/authContext";
 import { useRouter } from "next/router";
 import { DeleteDialog, InfoDialog } from "@/components/DialogBox";
 import ProductsRelatedCategory from "@/components/ProductsRelatedCategory";
+import Faq from "@/components/FAQ";
 
 export default function ProductPage({ product }: { product: Product }) {
   const { addToCart, cart } = useCart();
@@ -540,6 +541,10 @@ export default function ProductPage({ product }: { product: Product }) {
           onClose={() => setShowInfo(false)}
           title="Size Required"
           message="Please select a size before adding to cart."
+        />
+        <Faq
+          header="How can we ship"
+          body="We ship to within 1-2 days within Lagos \n and 3-4 days outside Lagos"
         />
       </main>
     </>

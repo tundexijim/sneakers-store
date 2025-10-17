@@ -241,6 +241,13 @@ export default function CheckoutPage() {
       setError("Please fill out all required fields correctly.");
       return;
     }
+    if (form.paymentMethod == "pay on delivery" && selectedState !== "Lagos") {
+      setError(
+        "Pay on delivery is only available in Lagos. Please contact support"
+      );
+      setShowInfo(true);
+      return;
+    }
     setError("");
     try {
       await validateStockAvailability(cart);
@@ -249,6 +256,7 @@ export default function CheckoutPage() {
       setLoading(false);
       return;
     }
+
     try {
       setLoading(true);
       const success = await placeOrder(cart, orderData, setLoading, setError);

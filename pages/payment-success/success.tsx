@@ -99,7 +99,7 @@ export default function SuccessPage() {
             </div>
           )}
           <button
-            onClick={() => router.push("/productslist")}
+            onClick={() => router.push("/products")}
             className="w-full bg-black text-white py-3 rounded-lg hover:bg-gray-800 transition-colors"
           >
             Continue Shopping
