@@ -33,7 +33,7 @@ export default function WhatsAppFloatingButton({
 
   const handleWhatsAppClick = () => {
     if (typeof window !== "undefined" && typeof window.fbq !== "undefined") {
-      window.fbq("track", "WhatsAppClick", {
+      window.fbq("trackCustom", "WhatsAppClick", {
         location: "floating_button",
         timestamp: new Date().toISOString(),
       });

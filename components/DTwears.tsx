@@ -17,6 +17,7 @@ export default function DTwears({ icon, setIcon }: Props) {
   const text = [
     `Free shipping for orders above ${formatPrice(100000)}.`,
     "Welcome to DTwears",
+    "Payment on delivery available nationwide.",
   ];
   const [index, setIndex] = useState(0);
 

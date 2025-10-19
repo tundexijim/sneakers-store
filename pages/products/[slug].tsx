@@ -243,6 +243,27 @@ export default function ProductPage({ product }: { product: Product }) {
                       </div>
                     ))}
                   </div>
+                  {/* Mobile Prev/Next Arrows (same as desktop) */}
+                  {productImages.length > 1 && (
+                    <>
+                      <button
+                        onClick={handlePrevImage}
+                        className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-sm z-20"
+                        aria-label="Previous image"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+
+                      <button
+                        onClick={handleNextImage}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-sm z-20"
+                        aria-label="Next image"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </>
+                  )}
+
                   {/* Mobile Image Counter */}
                   {productImages.length > 1 && (
                     <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 text-white text-sm rounded-full backdrop-blur-sm z-20">
@@ -277,7 +298,6 @@ export default function ProductPage({ product }: { product: Product }) {
                   )}
                 </div>
               </div>
-
               {/* Desktop Gallery View */}
               <div className="hidden md:block">
                 {/* Main Image Display */}
@@ -524,6 +544,30 @@ export default function ProductPage({ product }: { product: Product }) {
             excludeProductId={product.id}
           />
         </div>
+        <div className="flex flex-col gap-8 md:px-16 px-4">
+          <div>
+            <h1 className="text-center mb-4 text-3xl">FAQs</h1>
+            <p className="text-center">Have a question? We are here to help</p>
+          </div>
+          <div className="border-t border-gray-200">
+            {[
+              {
+                header: "Do you offer same day delivery within Lagos?",
+                body: "Yes we do! However, your order must be placed and confirmed before 10am to be eligible for same day delivery.\nDelivery timeframe is between 10:30am - 6:30pm",
+              },
+              {
+                header: "Do you ship nationwide?",
+                body: "We offer nationwide express shipping on all orders. You'll receive your order in an estimated 1–4 days after shipment. However, Doorstep delivery sometimes takes longer. We ship all orders within 1-2 business days!. Delivery takes 1-4 business days outside Lagos.",
+              },
+              {
+                header: "Do you offer Pay on Delivery?",
+                body: "Yes, we do offer pay on delivery nationwide. You can select this option at checkout and pay in cash or bank transfer when your order is delivered to you.",
+              },
+            ].map(({ header, body }) => (
+              <Faq key={header} header={header} body={body} />
+            ))}
+          </div>
+        </div>
 
         {/* Dialogs */}
         <DeleteDialog
@@ -541,10 +585,6 @@ export default function ProductPage({ product }: { product: Product }) {
           onClose={() => setShowInfo(false)}
           title="Size Required"
           message="Please select a size before adding to cart."
-        />
-        <Faq
-          header="How can we ship"
-          body="We ship to within 1-2 days within Lagos \n and 3-4 days outside Lagos"
         />
       </main>
     </>

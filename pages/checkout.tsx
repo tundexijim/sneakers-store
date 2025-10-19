@@ -241,13 +241,6 @@ export default function CheckoutPage() {
       setError("Please fill out all required fields correctly.");
       return;
     }
-    if (form.paymentMethod == "pay on delivery" && selectedState !== "Lagos") {
-      setError(
-        "Pay on delivery is only available in Lagos. Please contact support"
-      );
-      setShowInfo(true);
-      return;
-    }
     setError("");
     try {
       await validateStockAvailability(cart);
@@ -592,14 +585,14 @@ export default function CheckoutPage() {
                           <li>
                             <span>
                               Flat rate of{" "}
-                              <span className="font-medium">₦5,000.00</span>{" "}
+                              <span className="font-medium">₦6,000.00</span>{" "}
                               applies for delivery outside Lagos state.
                             </span>
                           </li>
                           <li>
                             <span>
                               Rate of{" "}
-                              <span className="font-medium">₦3,000.00</span>{" "}
+                              <span className="font-medium">₦3,500.00</span>{" "}
                               applies within Lagos state.
                             </span>
                           </li>
@@ -607,7 +600,6 @@ export default function CheckoutPage() {
                             <span>
                               Free shipping on orders above{" "}
                               <span className="font-medium">₦100,000.00</span>.
-                              This does not apply if paying on delivery.
                             </span>
                           </li>
                         </ul>
@@ -774,7 +766,7 @@ export default function CheckoutPage() {
                         </div>
                       </label>
 
-                      {form.paymentMethod === "pay on delivery" && (
+                      {/* {form.paymentMethod === "pay on delivery" && (
                         <div className="mt-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200">
                           <div className="text-sm text-gray-600 space-y-4">
                             <p>
@@ -788,7 +780,7 @@ export default function CheckoutPage() {
                             </p>
                           </div>
                         </div>
-                      )}
+                      )} */}
                     </div>
                   </div>
                   {/* Error Message */}

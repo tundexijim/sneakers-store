@@ -7,7 +7,7 @@ interface FAQProps {
 }
 
 /**
- * FAQ accordion - TypeScript version
+ * FAQ accordion - TypeScript version (Tailwind styles)
  * Props:
  *  - header: string - visible title
  *  - body: string   - panel content shown when open
@@ -16,43 +16,21 @@ export default function FAQ({ header, body }: FAQProps) {
   const [open, setOpen] = useState<boolean>(false);
   const idRef = useRef<string>(`faq-${Math.random().toString(36).slice(2, 9)}`);
 
-  // If the incoming string contains the literal sequence "\n" (backslash + n)
-  // convert that to an actual newline character so CSS pre-line can render it.
+  // convert literal "\n" sequences to actual newlines
   const normalizedBody = body.replace(/\\n/g, "\n");
 
   return (
-    <div
-      className="faq-accordion"
-      style={{
-        border: "1px solid #e5e7eb",
-        borderRadius: 6,
-        overflow: "hidden",
-        background: "#fff",
-      }}
-    >
+    <div className="faq-accordion border-b border-gray-200">
       <button
         id={`${idRef.current}-button`}
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls={`${idRef.current}-panel`}
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          width: "100%",
-          padding: "12px 16px",
-          background: "transparent",
-          border: "none",
-          cursor: "pointer",
-          textAlign: "left",
-        }}
+        className="w-full flex items-center justify-between px-4 py-3 text-left cursor-pointer"
       >
-        <span style={{ fontWeight: 600 }}>{header}</span>
-        <span
-          aria-hidden
-          style={{ marginLeft: 12, fontSize: 18, lineHeight: 1 }}
-        >
+        <span className="font-semibold text-gray-900">{header}</span>
+        <span aria-hidden className="ml-3 text-lg leading-none text-gray-700">
           {open ? "−" : "+"}
         </span>
       </button>
@@ -61,15 +39,12 @@ export default function FAQ({ header, body }: FAQProps) {
         id={`${idRef.current}-panel`}
         role="region"
         aria-labelledby={`${idRef.current}-button`}
-        style={{
-          padding: open ? "12px 16px" : "0 16px",
-          height: open ? "auto" : 0,
-          overflow: "hidden",
-          transition: "padding 160ms ease, height 160ms ease",
-        }}
+        className={`overflow-hidden transition-all duration-150 ease-in-out ${
+          open ? "p-4 h-auto" : "p-0 h-0"
+        }`}
       >
         {open && (
-          <div style={{ color: "#374151", whiteSpace: "pre-line" }}>
+          <div className="text-gray-700 whitespace-pre-line">
             {normalizedBody}
           </div>
         )}
