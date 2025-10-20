@@ -191,7 +191,7 @@ export default function ProductPage({ product }: { product: Product }) {
 
       <main className=" bg-gradient-to-br from-gray-50 via-white to-gray-100 pb-8">
         {/* Navigation Bar */}
-        <div className="container mx-auto px-4 md:px-16 my-8   ">
+        <div className="container mx-auto px-4 md:px-16 my-8">
           <Link
             href="/products"
             className="inline-flex items-center gap-2 text-gray-600 hover:text-black transition-colors group"
@@ -243,27 +243,6 @@ export default function ProductPage({ product }: { product: Product }) {
                       </div>
                     ))}
                   </div>
-                  {/* Mobile Prev/Next Arrows (same as desktop) */}
-                  {productImages.length > 1 && (
-                    <>
-                      <button
-                        onClick={handlePrevImage}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-sm z-20"
-                        aria-label="Previous image"
-                      >
-                        <ChevronLeft className="w-5 h-5" />
-                      </button>
-
-                      <button
-                        onClick={handleNextImage}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 w-9 h-9 bg-black/40 hover:bg-black/60 text-white rounded-full flex items-center justify-center transition-all duration-200 backdrop-blur-sm z-20"
-                        aria-label="Next image"
-                      >
-                        <ChevronRight className="w-5 h-5" />
-                      </button>
-                    </>
-                  )}
-
                   {/* Mobile Image Counter */}
                   {productImages.length > 1 && (
                     <div className="absolute top-4 right-4 px-3 py-1 bg-black/50 text-white text-sm rounded-full backdrop-blur-sm z-20">
@@ -297,6 +276,28 @@ export default function ProductPage({ product }: { product: Product }) {
                     </div>
                   )}
                 </div>
+                {productImages.length > 1 && (
+                  <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide mt-4 ml-4">
+                    {productImages.map((image, index) => (
+                      <button
+                        key={index}
+                        onClick={() => handleThumbnailClick(index)}
+                        className={`relative flex-shrink-0 w-16 h-16 overflow-hidden border-2 transition-all duration-200 ${
+                          selectedImageIndex === index
+                            ? "border-black shadow-lg scale-110"
+                            : "border-gray-200 hover:border-gray-400 hover:shadow-md"
+                        }`}
+                      >
+                        <Image
+                          src={image}
+                          alt={`${product.name} thumbnail ${index + 1}`}
+                          fill
+                          className="object-contain"
+                        />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               {/* Desktop Gallery View */}
               <div className="hidden md:block">
@@ -356,7 +357,7 @@ export default function ProductPage({ product }: { product: Product }) {
 
                 {/* Desktop Thumbnail Gallery */}
                 {productImages.length > 1 && (
-                  <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide">
+                  <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-hide mt-4">
                     {productImages.map((image, index) => (
                       <button
                         key={index}
