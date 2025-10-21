@@ -58,7 +58,7 @@ export default function ProductListPanel({
             onClick={() => setViewMode("grid")}
             className={`p-2 rounded-lg ${
               viewMode === "grid"
-                ? "bg-blue-100 text-blue-600"
+                ? "bg-blue-100 text-[#00C8C8]"
                 : "bg-gray-100 text-gray-600"
             }`}
           >
@@ -68,7 +68,7 @@ export default function ProductListPanel({
             onClick={() => setViewMode("list")}
             className={`p-2 rounded-lg ${
               viewMode === "list"
-                ? "bg-blue-100 text-blue-600"
+                ? "bg-blue-100 text-[#00C8C8]"
                 : "bg-gray-100 text-gray-600"
             }`}
           >

@@ -97,12 +97,11 @@ const SneakersHomepageContent = ({
         <section
           className="relative min-h-screen bg-cover bg-center bg-no-repeat overflow-hidden px-2 md:px-16"
           style={{
-            backgroundImage:
-              "url('https://www.dtwears.ng/images/heroimage.jpg')",
+            backgroundImage: "url('./images/banner3.jpg')",
           }}
         >
           {/* Dark overlay for better text readability */}
-          <div className="absolute inset-0 bg-black/60"></div>
+          <div className="absolute inset-0 bg-black/40"></div>
 
           {/* Gradient overlay for extra depth */}
           <div className="absolute inset-0 bg-gradient-to-br from-purple-900/40 via-transparent to-slate-900/40"></div>
@@ -125,7 +124,7 @@ const SneakersHomepageContent = ({
                   and performance.
                 </p>
                 <Link href="/products">
-                  <button className="bg-white text-black px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 flex items-center justify-center space-x-2 group cursor-pointer">
+                  <button className="bg-[#00C8C8] text-black px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 flex items-center justify-center space-x-2 group cursor-pointer">
                     <span>Shop Now</span>
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>

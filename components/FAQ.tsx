@@ -6,12 +6,6 @@ interface FAQProps {
   body: string;
 }
 
-/**
- * FAQ accordion - TypeScript version (Tailwind styles)
- * Props:
- *  - header: string - visible title
- *  - body: string   - panel content shown when open
- */
 export default function FAQ({ header, body }: FAQProps) {
   const [open, setOpen] = useState<boolean>(false);
   const idRef = useRef<string>(`faq-${Math.random().toString(36).slice(2, 9)}`);
@@ -52,4 +46,3 @@ export default function FAQ({ header, body }: FAQProps) {
     </div>
   );
 }
-// ...existing code...
