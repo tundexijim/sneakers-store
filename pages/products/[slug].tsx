@@ -618,12 +618,17 @@ export const getServerSideProps: GetServerSideProps = async ({
   req,
   params,
 }) => {
-  const protocol = req.headers["x-forwarded-proto"] || "http";
-  const host = req.headers["host"];
-  const fullUrl = `${protocol}://${host}${req.url}`;
   const slug = params?.slug as string;
   const product = await getProductBySlug(slug);
-
+  const protocol = req.headers["x-forwarded-proto"] || "http";
+  const host = req.headers["host"];
+  let path = req.url;
+  if (path?.startsWith("/_next/data")) {
+    const parts = path.split("/");
+    parts.splice(1, 3);
+    path = parts.join("/").replace(".json", "");
+  }
+  const fullUrl = `${protocol}://${host}${req.url}`;
   if (!product) {
     return { notFound: true };
   }
