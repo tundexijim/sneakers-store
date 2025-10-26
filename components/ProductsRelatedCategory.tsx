@@ -53,7 +53,10 @@ export default function ProductsRelatedCategory({
                 0
               );
               return (
-                <div key={product.id} className="relative">
+                <div
+                  key={product.id}
+                  className="flex-none w-72 snap-start relative"
+                >
                   {stock === 0 && (
                     <div
                       aria-hidden="true"
