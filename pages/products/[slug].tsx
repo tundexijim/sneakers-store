@@ -628,7 +628,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     parts.splice(1, 3);
     path = parts.join("/").replace(".json", "");
   }
-  const fullUrl = `${protocol}://${host}${req.url}`;
+  const fullUrl = `${protocol}://${host}${path}`;
   if (!product) {
     return { notFound: true };
   }
