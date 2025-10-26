@@ -37,20 +37,58 @@ export default function FeaturedProducts() {
       <div className="sm:hidden">
         <div className="px-4 overflow-x-auto scrollbar-hide">
           <div className="flex gap-2 snap-x snap-mandatory w-max">
-            {featuredProducts.map((p) => (
-              <div key={p.id} className="flex-none w-72 snap-start">
-                <ProductFeaturedCard product={p} />
-              </div>
-            ))}
+            {featuredProducts.map((product) => {
+              const stock = product.sizes.reduce(
+                (sum, size) => sum + size.stock,
+                0
+              );
+              console.log("Featured product stock:", stock);
+              return (
+                <div
+                  key={product.id}
+                  className="flex-none w-72 snap-start relative"
+                >
+                  {stock === 0 && (
+                    <div
+                      aria-hidden="true"
+                      className="absolute top-2 right-2 z-20 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded"
+                    >
+                      OUT OF STOCK
+                    </div>
+                  )}
+                  <ProductFeaturedCard product={product} />
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>
 
       {/* Grid Layout (sm and above) */}
       <div className="hidden sm:grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {featuredProducts.map((p) => (
-          <ProductFeaturedCard key={p.id} product={p} />
-        ))}
+        {featuredProducts.map((product) => {
+          const stock = product.sizes.reduce(
+            (sum, size) => sum + size.stock,
+            0
+          );
+
+          return (
+            <div
+              key={product.id}
+              className="flex-none w-72 snap-start relative"
+            >
+              {stock === 0 && (
+                <div
+                  aria-hidden="true"
+                  className="absolute top-2 right-2 z-20 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded"
+                >
+                  OUT OF STOCK
+                </div>
+              )}
+              <ProductFeaturedCard product={product} />
+            </div>
+          );
+        })}
       </div>
 
       <style jsx>{`

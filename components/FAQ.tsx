@@ -21,9 +21,9 @@ export default function FAQ({ header, body }: FAQProps) {
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-controls={`${idRef.current}-panel`}
-        className="w-full flex items-center justify-between px-4 py-3 text-left cursor-pointer"
+        className="w-full flex items-center justify-between py-3 text-left cursor-pointer"
       >
-        <span className="font-semibold text-gray-900">{header}</span>
+        <span className="font-semibold text-gray-900 uppercase">{header}</span>
         <span aria-hidden className="ml-3 text-lg leading-none text-gray-700">
           {open ? "−" : "+"}
         </span>
@@ -34,7 +34,7 @@ export default function FAQ({ header, body }: FAQProps) {
         role="region"
         aria-labelledby={`${idRef.current}-button`}
         className={`overflow-hidden transition-all duration-150 ease-in-out ${
-          open ? "p-4 h-auto" : "p-0 h-0"
+          open ? "p-2 h-auto" : "p-0 h-0"
         }`}
       >
         {open && (

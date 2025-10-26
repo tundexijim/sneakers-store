@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { fetchProductsByIds } from "@/services/productService";
 import FeaturedProducts from "@/components/FeaturedProducts";
+import WhatsAppFloatingButton from "@/components/WhatsApp";
 
 export default function CartPage() {
   const { cart, updateQty, removeFromCart, total, setCart } = useCart();
@@ -345,6 +346,14 @@ export default function CartPage() {
             You Might Like
           </h2>
           <FeaturedProducts />
+        </div>
+        <div className="fixed bottom-6 right-6 z-40 transition-all duration-300 hover:scale-105">
+          <WhatsAppFloatingButton
+            phoneNumber="2348106758547"
+            message="Hello! I am interested in your products. Kindly assist me."
+            position="bottom-right"
+            showTooltip={false}
+          />
         </div>
       </main>
     </>

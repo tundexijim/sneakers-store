@@ -6,7 +6,6 @@ import { Product } from "../../types";
 import { useCart } from "../../context/CartContext";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import ReactMarkdown from "react-markdown";
 import {
   X,
   ArrowLeft,
@@ -20,8 +19,15 @@ import { useRouter } from "next/router";
 import { DeleteDialog, InfoDialog } from "@/components/DialogBox";
 import ProductsRelatedCategory from "@/components/ProductsRelatedCategory";
 import Faq from "@/components/FAQ";
+import WhatsAppFloatingButton from "@/components/WhatsApp";
 
-export default function ProductPage({ product }: { product: Product }) {
+export default function ProductPage({
+  product,
+  fullUrl,
+}: {
+  product: Product;
+  fullUrl: string;
+}) {
   const { addToCart, cart } = useCart();
   const [selectedSize, setSelectedSize] = useState<number | string | null>(
     null
@@ -153,7 +159,7 @@ export default function ProductPage({ product }: { product: Product }) {
     setSelectedImageIndex(index);
     setIsImageLoading(true);
   };
-
+  console.log("fullUrl:", fullUrl);
   return (
     <>
       <Head>
@@ -400,8 +406,6 @@ export default function ProductPage({ product }: { product: Product }) {
                 </div>
               </div>
 
-              {/* Description */}
-
               {/* Stock Info */}
               {stockinsize && (
                 <p className="text-amber-800 font-medium">
@@ -476,8 +480,11 @@ export default function ProductPage({ product }: { product: Product }) {
               </div>
 
               {product.description !== "" && (
-                <div className="border-t border-gray-200 bg-white md:px-0 px-2 py-4 mb-0 font-[250]">
-                  <ReactMarkdown>{product.description}</ReactMarkdown>
+                <div className="border-t border-gray-200 bg-white md:px-0 px-2 py-4 mb-0">
+                  <h1 className="text-xl font-bold">DESCRIPTION</h1>
+                  <pre className="font-mono text-gray-700 mt-2">
+                    {product.description}
+                  </pre>
                 </div>
               )}
 
@@ -553,12 +560,19 @@ export default function ProductPage({ product }: { product: Product }) {
           <div className="border-t border-gray-200">
             {[
               {
+                header: "What payment methods do you accept?",
+                body: `We accept the following payment methods: 
+- Credit/Debit Card: VISA/MASTERCARD powered by Paystack
+- Bank Transfer
+- Cash on delivery`,
+              },
+              {
                 header: "Do you offer same day delivery within Lagos?",
                 body: "Yes we do! However, your order must be placed and confirmed before 10am to be eligible for same day delivery.\nDelivery timeframe is between 10:30am - 6:30pm",
               },
               {
                 header: "Do you ship nationwide?",
-                body: "We offer nationwide express shipping on all orders. You'll receive your order in an estimated 1–4 days after shipment. However, Doorstep delivery sometimes takes longer. We ship all orders within 1-2 business days!. Delivery takes 1-4 business days outside Lagos.",
+                body: "We offer nationwide express shipping on all orders.  You'll receive your order in an estimated 1–4 days after shipment. However, Doorstep delivery sometimes takes longer. We ship all orders within 1-2 business days!. Delivery takes 1-4 business days outside Lagos.",
               },
               {
                 header: "Do you offer Pay on Delivery?",
@@ -568,6 +582,14 @@ export default function ProductPage({ product }: { product: Product }) {
               <Faq key={header} header={header} body={body} />
             ))}
           </div>
+        </div>
+        <div className="fixed bottom-6 right-6 z-40 transition-all duration-300 hover:scale-105">
+          <WhatsAppFloatingButton
+            phoneNumber="2348106758547"
+            message={`Hi! I am interested in this product ${fullUrl} from dtwears. Kindly assist me.`}
+            position="bottom-right"
+            showTooltip={false}
+          />
         </div>
 
         {/* Dialogs */}
@@ -592,13 +614,18 @@ export default function ProductPage({ product }: { product: Product }) {
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  params,
+}) => {
+  const protocol = req.headers["x-forwarded-proto"] || "http";
+  const host = req.headers["host"];
+  const fullUrl = `${protocol}://${host}${req.url}`;
   const slug = params?.slug as string;
   const product = await getProductBySlug(slug);
 
   if (!product) {
     return { notFound: true };
   }
-
-  return { props: { product } };
+  return { props: { product, fullUrl } };
 };

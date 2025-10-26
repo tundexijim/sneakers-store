@@ -309,12 +309,20 @@ export default function AdminPanel() {
                         <Mail className="w-4 h-4 mr-1 text-gray-400" />
                         {selectedOrder.customer?.email}
                       </p>
+                      <p>
+                        E-mail Opt-In:{" "}
+                        {selectedOrder.customer.emailOptIn ? "Yes" : "No"}
+                      </p>
                     </div>
                     <div>
                       <p className="text-sm text-gray-600">Phone</p>
                       <p className="font-medium flex items-center">
                         <Phone className="w-4 h-4 mr-1 text-gray-400" />
                         {selectedOrder.customer.phone}
+                      </p>
+                      <p>
+                        Text Opt-In:{" "}
+                        {selectedOrder.customer.textOptIn ? "Yes" : "No"}
                       </p>
                     </div>
                     <div>

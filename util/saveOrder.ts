@@ -27,6 +27,8 @@ export interface OrderData {
     phone: string;
     city: string;
     selectedState: string;
+    emailOptIn?: boolean;
+    textOptIn?: boolean;
   };
   paymentMethod: string;
   total: number;

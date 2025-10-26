@@ -188,7 +188,7 @@ export default function Navbar() {
       ${isScrolled ? "backdrop-blur-sm bg-black/95" : "bg-black"}
     `}
     >
-      <div className="container mx-auto md:px-16 p-4">
+      <div className="container mx-auto md:px-16 px-4 py-2">
         <div className="flex justify-between items-center">
           {/* Desktop Logo */}
           <Link href="/" className="hidden md:flex group">
@@ -197,7 +197,7 @@ export default function Navbar() {
               alt="logo"
               width={56}
               height={56}
-              className="w-14 transition-transform duration-200 group-hover:scale-105"
+              className="transition-transform duration-200 group-hover:scale-105"
               priority
             />
           </Link>

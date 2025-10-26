@@ -14,6 +14,7 @@ import Image from "next/image";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/lib/firebaseConfig";
 import { payWithPaystack, PaystackResponse } from "@/util/paystack";
+import WhatsAppFloatingButton from "@/components/WhatsApp";
 
 export default function CheckoutPage() {
   const { cart, total, clearCart } = useCart();
@@ -34,6 +35,8 @@ export default function CheckoutPage() {
   const [hasRestoredForm, setHasRestoredForm] = useState(false);
   const [errors, setErrors] = useState<{ [key: string]: boolean }>({});
   const [showInfo, setShowInfo] = useState(false);
+  const [emailOptIn, setEmailOptIn] = useState(false);
+  const [textOptIn, setTextOptIn] = useState(false);
   const isClient = useIsClient();
   const Subtotal =
     total +
@@ -134,6 +137,8 @@ export default function CheckoutPage() {
       address: form.address,
       city: form.city,
       selectedState,
+      emailOptIn,
+      textOptIn,
     },
     paymentMethod: form.paymentMethod,
     total,
@@ -312,9 +317,9 @@ export default function CheckoutPage() {
         </div>
 
         <div className=" space-y-3 pt-4 border-t border-slate-200">
-          <div className="flex justify-between text-slate-600">
-            <span>Shipping</span>
-            <span>
+          <div className="grid grid-cols-[1fr_auto] gap-4 text-slate-600 items-center">
+            <span>GIGL Shipping</span>
+            <span className="text-right whitespace-nowrap">
               {form.paymentMethod === "pay on delivery"
                 ? formatPrice(ShippingCost)
                 : total <= 100000
@@ -322,9 +327,12 @@ export default function CheckoutPage() {
                 : formatPrice(0)}
             </span>
           </div>
-          <div className="flex justify-between text-xl font-bold text-slate-900 pt-2">
-            <span>Total</span>
-            <span>{formatPrice(Subtotal)}</span>
+
+          <div className="grid grid-cols-[1fr_auto] gap-4 items-baseline pt-2">
+            <span className="text-lg font-medium text-slate-700">Total</span>
+            <span className="text-xl font-bold text-slate-900 text-right whitespace-nowrap">
+              {formatPrice(Subtotal)}
+            </span>
           </div>
         </div>
       </div>
@@ -451,6 +459,15 @@ export default function CheckoutPage() {
                               <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                             </div>
                           )}
+                          <label className="inline-flex items-center gap-2 text-[12px] mt-2">
+                            <input
+                              type="checkbox"
+                              name="isFeatured"
+                              checked={textOptIn}
+                              onChange={() => setTextOptIn(!textOptIn)}
+                            />
+                            Text me with news and offers
+                          </label>
                         </div>
                       </div>
 
@@ -476,6 +493,15 @@ export default function CheckoutPage() {
                               <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                             </div>
                           )}
+                          <label className="inline-flex items-center gap-2 text-[12px] mt-2">
+                            <input
+                              type="checkbox"
+                              name="isFeatured"
+                              checked={emailOptIn}
+                              onChange={() => setEmailOptIn(!emailOptIn)}
+                            />
+                            Email me with news and offers
+                          </label>
                         </div>
                       </div>
                     </div>
@@ -627,14 +653,14 @@ export default function CheckoutPage() {
                           <li>
                             <span>
                               Flat rate of{" "}
-                              <span className="font-medium">₦5,000.00</span>{" "}
+                              <span className="font-medium">₦6,000.00</span>{" "}
                               applies for delivery outside Lagos state.
                             </span>
                           </li>
                           <li>
                             <span>
                               Rate of{" "}
-                              <span className="font-medium">₦3,000.00</span>{" "}
+                              <span className="font-medium">₦3,500.00</span>{" "}
                               applies within Lagos state.
                             </span>
                           </li>
@@ -766,21 +792,16 @@ export default function CheckoutPage() {
                         </div>
                       </label>
 
-                      {/* {form.paymentMethod === "pay on delivery" && (
+                      {form.paymentMethod === "pay on delivery" && (
                         <div className="mt-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200">
                           <div className="text-sm text-gray-600 space-y-4">
                             <p>
-                              1. Payment on delivery is available for Lagos
-                              state only.
-                            </p>
-                            <p>
-                              {" "}
-                              2. We reserve the right to decline POD order based
-                              on location and other considerations.
+                              Your order can be paid for upon delivery, subject
+                              to order confirmation by phone or email.
                             </p>
                           </div>
                         </div>
-                      )} */}
+                      )}
                     </div>
                   </div>
                   {/* Error Message */}
@@ -844,6 +865,14 @@ export default function CheckoutPage() {
               </div>
             </div>
           )}
+          <div className="fixed bottom-6 right-6 z-40 transition-all duration-300 hover:scale-105">
+            <WhatsAppFloatingButton
+              phoneNumber="2348106758547"
+              message="Hello! I am interested in your products. Kindly assist me."
+              position="bottom-right"
+              showTooltip={false}
+            />
+          </div>
         </main>
       </div>
     </>

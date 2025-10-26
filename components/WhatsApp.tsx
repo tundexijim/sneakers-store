@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
-import { time } from "console";
 
 interface WhatsAppFloatingButtonProps {
   phoneNumber: string; // Phone number in international format (e.g., "2348123456789")

@@ -13,6 +13,7 @@ import ProductListPanel from "@/components/ProductListPanel";
 import { useRouter } from "next/router";
 import { LoadingOverlay } from "@/components/Loading";
 import CategoryBadge from "@/components/Categorybadge";
+import WhatsAppFloatingButton from "@/components/WhatsApp";
 
 type Props = {
   products: Product[];
@@ -187,13 +188,32 @@ export default function ProductsList({
                   : "space-y-4"
               }
             >
-              {products.map((product) => (
-                <ProductCard
-                  key={product.id}
-                  product={product}
-                  isListView={viewMode === "list"}
-                />
-              ))}
+              {products.map((product) => {
+                // calculate total stock for this product
+                const stock = product.sizes.reduce(
+                  (sum, size) => sum + size.stock,
+                  0
+                );
+
+                return (
+                  <div key={product.id} className="relative">
+                    {/* Out of stock badge */}
+                    {stock === 0 && (
+                      <div
+                        aria-hidden="true"
+                        className="absolute top-2 right-2 z-20 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded"
+                      >
+                        OUT OF STOCK
+                      </div>
+                    )}
+
+                    <ProductCard
+                      product={product}
+                      isListView={viewMode === "list"}
+                    />
+                  </div>
+                );
+              })}
             </div>
           )}
         </LoadingOverlay>
@@ -280,6 +300,14 @@ export default function ProductsList({
             {Math.min(currentPage * PRODUCTS_PER_PAGE, total)} of {total}
           </div>
         )}
+        <div className="fixed bottom-6 right-6 z-40 transition-all duration-300 hover:scale-105">
+          <WhatsAppFloatingButton
+            phoneNumber="2348106758547"
+            message="Hello! I am interested in your products. Kindly assist me."
+            position="bottom-right"
+            showTooltip={false}
+          />
+        </div>
       </main>
     </>
   );

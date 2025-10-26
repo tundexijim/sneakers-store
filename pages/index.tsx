@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { ArrowRight, Star, Zap, Truck } from "lucide-react";
 import Head from "next/head";
 import Link from "next/link";
@@ -7,6 +7,9 @@ import Image from "next/image";
 import { GetServerSideProps } from "next";
 import { Category } from "@/types";
 import FeaturedProducts from "@/components/FeaturedProducts";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import WhatsAppFloatingButton from "@/components/WhatsApp";
 
 type Props = {
   categories: Category[];
@@ -37,6 +40,82 @@ const SneakersHomepageContent = ({
 }: {
   categories: Category[];
 }) => {
+  const featuredRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const pillRef = useRef<HTMLDivElement | null>(null);
+  const headingRef = useRef<HTMLHeadingElement | null>(null);
+  const subRef = useRef<HTMLParagraphElement | null>(null);
+  const ctaRef = useRef<HTMLButtonElement | null>(null);
+  // ...existing code...
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      gsap.registerPlugin(ScrollTrigger);
+    }
+    const ctx = gsap.context(() => {
+      // slower, smoother fade-ins on load
+      const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
+
+      if (pillRef.current) {
+        tl.fromTo(
+          pillRef.current,
+          { y: -8, opacity: 0 },
+          { y: 0, opacity: 1, duration: 2, immediateRender: false }
+        );
+      }
+
+      if (headingRef.current) {
+        tl.fromTo(
+          headingRef.current,
+          { y: 20, opacity: 0 },
+          { y: 0, opacity: 1, duration: 2, immediateRender: false },
+          "-=0.6"
+        );
+      }
+
+      if (subRef.current) {
+        tl.fromTo(
+          subRef.current,
+          { y: 12, opacity: 0 },
+          { y: 0, opacity: 1, duration: 2, immediateRender: false },
+          "-=1.0"
+        );
+      }
+
+      if (ctaRef.current) {
+        tl.fromTo(
+          ctaRef.current,
+          { y: 8, opacity: 0, scale: 0.98 },
+          {
+            y: 0,
+            opacity: 1,
+            scale: 1,
+            duration: 2,
+            immediateRender: false,
+          },
+          "-=0.9"
+        );
+      }
+      gsap.fromTo(
+        featuredRef.current,
+        { y: 120, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 5,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: featuredRef.current,
+            start: "top 85%",
+            toggleActions: "play none none none",
+            // markers: true, // uncomment for debugging
+          },
+        }
+      );
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, []);
+  // ...existing code...
   return (
     <>
       <Head>
@@ -95,7 +174,7 @@ const SneakersHomepageContent = ({
       <div className="min-h-screen bg-white">
         {/* Hero Section */}
         <section
-          className="relative min-h-screen bg-cover bg-center bg-no-repeat overflow-hidden px-2 md:px-16"
+          className="relative bg-cover bg-center bg-no-repeat overflow-hidden px-2 md:px-16"
           style={{
             backgroundImage: "url('./images/banner3.jpg')",
           }}
@@ -104,27 +183,39 @@ const SneakersHomepageContent = ({
           <div className="absolute inset-0 bg-black/40"></div>
 
           {/* Gradient overlay for extra depth */}
-          <div className="absolute inset-0 bg-gradient-to-br from-purple-900/40 via-transparent to-slate-900/40"></div>
-
-          <div className="relative container mx-auto px-4 py-16 lg:py-24 min-h-screen flex items-center">
+          <div
+            ref={containerRef}
+            className="relative container h-[calc(100vh-200px)] md:h-[calc(100vh-100px)] mx-auto px-4 py-16 lg:py-24  flex items-center"
+          >
             <div className="grid lg:grid-cols-2 gap-12 items-center w-full">
               <div className="text-white space-y-6">
-                <div className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm">
+                <div
+                  ref={pillRef}
+                  className="inline-flex items-center space-x-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 text-sm"
+                >
                   <Zap className="w-4 h-4 text-yellow-400" />
                   <span>New Collection Available</span>
                 </div>
-                <h1 className="text-4xl lg:text-6xl font-bold leading-tight">
+
+                <h1
+                  ref={headingRef}
+                  className="text-4xl lg:text-6xl font-bold leading-tight"
+                >
                   Step Up Your{" "}
                   <span className="block bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent">
                     Game
                   </span>
                 </h1>
-                <p className="text-xl text-gray-300 max-w-lg">
+                <p ref={subRef} className="text-xl text-gray-300 max-w-lg">
                   Discover the latest jerseys and sneakers to elevate your style
                   and performance.
                 </p>
+
                 <Link href="/products">
-                  <button className="bg-[#00C8C8] text-black px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 flex items-center justify-center space-x-2 group cursor-pointer">
+                  <button
+                    ref={ctaRef}
+                    className="bg-[#00C8C8] text-black px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 flex items-center justify-center space-x-2 group cursor-pointer"
+                  >
                     <span>Shop Now</span>
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
                   </button>
@@ -132,6 +223,7 @@ const SneakersHomepageContent = ({
               </div>
 
               {/* Visual element on the right side */}
+
               <div className="relative w-full h-96 lg:block hidden">
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-500 to-pink-500 rounded-3xl blur-3xl opacity-20 animate-pulse"></div>
                 <div className="relative w-full h-96 bg-white/5 backdrop-blur-sm rounded-3xl border border-white/10 flex items-center justify-center">
@@ -176,7 +268,7 @@ const SneakersHomepageContent = ({
         </section>
 
         {/* Featured Products */}
-        <section className="py-16 md:px-16">
+        <section ref={featuredRef} className="py-16 md:px-16">
           <div className="mb-12 text-center px-2">
             <h2 className="text-3xl lg:text-4xl font-bold mb-4">
               Featured Releases
@@ -262,6 +354,14 @@ const SneakersHomepageContent = ({
             </div>
           </div>
         </section>
+        <div className="fixed bottom-6 right-6 z-40 transition-all duration-300 hover:scale-105">
+          <WhatsAppFloatingButton
+            phoneNumber="2348106758547"
+            message="Hello! I am interested in your products. Kindly assist me."
+            position="bottom-right"
+            showTooltip={false}
+          />
+        </div>
       </div>
     </>
   );
