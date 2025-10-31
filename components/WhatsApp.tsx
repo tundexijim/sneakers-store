@@ -16,6 +16,7 @@ export default function WhatsAppFloatingButton({
 }: WhatsAppFloatingButtonProps) {
   const [isVisible, setIsVisible] = useState(false);
   const [showTooltipState, setShowTooltipState] = useState(false);
+  const eventId = "whatsappclick_" + Date.now();
 
   // Show button after page loads
   useEffect(() => {
@@ -32,10 +33,15 @@ export default function WhatsAppFloatingButton({
 
   const handleWhatsAppClick = () => {
     if (typeof window !== "undefined" && typeof window.fbq !== "undefined") {
-      window.fbq("trackCustom", "WhatsAppClick", {
-        location: "floating_button",
-        timestamp: new Date().toISOString(),
-      });
+      window.fbq(
+        "trackCustom",
+        "WhatsAppClick",
+        {
+          location: "floating_button",
+          timestamp: new Date().toISOString(),
+        },
+        { eventID: eventId }
+      );
     }
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;

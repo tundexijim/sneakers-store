@@ -8,7 +8,8 @@ import { GetServerSideProps } from "next";
 import { Category } from "@/types";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
+// import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 import WhatsAppFloatingButton from "@/components/WhatsApp";
 
 type Props = {
@@ -46,76 +47,48 @@ const SneakersHomepageContent = ({
   const headingRef = useRef<HTMLHeadingElement | null>(null);
   const subRef = useRef<HTMLParagraphElement | null>(null);
   const ctaRef = useRef<HTMLButtonElement | null>(null);
-  // ...existing code...
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      gsap.registerPlugin(ScrollTrigger);
-    }
-    const ctx = gsap.context(() => {
-      // slower, smoother fade-ins on load
+  useGSAP(
+    () => {
+      if (typeof window !== "undefined") {
+        const ScrollTrigger = require("gsap/ScrollTrigger").ScrollTrigger;
+        gsap.registerPlugin(ScrollTrigger);
+      }
+      // Hero section animations
       const tl = gsap.timeline({ defaults: { ease: "power2.out" } });
 
-      if (pillRef.current) {
-        tl.fromTo(
-          pillRef.current,
-          { y: -8, opacity: 0 },
-          { y: 0, opacity: 1, duration: 2, immediateRender: false }
-        );
-      }
-
-      if (headingRef.current) {
-        tl.fromTo(
-          headingRef.current,
-          { y: 20, opacity: 0 },
-          { y: 0, opacity: 1, duration: 2, immediateRender: false },
-          "-=0.6"
-        );
-      }
-
-      if (subRef.current) {
-        tl.fromTo(
-          subRef.current,
-          { y: 12, opacity: 0 },
-          { y: 0, opacity: 1, duration: 2, immediateRender: false },
-          "-=1.0"
-        );
-      }
-
-      if (ctaRef.current) {
-        tl.fromTo(
-          ctaRef.current,
-          { y: 8, opacity: 0, scale: 0.98 },
-          {
-            y: 0,
-            opacity: 1,
-            scale: 1,
-            duration: 2,
-            immediateRender: false,
-          },
-          "-=0.9"
-        );
-      }
-      gsap.fromTo(
-        featuredRef.current,
-        { y: 120, opacity: 0 },
+      tl.fromTo(
+        [pillRef.current, headingRef.current, subRef.current, ctaRef.current],
+        { y: 20, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 5,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: featuredRef.current,
-            start: "top 85%",
-            toggleActions: "play none none none",
-            // markers: true, // uncomment for debugging
-          },
+          duration: 1.5,
+          stagger: 0.2,
+          immediateRender: false,
         }
       );
-    }, containerRef);
 
-    return () => ctx.revert();
-  }, []);
-  // ...existing code...
+      // Featured products animation
+      if (featuredRef.current) {
+        gsap.fromTo(
+          featuredRef.current,
+          { y: 120, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 5,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: featuredRef.current,
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          }
+        );
+      }
+    },
+    { scope: containerRef }
+  );
   return (
     <>
       <Head>
@@ -124,6 +97,12 @@ const SneakersHomepageContent = ({
           name="description"
           content="Shop premium sneakers and NFL jerseys online at DTwears. Discover the latest collections to elevate your style and performance."
         />
+        <meta
+          name="keywords"
+          content="nfl jerseys, clothings, sneakers, sports apparel, Nigeria"
+        />
+        <meta name="viewport" content="width=device-width,initial-scale=1" />
+        {/* open graph */}
         <meta
           property="og:title"
           content="DTwears - Premium Sneakers & Jerseys"

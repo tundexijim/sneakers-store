@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@gsap/react": "^2.1.2",
     "axios": "^1.9.0",
     "date-fns": "^4.1.0",
     "firebase": "^11.7.1",

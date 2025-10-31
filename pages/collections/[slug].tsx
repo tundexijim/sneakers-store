@@ -62,12 +62,11 @@ export default function ProductsList({
   }, [currentPage]);
 
   const handleSortChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newSort = e.target.value;
-    setSelectedSort(newSort);
+    setSelectedSort(e.target.value);
     const { slug, ...queryParams } = router.query;
     router.push({
       pathname: `/collections/${catName}`,
-      query: { ...queryParams, sortBy: newSort, page: 1 },
+      query: { ...queryParams, sortBy: e.target.value, page: 1 },
     });
   };
 

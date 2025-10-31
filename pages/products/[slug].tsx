@@ -47,6 +47,7 @@ export default function ProductPage({
 
   const stock = product.sizes.reduce((sum, size) => sum + size.stock, 0);
   const router = useRouter();
+  const eventId = "addtocart_" + Date.now();
 
   // Convert single image to array or use existing images array
   const productImages =
@@ -91,13 +92,18 @@ export default function ProductPage({
         addToCart({ ...product, qty: 1, selectedSize });
       }, 1000);
       if (typeof window.fbq !== "undefined") {
-        window.fbq("track", "AddToCart", {
-          content_name: product.name,
-          content_ids: product.id,
-          content_type: "product",
-          value: product.price,
-          currency: "NGN",
-        });
+        window.fbq(
+          "track",
+          "AddToCart",
+          {
+            content_name: product.name,
+            content_ids: product.id,
+            content_type: "product",
+            value: product.price,
+            currency: "NGN",
+          },
+          { eventID: eventId }
+        );
       }
     }
   };

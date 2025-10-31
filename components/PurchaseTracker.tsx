@@ -9,12 +9,19 @@ export default function PurchaseTracker({
   value,
   currency = "NGN",
 }: PurchaseTrackerProps) {
+  const eventId = "purchase_" + Date.now();
+
   useEffect(() => {
     if (typeof window !== "undefined" && typeof window.fbq !== "undefined") {
-      window.fbq("track", "Purchase", {
-        value,
-        currency,
-      });
+      window.fbq(
+        "track",
+        "Purchase",
+        {
+          value,
+          currency,
+        },
+        { eventID: eventId }
+      );
     }
   }, [value, currency]);
 
