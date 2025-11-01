@@ -79,6 +79,21 @@ export default function ProductPage({
 
     productChange();
   }, [product.id]);
+  useEffect(() => {
+    if (typeof window !== "undefined" && typeof window.fbq !== "undefined") {
+      window.fbq(
+        "track",
+        "ViewContent",
+        {
+          content_ids: [product.slug],
+          content_type: "product",
+          value: product.price,
+          currency: "NGN",
+        },
+        { eventID: eventId }
+      );
+    }
+  }, [product]);
 
   const handleAddToCart = () => {
     if (isLoading) return;
