@@ -48,6 +48,7 @@ export default function ProductPage({
   const stock = product.sizes.reduce((sum, size) => sum + size.stock, 0);
   const router = useRouter();
   const eventId = "addtocart_" + Date.now();
+  const eventIdView = "viewcontent_" + Date.now();
 
   // Convert single image to array or use existing images array
   const productImages =
@@ -90,7 +91,7 @@ export default function ProductPage({
           value: product.price,
           currency: "NGN",
         },
-        { eventID: eventId }
+        { eventID: eventIdView }
       );
     }
   }, [product]);

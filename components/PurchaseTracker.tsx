@@ -20,7 +20,7 @@ export default function PurchaseTracker({
         "Purchase",
         {
           content_ids: cart.map((item) => item.slug),
-          content_type: "product",
+          content_type: "product_group",
           value,
           currency,
         },
