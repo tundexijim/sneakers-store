@@ -17,7 +17,7 @@ import { payWithPaystack, PaystackResponse } from "@/util/paystack";
 import WhatsAppFloatingButton from "@/components/WhatsApp";
 
 export default function CheckoutPage() {
-  const { cart, total, clearCart } = useCart();
+  const { cart, total } = useCart();
   const router = useRouter();
   const [ShippingCost, setShippingCost] = useState(0);
   const [selectedState, setSelectedState] = useState("");
@@ -169,7 +169,6 @@ export default function CheckoutPage() {
           router.push(
             `/payment-success/success?orderNumber=${result.data.reference}&amount=${Subtotal}`
           );
-          clearCart();
         } else {
           await saveOrder(
             {
@@ -269,7 +268,6 @@ export default function CheckoutPage() {
             `/payment-success/success?orderNumber=${orderData.orderNumber}&amount=${Subtotal}&account=1235`
           );
         }
-        clearCart();
       }
       setLoading(false);
     } catch (error: any) {

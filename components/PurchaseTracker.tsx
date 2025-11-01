@@ -1,3 +1,4 @@
+import { useCart } from "@/context/CartContext";
 import { useEffect } from "react";
 
 interface PurchaseTrackerProps {
@@ -10,6 +11,7 @@ export default function PurchaseTracker({
   currency = "NGN",
 }: PurchaseTrackerProps) {
   const eventId = "purchase_" + Date.now();
+  const { cart, clearCart } = useCart();
 
   useEffect(() => {
     if (typeof window !== "undefined" && typeof window.fbq !== "undefined") {
@@ -17,12 +19,15 @@ export default function PurchaseTracker({
         "track",
         "Purchase",
         {
+          content_ids: cart.map((item) => item.slug),
+          content_type: "product",
           value,
           currency,
         },
         { eventID: eventId }
       );
     }
+    clearCart();
   }, [value, currency]);
 
   return null; // nothing to render

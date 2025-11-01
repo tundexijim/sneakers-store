@@ -97,7 +97,7 @@ export default function ProductPage({
           "AddToCart",
           {
             content_name: product.name,
-            content_ids: product.id,
+            content_ids: product.slug,
             content_type: "product",
             value: product.price,
             currency: "NGN",
