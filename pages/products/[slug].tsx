@@ -94,7 +94,7 @@ export default function ProductPage({
         { eventID: eventIdView }
       );
     }
-  }, [product]);
+  }, [product.id]);
 
   const handleAddToCart = () => {
     if (isLoading) return;
@@ -494,7 +494,7 @@ export default function ProductPage({
 
                 {isInCart && (
                   <Link href="/cart" className="block">
-                    <button className="w-full h-14 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+                    <button className="w-full h-14 bg-[#00c8c8] text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
                       View Cart & Checkout
                     </button>
                   </Link>

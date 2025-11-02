@@ -4,14 +4,7 @@ import { useCart } from "../context/CartContext";
 import Link from "next/link";
 import { useIsClient } from "@/hooks/useIsClient";
 import { useEffect, useMemo, useState } from "react";
-import {
-  AlertTriangle,
-  ArrowLeft,
-  Minus,
-  Plus,
-  ShoppingBag,
-  Trash2,
-} from "lucide-react";
+import { AlertTriangle, Minus, Plus, Trash2 } from "lucide-react";
 import { fetchProductsByIds } from "@/services/productService";
 import FeaturedProducts from "@/components/FeaturedProducts";
 import WhatsAppFloatingButton from "@/components/WhatsApp";
@@ -130,28 +123,6 @@ export default function CartPage() {
       </Head>
 
       <main className="container mx-auto md:px-16 px-4 py-8">
-        <div className="bg-white shadow-sm sticky top-0 z-10 mb-8">
-          <div className="max-w-6xl mx-auto px-4 py-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <Link href="/products">
-                  <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                    <ArrowLeft className="w-5 h-5" />
-                  </button>
-                </Link>
-                <div>
-                  <h1 className="text-2xl font-bold text-gray-900">
-                    Shopping Cart
-                  </h1>
-                  <p className="text-gray-600">
-                    {cart.length} {cart.length === 1 ? "item" : "items"}
-                  </p>
-                </div>
-              </div>
-              <ShoppingBag className="w-8 h-8 text-gray-400" />
-            </div>
-          </div>
-        </div>
         {removedItems.length > 0 && (
           <div className="mb-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
             <div className="flex items-start space-x-3">
@@ -169,9 +140,8 @@ export default function CartPage() {
 
         {cart.length === 0 ? (
           <div className="text-center py-16">
-            <ShoppingBag className="w-24 h-24 text-gray-300 mx-auto mb-4" />
             <h2 className="text-2xl font-semibold text-gray-900 mb-2">
-              Your cart is empty
+              Your cart is currently empty
             </h2>
             <p className="text-gray-600 mb-8">Add some items to get started</p>
             <Link href="/products">
