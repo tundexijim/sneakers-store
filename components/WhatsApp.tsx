@@ -2,14 +2,12 @@ import React, { useState, useEffect } from "react";
 import { X } from "lucide-react";
 
 interface WhatsAppFloatingButtonProps {
-  phoneNumber: string; // Phone number in international format (e.g., "2348123456789")
   message?: string; // Default message
   position?: "bottom-right" | "bottom-left";
   showTooltip?: boolean;
 }
 
 export default function WhatsAppFloatingButton({
-  phoneNumber,
   message = "Hello! I am interested in your products.",
   position = "bottom-right",
   showTooltip = true,
@@ -44,7 +42,7 @@ export default function WhatsAppFloatingButton({
       );
     }
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/${process.env.NEXT_PUBLIC_PHONE}?text=${encodedMessage}`;
     window.open(whatsappUrl, "_blank");
   };
 

@@ -541,7 +541,7 @@ export default function ProductPage({
               </div>
 
               {/* Admin Actions */}
-              {user?.email === "ijimakindetunde@gmail.com" && (
+              {user?.email === process.env.NEXT_PUBLIC_EMAIL && (
                 <div className="flex gap-4 pt-6 border-t border-gray-200">
                   <button
                     onClick={() => setShowDelete(true)}
@@ -607,7 +607,6 @@ export default function ProductPage({
         </div>
         <div className="fixed bottom-6 right-6 z-40 transition-all duration-300 hover:scale-105">
           <WhatsAppFloatingButton
-            phoneNumber="2348106758547"
             message={`Hi! I am interested in this product ${fullUrl} from dtwears. Kindly assist me.`}
             position="bottom-right"
             showTooltip={false}

@@ -119,7 +119,7 @@ export default function AdminPanel() {
     );
   }
 
-  if (!user || user?.email !== "ijimakindetunde@gmail.com") {
+  if (!user || user?.email !== process.env.NEXT_PUBLIC_EMAIL) {
     return null;
   }
 

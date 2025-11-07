@@ -865,7 +865,6 @@ export default function CheckoutPage() {
           )}
           <div className="fixed bottom-6 right-6 z-40 transition-all duration-300 hover:scale-105">
             <WhatsAppFloatingButton
-              phoneNumber="2348106758547"
               message="Hello! I am interested in your products. Kindly assist me."
               position="bottom-right"
               showTooltip={false}

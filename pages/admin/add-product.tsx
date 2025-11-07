@@ -241,7 +241,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
   };
 
   if (!isClient) return null;
-  if (user?.email !== "ijimakindetunde@gmail.com") return null;
+  if (user?.email !== process.env.NEXT_PUBLIC_EMAIL) return null;
   if (authloading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
