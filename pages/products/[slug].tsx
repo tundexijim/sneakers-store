@@ -504,9 +504,9 @@ export default function ProductPage({
               {product.description !== "" && (
                 <div className="border-t border-gray-200 bg-white md:px-0 px-2 py-4 mb-0">
                   <h1 className="text-xl font-bold">DESCRIPTION</h1>
-                  <pre className="font-mono text-gray-700 mt-2">
+                  <div className="font-mono text-gray-700 mt-2 whitespace-pre-wrap">
                     {product.description}
-                  </pre>
+                  </div>
                 </div>
               )}
 
