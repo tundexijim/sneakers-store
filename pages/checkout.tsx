@@ -316,7 +316,7 @@ export default function CheckoutPage() {
 
         <div className=" space-y-3 pt-4 border-t border-slate-200">
           <div className="grid grid-cols-[1fr_auto] gap-4 text-slate-600 items-center">
-            <span>GIGL Shipping</span>
+            <span>Shipping</span>
             <span className="text-right whitespace-nowrap">
               {form.paymentMethod === "pay on delivery"
                 ? formatPrice(ShippingCost)
