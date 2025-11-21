@@ -181,7 +181,6 @@ export default function ProductPage({
     setSelectedImageIndex(index);
     setIsImageLoading(true);
   };
-  console.log("fullUrl:", fullUrl);
   return (
     <>
       <Head>
@@ -641,6 +640,29 @@ export const getServerSideProps: GetServerSideProps = async ({
 }) => {
   const slug = params?.slug as string;
   const product = await getProductBySlug(slug);
+  const cleanFacebookParams = (url: string) => {
+    const removeParams = [
+      "fbclid",
+      "utm_source",
+      "utm_medium",
+      "utm_campaign",
+      "utm_term",
+      "utm_content",
+      "ref",
+      "gclid",
+    ];
+    const parsed = new URL(url);
+    removeParams.forEach((param) => {
+      if (parsed.searchParams.has(param)) {
+        parsed.searchParams.delete(param);
+      }
+    });
+    return (
+      parsed.origin +
+      parsed.pathname +
+      (parsed.search ? "?" + parsed.searchParams.toString() : "")
+    );
+  };
   const protocol = req.headers["x-forwarded-proto"] || "http";
   const host = req.headers["host"];
   let path = req.url;
@@ -649,7 +671,8 @@ export const getServerSideProps: GetServerSideProps = async ({
     parts.splice(1, 3);
     path = parts.join("/").replace(".json", "");
   }
-  const fullUrl = `${protocol}://${host}${path}`;
+  const dirtyUrl = `${protocol}://${host}${path}`;
+  const fullUrl = cleanFacebookParams(dirtyUrl);
   if (!product) {
     return { notFound: true };
   }
