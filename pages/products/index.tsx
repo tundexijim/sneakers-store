@@ -181,6 +181,14 @@ export default function ProductsList({
                     product={product}
                     isListView={viewMode === "list"}
                   />
+                  {product.oldPrice !== 0 && (
+                    <div
+                      aria-hidden="true"
+                      className="absolute top-2 left-2 z-20 bg-gray-700 text-white text-xs font-semibold px-2 py-1 rounded"
+                    >
+                      SALES
+                    </div>
+                  )}
                 </div>
               );
             })}

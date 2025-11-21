@@ -25,6 +25,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
   const [form, setForm] = useState({
     name: product ? product.name : "",
     price: product ? product.price : 0,
+    oldPrice: product ? product.oldPrice : 0,
     description: product ? product.description : "",
     images: product ? (product.images as string[]) : ([] as string[]),
     sizes: product ? product.sizes : ([] as ProductSize[]),
@@ -210,6 +211,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
       const formData = {
         ...form,
         price: Number(form.price),
+        oldPrice: Number(form.oldPrice),
         image: form.images[0], // Keep backward compatibility by setting first image as main image
         images: form.images,
       };
@@ -224,6 +226,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
         setForm({
           name: "",
           price: 0,
+          oldPrice: 0,
           description: "",
           images: [],
           sizes: [],
@@ -401,7 +404,6 @@ export default function AddProductPage({ product }: { product?: Product }) {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                   />
                 </div>
-
                 <div>
                   <label
                     htmlFor="price"
@@ -419,6 +421,31 @@ export default function AddProductPage({ product }: { product?: Product }) {
                       name="price"
                       placeholder="0.00"
                       value={form.price}
+                      onChange={handleChange}
+                      required
+                      min="0"
+                      step="0.01"
+                      className="w-full pl-8 pr-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label
+                    htmlFor="price"
+                    className="block text-sm font-medium text-gray-700 mb-2"
+                  >
+                    Old Price <span className="text-red-500">*</span>
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <span className="text-gray-500 sm:text-sm">₦</span>
+                    </div>
+                    <input
+                      type="number"
+                      id="oldPrice"
+                      name="oldPrice"
+                      placeholder="0.00"
+                      value={form.oldPrice}
                       onChange={handleChange}
                       required
                       min="0"

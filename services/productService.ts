@@ -133,6 +133,7 @@ export async function fetchProductsByIds(ids: string[]): Promise<Product[]> {
             id: doc.id,
             name: data.name,
             price: data.price,
+            oldPrice: data.oldPrice,
             image: data.image,
             slug: data.slug,
             isFeatured: data.isFeatured,
@@ -274,6 +275,7 @@ export async function getProductsRelatedCategory(
 export async function saveProduct(product: {
   name: string;
   price: number;
+  oldPrice: number;
   description: string;
   image: string;
   sizes: ProductSize[];

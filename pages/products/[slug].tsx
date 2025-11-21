@@ -416,8 +416,15 @@ export default function ProductPage({
                   {product.name}
                 </h1>
                 <div className="flex items-center gap-4">
-                  <div className="text-xl font-semibold bg-gradient-to-r text-gray-600 bg-clip-text">
-                    {formatPrice(product.price)}
+                  <div>
+                    {product.oldPrice !== 0 && (
+                      <p className="text-[18px] font-semibold line-through bg-gradient-to-r text-gray-600 bg-clip-text">
+                        {formatPrice(product.oldPrice)}
+                      </p>
+                    )}
+                    <p className="text-xl font-bold text-[#00C8C8]">
+                      {formatPrice(product.price)}
+                    </p>
                   </div>
                   {stock > 0 && (
                     <div className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">

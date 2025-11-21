@@ -49,6 +49,7 @@ export default function CartPage() {
           return {
             ...item,
             price: product?.price ?? item.price,
+            oldPrice: product?.oldPrice ?? item.oldPrice,
             image: product?.image ?? item.image,
             name: product?.name ?? item.name,
             description: product?.description ?? item.description,

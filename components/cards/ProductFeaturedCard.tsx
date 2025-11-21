@@ -25,7 +25,14 @@ export default function ProductFeaturedCard({ product }: { product: Product }) {
           <h3 className="text-xl font-semibold transition-colors">
             {product.name}
           </h3>
-          <p className="text-[17px] font-semibold text-gray-500">
+        </div>
+        <div className="flex flex-col">
+          {product.oldPrice !== 0 && (
+            <p className="text-[17px] font-semibold text-gray-500 line-through">
+              {formatPrice(product.oldPrice)}
+            </p>
+          )}
+          <p className="text-[18px] font-bold text-[#00C8C8]">
             {formatPrice(product.price)}
           </p>
         </div>

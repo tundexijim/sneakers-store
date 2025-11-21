@@ -65,6 +65,14 @@ export default function ProductsRelatedCategory({
                       OUT OF STOCK
                     </div>
                   )}
+                  {product.oldPrice != 0 && (
+                    <div
+                      aria-hidden="true"
+                      className="absolute top-2 left-2 z-20 bg-gray-700 text-white text-xs font-semibold px-2 py-1 rounded"
+                    >
+                      SALES
+                    </div>
+                  )}
                   <ProductFeaturedCard key={product.id} product={product} />
                 </div>
               );
@@ -88,6 +96,14 @@ export default function ProductsRelatedCategory({
                   className="absolute top-2 right-2 z-20 bg-red-600 text-white text-xs font-semibold px-2 py-1 rounded"
                 >
                   OUT OF STOCK
+                </div>
+              )}
+              {product.oldPrice != 0 && (
+                <div
+                  aria-hidden="true"
+                  className="absolute top-2 left-2 z-20 bg-gray-700 text-white text-xs font-semibold px-2 py-1 rounded"
+                >
+                  SALES
                 </div>
               )}
               <ProductFeaturedCard key={product.id} product={product} />
