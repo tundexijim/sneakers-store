@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
         pathname: "/**", // This allows all images from all paths
       },
     ],
+    unoptimized: true,
   },
   eslint: {
     ignoreDuringBuilds: true,
