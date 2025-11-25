@@ -253,7 +253,7 @@ export default function CheckoutPage() {
       setLoading(false);
       return;
     }
-
+    if (loading) return;
     try {
       setLoading(true);
       const success = await placeOrder(cart, orderData, setLoading, setError);
