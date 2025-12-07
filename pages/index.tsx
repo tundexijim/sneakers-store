@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { ArrowRight, Star, Zap, Truck } from "lucide-react";
 import Head from "next/head";
 import Link from "next/link";

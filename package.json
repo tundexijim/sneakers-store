@@ -15,10 +15,10 @@
     "firebase": "^11.7.1",
     "gsap": "^3.13.0",
     "lucide-react": "^0.509.0",
-    "next": "15.3.2",
+    "next": "^16.0.7",
     "next-sitemap": "^4.2.3",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
     "react-hot-toast": "^2.5.2",
     "react-markdown": "^10.1.0"
   },
