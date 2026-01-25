@@ -22,17 +22,17 @@ export default function ProductFeaturedCard({ product }: { product: Product }) {
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300"></div>
         </div>
         <div className="space-y-2">
-          <h3 className="text-xl font-semibold transition-colors">
+          <h3 className="text-[13px] font-semibold transition-colors">
             {product.name}
           </h3>
         </div>
-        <div className="flex flex-col">
+        <div className="flex gap-4">
           {product.oldPrice !== 0 && (
-            <p className="text-[17px] font-semibold text-gray-500 line-through">
+            <p className="text-[14px] font-semibold text-gray-500 line-through">
               {formatPrice(product.oldPrice)}
             </p>
           )}
-          <p className="text-[18px] font-bold text-[#00C8C8]">
+          <p className="text-[14px] font-bold text-[#00C8C8]">
             {formatPrice(product.price)}
           </p>
         </div>

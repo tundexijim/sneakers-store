@@ -37,21 +37,21 @@ export default function ProductCard({
           />
         </div>
 
-        <div className={`${isListView ? "flex-1" : "p-4"} space-y-2 relative`}>
+        <div className={`${isListView ? "flex-1" : "p-4"} relative`}>
           <h3
             className={`${
-              isListView ? "text-lg" : "text-xl"
+              isListView ? "text-[12px]" : "text-[13px]"
             } font-semibold transition-colors line-clamp-2`}
           >
             {product.name}
           </h3>
-          <div className="flex flex-col">
+          <div className="flex gap-4">
             {product.oldPrice !== 0 && (
-              <p className="text-[17px] font-semibold text-gray-500 line-through">
+              <p className="text-[14px] font-semibold text-gray-500 line-through">
                 {formatPrice(product.oldPrice)}
               </p>
             )}
-            <p className="text-[18px] font-bold text-[#00C8C8]">
+            <p className="text-[14px] font-bold text-[#00C8C8]">
               {formatPrice(product.price)}
             </p>
           </div>
