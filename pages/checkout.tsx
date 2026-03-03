@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useCart } from "../context/CartContext";
 import { placeOrder, saveOrder } from "@/util/saveOrder";
 import { useRouter } from "next/router";
@@ -37,6 +37,7 @@ export default function CheckoutPage() {
   const [showInfo, setShowInfo] = useState(false);
   const [emailOptIn, setEmailOptIn] = useState(false);
   const [textOptIn, setTextOptIn] = useState(false);
+  const submittingRef = useRef(false);
   const isClient = useIsClient();
   const Subtotal =
     total +
@@ -253,7 +254,8 @@ export default function CheckoutPage() {
       setLoading(false);
       return;
     }
-    if (loading) return;
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     try {
       setLoading(true);
       const success = await placeOrder(cart, orderData, setLoading, setError);
@@ -274,6 +276,7 @@ export default function CheckoutPage() {
       console.log(error.message);
     } finally {
       setLoading(false);
+      submittingRef.current = false;
     }
   };
   // Order summary component
