@@ -94,7 +94,8 @@ export default function SuccessPage() {
               <p className="mt-2">
                 All orders will be processed immediately after your payment is
                 confirmed. Please include your order ID as reference for easy
-                confirmation of your payment.
+                confirmation of your payment. Kindly send proof of payment to
+                08150548525 on WhatsApp.
               </p>
             </div>
           )}
