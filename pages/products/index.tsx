@@ -164,7 +164,6 @@ export default function ProductsList({
                 (sum, size) => sum + size.stock,
                 0
               );
-
               return (
                 <div key={product.id} className="relative">
                   {/* Out of stock badge */}
