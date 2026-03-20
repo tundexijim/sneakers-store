@@ -30,5 +30,5 @@ export default function PurchaseTracker({
     clearCart();
   }, [value, currency]);
 
-  return null; // nothing to render
+  return null;
 }

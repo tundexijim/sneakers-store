@@ -455,17 +455,17 @@ export default function ProductPage({
                           onClick={() =>
                             handleSelectSize(size.size, size.stock)
                           }
-                          disabled={size.stock === 0}
+                          disabled={size.stock <= 0}
                           className={`p-2 border-2 font-semibold text-lg transition-all duration-300 relative overflow-hidden ${
                             selectedSize === size.size
                               ? "bg-black text-white border-black shadow-lg scale-105"
-                              : size.stock === 0
+                              : size.stock <= 0
                               ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
                               : "bg-white text-gray-900 border-gray-300 hover:border-black hover:shadow-md hover:scale-105"
                           }`}
                         >
                           {size.size}
-                          {size.stock === 0 && (
+                          {size.stock <= 0 && (
                             <div className="absolute inset-0 flex items-center justify-center">
                               <X
                                 className="w-8 h-8 text-red-500"

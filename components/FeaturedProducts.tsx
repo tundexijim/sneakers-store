@@ -42,7 +42,6 @@ export default function FeaturedProducts() {
                 (sum, size) => sum + size.stock,
                 0
               );
-              console.log("Featured product stock:", stock);
               return (
                 <div
                   key={product.id}
