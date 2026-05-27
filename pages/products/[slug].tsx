@@ -30,7 +30,7 @@ export default function ProductPage({
 }) {
   const { addToCart, cart } = useCart();
   const [selectedSize, setSelectedSize] = useState<number | string | null>(
-    null
+    null,
   );
   const isInCart = cart.some((item) => item.id === product.id);
   const { user } = useAuth();
@@ -91,7 +91,7 @@ export default function ProductPage({
           value: product.price,
           currency: "NGN",
         },
-        { eventID: eventIdView }
+        { eventID: eventIdView },
       );
     }
   }, [product.id]);
@@ -118,7 +118,7 @@ export default function ProductPage({
             value: product.price,
             currency: "NGN",
           },
-          { eventID: eventId }
+          { eventID: eventId },
         );
       }
     }
@@ -165,14 +165,14 @@ export default function ProductPage({
   };
   const handlePrevImage = () => {
     setSelectedImageIndex((prev) =>
-      prev === 0 ? productImages.length - 1 : prev - 1
+      prev === 0 ? productImages.length - 1 : prev - 1,
     );
     setIsImageLoading(true);
   };
 
   const handleNextImage = () => {
     setSelectedImageIndex((prev) =>
-      prev === productImages.length - 1 ? 0 : prev + 1
+      prev === productImages.length - 1 ? 0 : prev + 1,
     );
     setIsImageLoading(true);
   };
@@ -460,8 +460,8 @@ export default function ProductPage({
                             selectedSize === size.size
                               ? "bg-black text-white border-black shadow-lg scale-105"
                               : size.stock <= 0
-                              ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
-                              : "bg-white text-gray-900 border-gray-300 hover:border-black hover:shadow-md hover:scale-105"
+                                ? "bg-gray-100 text-gray-400 border-gray-200 cursor-not-allowed"
+                                : "bg-white text-gray-900 border-gray-300 hover:border-black hover:shadow-md hover:scale-105"
                           }`}
                         >
                           {size.size}
