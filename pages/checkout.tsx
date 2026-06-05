@@ -44,8 +44,8 @@ export default function CheckoutPage() {
     (form.paymentMethod === "pay on delivery"
       ? ShippingCost
       : total <= 100000
-      ? ShippingCost
-      : 0);
+        ? ShippingCost
+        : 0);
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-NG", {
       style: "currency",
@@ -76,7 +76,7 @@ export default function CheckoutPage() {
   }, [form.paymentMethod]);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setForm({ ...form, [e.target.name]: e.target.value });
     if (errors[e.target.name]) {
@@ -94,8 +94,8 @@ export default function CheckoutPage() {
       form.paymentMethod === "pay on delivery"
         ? getStateCode(state)
         : total <= 100000
-        ? getStateCode(state)
-        : 0
+          ? getStateCode(state)
+          : 0,
     );
 
     if (errors.state) {
@@ -162,13 +162,13 @@ export default function CheckoutPage() {
           cart,
           { ...orderData, orderNumber: result.data.reference },
           setLoading,
-          setError
+          setError,
         );
 
         if (success) {
           localStorage.removeItem("checkoutForm");
           router.push(
-            `/payment-success/success?orderNumber=${result.data.reference}&amount=${Subtotal}`
+            `/payment-success/success?orderNumber=${result.data.reference}&amount=${Subtotal}`,
           );
         } else {
           await saveOrder(
@@ -178,14 +178,14 @@ export default function CheckoutPage() {
               orderNumber: result.data.reference,
             },
             setLoading,
-            setError
+            setError,
           );
           router.push(
-            `/payment-success/payment-success-pending?reference=${result.data.reference}`
+            `/payment-success/payment-success-pending?reference=${result.data.reference}`,
           );
 
           setError(
-            `Order placement failed after successful payment. Please contact support with your reference number: ${result.data.reference}`
+            `Order placement failed after successful payment. Please contact support with your reference number: ${result.data.reference}`,
           );
         }
       } else {
@@ -263,11 +263,11 @@ export default function CheckoutPage() {
         localStorage.removeItem("checkoutForm");
         if (form.paymentMethod === "pay on delivery") {
           router.push(
-            `/payment-success/success?orderNumber=${orderData.orderNumber}&amount=${Subtotal}`
+            `/payment-success/success?orderNumber=${orderData.orderNumber}&amount=${Subtotal}`,
           );
         } else if (form.paymentMethod === "bank") {
           router.push(
-            `/payment-success/success?orderNumber=${orderData.orderNumber}&amount=${Subtotal}&account=1235`
+            `/payment-success/success?orderNumber=${orderData.orderNumber}&amount=${Subtotal}&account=1235`,
           );
         }
       }
@@ -319,13 +319,13 @@ export default function CheckoutPage() {
 
         <div className=" space-y-3 pt-4 border-t border-slate-200">
           <div className="grid grid-cols-[1fr_auto] gap-4 text-slate-600 items-center">
-            <span>Shipping</span>
+            <span>Shipping fee</span>
             <span className="text-right whitespace-nowrap">
               {form.paymentMethod === "pay on delivery"
                 ? formatPrice(ShippingCost)
                 : total <= 100000
-                ? formatPrice(ShippingCost)
-                : formatPrice(0)}
+                  ? formatPrice(ShippingCost)
+                  : formatPrice(0)}
             </span>
           </div>
 
@@ -829,7 +829,8 @@ export default function CheckoutPage() {
                             loading ? "invisible" : ""
                           }`}
                         >
-                          <Lock size={15} /> Place Order
+                          Place Order <span />
+                          {formatPrice(Subtotal)}
                         </span>
                         {loading && (
                           <div className="absolute inset-0 flex items-center justify-center">
@@ -853,7 +854,8 @@ export default function CheckoutPage() {
                           loading ? "invisible" : ""
                         }`}
                       >
-                        <Lock size={15} /> Place Order
+                        Place Order <span />
+                        {formatPrice(Subtotal)}
                       </span>
                       {loading && (
                         <div className="absolute inset-0 flex items-center justify-center">
