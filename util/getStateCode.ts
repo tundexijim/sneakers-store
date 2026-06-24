@@ -49,7 +49,7 @@ export function getStateCode(state: string) {
     case "Kwara":
       return 6000;
     case "Lagos":
-      return 4000;
+      return 5000;
     case "Nasarawa":
       return 6000;
     case "Niger":
