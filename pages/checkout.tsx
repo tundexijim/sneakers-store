@@ -661,7 +661,7 @@ export default function CheckoutPage() {
                           <li>
                             <span>
                               Rate of{" "}
-                              <span className="font-medium">₦3,500.00</span>{" "}
+                              <span className="font-medium">₦5,000.00</span>{" "}
                               applies within Lagos state.
                             </span>
                           </li>
@@ -798,7 +798,11 @@ export default function CheckoutPage() {
                           <div className="text-sm text-gray-600 space-y-4">
                             <p>
                               Your order can be paid for upon delivery, subject
-                              to order confirmation by phone or email.
+                              to order confirmation via phone call/message or
+                              email. To help us serve everyone better, please
+                              select Pay on Delivery only if you're certain
+                              you'll be available to receive and pay for your
+                              order. Thank you!
                             </p>
                           </div>
                         </div>
