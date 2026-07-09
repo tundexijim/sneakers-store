@@ -39,7 +39,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
   const [uploadProgress, setUploadProgress] = useState<{
     [key: string]: number;
   }>({});
-  const [sizeInput, setSizeInput] = useState({ size: "", stock: "" });
+  const [sizeInput, setSizeInput] = useState<any>({ size: "", stock: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const { user, loading: authloading, logOut } = useAuth();
@@ -63,7 +63,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
+    >,
   ) => {
     const { name, value, type } = e.target;
     const checked =
@@ -73,7 +73,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
   };
 
   const handlesizeInputchange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setSizeInput({ ...sizeInput, [e.target.name]: e.target.value });
   };
@@ -115,7 +115,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
           async () => {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             resolve(downloadURL);
-          }
+          },
         );
       });
 
@@ -162,16 +162,25 @@ export default function AddProductPage({ product }: { product?: Product }) {
   };
 
   const addSize = () => {
-    const trimmedSize = sizeInput.size.trim();
+    const trimmedSize = sizeInput.size;
     const size = /^\d+$/.test(trimmedSize)
       ? parseInt(trimmedSize, 10)
       : trimmedSize;
-    const stock = parseInt(sizeInput.stock.trim(), 10);
-
+    const stock = parseInt(sizeInput.stock, 10);
     if (!isNaN(stock) && !form.sizes.some((s) => s.size === size)) {
       setForm((prev) => ({
         ...prev,
         sizes: [...prev.sizes, { size, stock }],
+      }));
+      setSizeInput({ size: "", stock: "" });
+    }
+    if (!isNaN(stock) && form.sizes.some((s) => s.size === size)) {
+      const updatedSizes = form.sizes.map((s) =>
+        s.size === size ? { ...s, stock } : s,
+      );
+      setForm((prev) => ({
+        ...prev,
+        sizes: updatedSizes,
       }));
       setSizeInput({ size: "", stock: "" });
     }
@@ -542,7 +551,18 @@ export default function AddProductPage({ product }: { product?: Product }) {
                             key={size.size}
                             className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800 border border-blue-200"
                           >
-                            Size {size.size} - Stock: {size.stock}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                setSizeInput({
+                                  size: size.size,
+                                  stock: size.stock,
+                                })
+                              }
+                            >
+                              {" "}
+                              Size {size.size} - Stock: {size.stock}
+                            </button>
                             <button
                               type="button"
                               onClick={() => removeSize(size)}
@@ -686,7 +706,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
                             ></div>
                           </div>
                         </div>
-                      )
+                      ),
                     )}
                   </div>
                 )}
@@ -792,10 +812,10 @@ export default function AddProductPage({ product }: { product?: Product }) {
                   {uploading
                     ? "Uploading..."
                     : loading
-                    ? "Loading..."
-                    : product
-                    ? "Update Product"
-                    : "Save Product"}
+                      ? "Loading..."
+                      : product
+                        ? "Update Product"
+                        : "Save Product"}
                 </button>
               </div>
             </form>
