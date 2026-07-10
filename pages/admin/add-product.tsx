@@ -39,7 +39,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
   const [uploadProgress, setUploadProgress] = useState<{
     [key: string]: number;
   }>({});
-  const [sizeInput, setSizeInput] = useState<any>({ size: "", stock: "" });
+  const [sizeInput, setSizeInput] = useState({ size: "", stock: "" });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const { user, loading: authloading, logOut } = useAuth();
@@ -162,11 +162,11 @@ export default function AddProductPage({ product }: { product?: Product }) {
   };
 
   const addSize = () => {
-    const trimmedSize = sizeInput.size;
+    const trimmedSize = sizeInput.size.trim();
     const size = /^\d+$/.test(trimmedSize)
       ? parseInt(trimmedSize, 10)
       : trimmedSize;
-    const stock = parseInt(sizeInput.stock, 10);
+    const stock = parseInt(sizeInput.stock.trim(), 10);
     if (!isNaN(stock) && !form.sizes.some((s) => s.size === size)) {
       setForm((prev) => ({
         ...prev,
@@ -555,8 +555,8 @@ export default function AddProductPage({ product }: { product?: Product }) {
                               type="button"
                               onClick={() =>
                                 setSizeInput({
-                                  size: size.size,
-                                  stock: size.stock,
+                                  size: String(size.size),
+                                  stock: String(size.stock),
                                 })
                               }
                             >
