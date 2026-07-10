@@ -66,7 +66,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center gap-3">
                 <Phone size={16} className="text-gray-400" />
-                <span className="text-gray-300">08062474452</span>
+                <span className="text-gray-300">08150548525</span>
               </div>
               <div className="flex items-center gap-3">
                 <Mail size={16} className="text-gray-400" />
@@ -89,7 +89,7 @@ const Footer = () => {
                       {link}
                     </a>
                   </li>
-                )
+                ),
               )}
             </ul>
           </div>
