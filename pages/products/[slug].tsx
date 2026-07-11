@@ -446,9 +446,10 @@ export default function ProductPage({
                 <div className="flex items-center justify-between">
                   <h3 className="text-xl  text-gray-900">Select Size:</h3>
                 </div>
-                <div className="flex gap-2">
+
+                <div className="flex flex-wrap gap-2">
                   {product.sizes
-                    .sort((a: any, b: any) => a.size - b.size)
+                    .sort((a, b) => Number(a.size) - Number(b.size))
                     .map((size, i) => (
                       <div className="relative" key={i}>
                         <button
@@ -456,7 +457,7 @@ export default function ProductPage({
                             handleSelectSize(size.size, size.stock)
                           }
                           disabled={size.stock <= 0}
-                          className={`p-2 border-2 font-semibold text-lg transition-all duration-300 relative overflow-hidden ${
+                          className={`w-14 h-12 flex items-center justify-center rounded-md border-2 text-base font-semibold transition-all duration-300 relative overflow-hidden ${
                             selectedSize === size.size
                               ? "bg-black text-white border-black shadow-lg scale-105"
                               : size.stock <= 0
@@ -465,6 +466,7 @@ export default function ProductPage({
                           }`}
                         >
                           {size.size}
+
                           {size.stock <= 0 && (
                             <div className="absolute inset-0 flex items-center justify-center">
                               <X
