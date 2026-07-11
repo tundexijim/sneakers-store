@@ -619,7 +619,7 @@ export default function CheckoutPage() {
                           <li>
                             <span>
                               Rate of{" "}
-                              <span className="font-medium">₦3,500.00</span>{" "}
+                              <span className="font-medium">₦5,000.00</span>{" "}
                               applies within Lagos state.
                             </span>
                           </li>
