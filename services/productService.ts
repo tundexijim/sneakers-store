@@ -43,7 +43,7 @@ export async function getAllProducts(page = 1, sortBy = "newest") {
     const q = query(
       collection(db, "products"),
       orderBy(sortField, direction),
-      limit(itemsToFetch)
+      limit(itemsToFetch),
     );
     const snapshot = await getDocs(q);
     const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
@@ -119,7 +119,7 @@ export async function fetchProductsByIds(ids: string[]): Promise<Product[]> {
     for (const chunk of chunks) {
       const q = query(
         collection(db, "products"),
-        where(documentId(), "in", chunk)
+        where(documentId(), "in", chunk),
       );
 
       const snapshot = await getDocs(q);
@@ -157,7 +157,7 @@ export async function fetchProductsByIds(ids: string[]): Promise<Product[]> {
 
 // Get single product with slug
 export const getProductBySlug = async (
-  slug: string
+  slug: string,
 ): Promise<Product | null> => {
   try {
     const productsRef = collection(db, "products");
@@ -185,7 +185,7 @@ export const getProductBySlug = async (
 export async function getProductsByCategory(
   categoryName: string,
   page = 1,
-  sortBy = "newest"
+  sortBy = "newest",
 ) {
   try {
     const [sortField, direction] = getSortParams(sortBy);
@@ -195,7 +195,7 @@ export async function getProductsByCategory(
       collection(db, "products"),
       where("categorySlug", "==", categoryName),
       orderBy(sortField, direction),
-      limit(itemsToFetch)
+      limit(itemsToFetch),
     );
     const snapshot = await getDocs(q);
     const startIndex = (page - 1) * PRODUCTS_PER_PAGE;
@@ -212,7 +212,7 @@ export async function getProductsByCategory(
 
     const countQuery = query(
       collection(db, "products"),
-      where("categorySlug", "==", categoryName)
+      where("categorySlug", "==", categoryName),
     );
     const countSnapshot = await getCountFromServer(countQuery);
     const total = countSnapshot.data().count;
@@ -235,14 +235,14 @@ export async function getProductsByCategory(
 export async function getProductsRelatedCategory(
   limitCount: number = 10,
   categoryName: string,
-  excludeProductId?: string
+  excludeProductId?: string,
 ): Promise<Product[]> {
   try {
     const q = query(
       collection(db, "products"),
       where("categorySlug", "==", categoryName),
       orderBy("createdAt", "desc"),
-      limit(limitCount + 1) // Get one extra in case we need to exclude current product
+      limit(limitCount + 1), // Get one extra in case we need to exclude current product
     );
 
     const querySnapshot = await getDocs(q);
@@ -252,14 +252,14 @@ export async function getProductsRelatedCategory(
         ({
           id: doc.id,
           ...doc.data(),
-        } as Product)
+        }) as Product,
     );
 
     // Filter out the current product if excludeProductId is provided
     let RelatedProducts = Products;
     if (excludeProductId) {
       RelatedProducts = Products.filter(
-        (product) => product.id !== excludeProductId
+        (product) => product.id !== excludeProductId,
       );
     }
 
@@ -293,7 +293,7 @@ export async function saveProduct(product: {
 //delete product
 export async function deleteProduct(
   productId: string,
-  imagePaths: string[]
+  imagePaths: string[],
 ): Promise<void> {
   try {
     // Delete all images with individual error handling
@@ -301,7 +301,7 @@ export async function deleteProduct(
       imagePaths.map(async (imagePath) => {
         const imageRef = ref(storage, imagePath);
         return deleteObject(imageRef);
-      })
+      }),
     );
 
     // Log any failed image deletions
@@ -309,7 +309,7 @@ export async function deleteProduct(
       if (result.status === "rejected") {
         console.warn(
           `Failed to delete image ${imagePaths[index]}:`,
-          result.reason
+          result.reason,
         );
       }
     });
@@ -319,10 +319,10 @@ export async function deleteProduct(
     await deleteDoc(productRef);
 
     const successfulDeletes = deleteResults.filter(
-      (r) => r.status === "fulfilled"
+      (r) => r.status === "fulfilled",
     ).length;
     console.log(
-      `Product with ID ${productId} deleted successfully. ${successfulDeletes}/${imagePaths.length} images deleted.`
+      `Product with ID ${productId} deleted successfully. ${successfulDeletes}/${imagePaths.length} images deleted.`,
     );
   } catch (error) {
     console.error("Error deleting product:", error);
@@ -343,7 +343,7 @@ type UpdateProductData = {
 
 export async function updateProduct(
   product: Product,
-  updatedData: UpdateProductData
+  updatedData: UpdateProductData,
 ) {
   try {
     const slug = await generateSlug(updatedData.name);
@@ -362,14 +362,14 @@ export async function updateProduct(
 
 // Featured products
 export async function getFeaturedProducts(
-  limitCount: number
+  limitCount: number,
 ): Promise<Product[]> {
   try {
     const q = query(
       collection(db, "products"),
       where("isFeatured", "==", true),
       orderBy("createdAt", "desc"),
-      limit(limitCount)
+      limit(limitCount),
     );
 
     const querySnapshot = await getDocs(q);
@@ -379,7 +379,7 @@ export async function getFeaturedProducts(
         ({
           id: doc.id,
           ...doc.data(),
-        } as Product)
+        }) as Product,
     );
 
     return featuredProducts;
