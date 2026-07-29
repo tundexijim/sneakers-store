@@ -380,7 +380,12 @@ export default function CheckoutPage() {
               </div>
               {/* Checkout Form */}
               <div className="lg:col-span-3">
-                <form onSubmit={handleSubmit} className="space-y-8">
+                <form
+                  onSubmit={
+                    form.paymentMethod === "paystack" ? handlePay : handleSubmit
+                  }
+                  className="space-y-8"
+                >
                   {/* Customer Information */}
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
                     <h3 className="text-xl font-semibold text-slate-900 mb-6 flex items-center">
@@ -821,35 +826,9 @@ export default function CheckoutPage() {
                     </div>
                   )}
                   {/* Submit Button */}
-                  {["pay on delivery", "bank"].includes(form.paymentMethod) && (
-                    <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
-                      <button
-                        type="submit"
-                        disabled={loading}
-                        className="w-full relative bg-gradient-to-r rounded-xl cursor-pointer bg-blue-900 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
-                      >
-                        <span
-                          className={`flex items-center justify-center gap-2 ${
-                            loading ? "invisible" : ""
-                          }`}
-                        >
-                          Place Order <span />
-                          {formatPrice(Subtotal)}
-                        </span>
-                        {loading && (
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <Loading />
-                          </div>
-                        )}
-                      </button>
-                    </div>
-                  )}
-                </form>
-                {/* Paystack submit button */}
-                {form.paymentMethod === "paystack" && (
-                  <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50 mt-6">
+                  <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
                     <button
-                      onClick={handlePay}
+                      type="submit"
                       disabled={loading}
                       className="w-full relative bg-gradient-to-r rounded-xl cursor-pointer bg-blue-900 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
                     >
@@ -868,7 +847,7 @@ export default function CheckoutPage() {
                       )}
                     </button>
                   </div>
-                )}
+                </form>
               </div>
             </div>
           )}

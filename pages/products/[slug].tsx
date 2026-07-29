@@ -446,7 +446,7 @@ export default function ProductPage({
                 <div className="flex items-center justify-between">
                   <h3 className="text-[18px]  text-gray-900">Select Size:</h3>
                 </div>
-                <div className="flex flex-wrap gap-4">
+                <div className="flex flex-wrap gap-2">
                   {product.sizes
                     .sort((a, b) => Number(a.size) - Number(b.size))
                     .map((size, i) => (

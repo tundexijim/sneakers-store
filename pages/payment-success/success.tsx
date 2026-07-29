@@ -82,11 +82,11 @@ export default function SuccessPage() {
             <div className="mb-6 text-gray-600">
               <p>Kindly make payment into this account</p>
               <p>
-                <strong>Account Name:</strong> Adeyeye Damilola Caroline
+                <strong>Account Name:</strong> Ijimakinde Tunde Philip
               </p>
               <p>
                 {" "}
-                <strong>Account Number:</strong> 3156850684
+                <strong>Account Number:</strong> 3107480898
               </p>
               <p>
                 <strong>Bank:</strong> First Bank
