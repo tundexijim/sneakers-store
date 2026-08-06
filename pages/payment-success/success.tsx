@@ -8,26 +8,28 @@ export default function SuccessPage() {
   const router = useRouter();
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [accountNumber, setAccountNumber] = useState<string | null>(null);
-  const [amount, setAmount] = useState<number | null>(null);
+  const [cost, setCost] = useState<number | null>(null);
   const [isReady, setIsReady] = useState(false);
 
   useEffect(() => {
     if (router.isReady) {
       setIsReady(true);
-      const queryOrderNumber = router.query.orderNumber;
-      const queryAccountNumber = router.query.account;
-      const queryAmount = router.query.amount;
-      if (typeof queryOrderNumber === "string") {
-        setOrderNumber(queryOrderNumber);
+
+      const { orderNumber, account, amount } = router.query;
+      // const queryOrderNumber = router.query.orderNumber;
+      // const queryAccountNumber = router.query.account;
+      // const queryAmount = router.query.amount;
+      if (typeof orderNumber === "string") {
+        setOrderNumber(orderNumber);
       }
-      if (typeof queryAccountNumber === "string") {
-        setAccountNumber(queryAccountNumber);
+      if (typeof account === "string") {
+        setAccountNumber(account);
       }
-      if (queryAmount && !isNaN(Number(queryAmount))) {
-        setAmount(Number(queryAmount));
+      if (amount && !isNaN(Number(amount))) {
+        setCost(Number(amount));
       }
     }
-  }, [router.isReady, router.query.orderNumber]);
+  }, [router.isReady, orderNumber]);
 
   if (!isReady) {
     return <div>Loading...</div>;
@@ -106,7 +108,7 @@ export default function SuccessPage() {
             Continue Shopping
           </button>
         </div>
-        <PurchaseTracker value={amount} />
+        <PurchaseTracker value={cost} />
       </div>
     </>
   );
