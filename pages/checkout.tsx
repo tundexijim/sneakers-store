@@ -106,17 +106,32 @@ export default function CheckoutPage() {
   const validateForm = () => {
     const newErrors: { [key: string]: boolean } = {};
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
+    const normalizedPhone = form.phone.replace(/[\s-]/g, "");
+    const phoneRegex =
+      /^(?:0(?:70|71|80|81|90|91)\d{8}|\+234(?:70|71|80|81|90|91)\d{8}|(?:70|71|80|81|90|91)\d{8})$/;
     if (!form.firstname) newErrors.firstname = true;
     if (!form.lastname) newErrors.lastname = true;
-    if (!form.phone) newErrors.phone = true;
+
+    if (!normalizedPhone || !phoneRegex.test(normalizedPhone)) {
+      newErrors.phone = true;
+    }
+
     if (!form.email || !emailRegex.test(form.email)) newErrors.email = true;
     if (!form.address) newErrors.address = true;
     if (!selectedState) newErrors.state = true;
     if (!form.paymentMethod) newErrors.paymentMethod = true;
     if (!form.city) newErrors.city = true;
+
     setErrors(newErrors);
-    console.log("Errors:", newErrors);
+
+    // Give the specific phone error you requested
+    if (newErrors.phone) {
+      setError("invalid phone number");
+    } else if (Object.keys(newErrors).length > 0) {
+      setError("Please fill out all required fields correctly.");
+    } else {
+      setError("");
+    }
 
     return Object.keys(newErrors).length === 0;
   };
@@ -202,7 +217,7 @@ export default function CheckoutPage() {
     e.preventDefault();
     const isValid = validateForm();
     if (!isValid) {
-      setError("Please fill out all required fields correctly.");
+      // setError("Please fill out all required fields correctly.");
       return;
     }
     setError("");
@@ -243,7 +258,7 @@ export default function CheckoutPage() {
     e.preventDefault();
     const isValid = validateForm();
     if (!isValid) {
-      setError("Please fill out all required fields correctly.");
+      // setError("Please fill out all required fields correctly.");
       return;
     }
     setError("");
@@ -449,11 +464,12 @@ export default function CheckoutPage() {
                         </label>
                         <div className="relative">
                           <input
-                            type="text"
+                            type="tel"
                             name="phone"
                             placeholder="Enter your phone number"
                             value={form.phone}
                             onChange={handleChange}
+                            inputMode="numeric"
                             className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
                               errors.phone
                                 ? "border-red-300 bg-red-50 focus:border-red-500"
