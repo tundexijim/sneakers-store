@@ -257,7 +257,6 @@ export default function CheckoutPage() {
     e.preventDefault();
     const isValid = validateForm();
     if (!isValid) {
-      // setError("Please fill out all required fields correctly.");
       return;
     }
     setError("");
@@ -424,11 +423,6 @@ export default function CheckoutPage() {
                                 : "border-slate-200 bg-white hover:border-slate-300 focus:border-blue-500"
                             }`}
                           />
-                          {errors.firstname && (
-                            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                            </div>
-                          )}
                         </div>
                       </div>
 
@@ -445,11 +439,6 @@ export default function CheckoutPage() {
                             onChange={handleChange}
                             className="w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 border-slate-200 bg-white hover:border-slate-300 focus:border-blue-500"
                           />
-                          {errors.lastname && (
-                            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                            </div>
-                          )}
                         </div>
                       </div>
                       <div className="space-y-2">
@@ -470,11 +459,6 @@ export default function CheckoutPage() {
                                 : "border-slate-200 bg-white hover:border-slate-300 focus:border-blue-500"
                             }`}
                           />
-                          {errors.phone && (
-                            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                            </div>
-                          )}
                           <label className="inline-flex items-center gap-2 text-[12px] mt-2">
                             <input
                               type="checkbox"
@@ -504,11 +488,6 @@ export default function CheckoutPage() {
                                 : "border-slate-200 bg-white hover:border-slate-300 focus:border-blue-500"
                             }`}
                           />
-                          {errors.email && (
-                            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                            </div>
-                          )}
                           <label className="inline-flex items-center gap-2 text-[12px] mt-2">
                             <input
                               type="checkbox"
@@ -546,11 +525,6 @@ export default function CheckoutPage() {
                                 : "border-slate-200 bg-white hover:border-slate-300 focus:border-blue-500"
                             }`}
                           />
-                          {errors.address && (
-                            <div className="absolute top-4 right-0 flex items-center pr-3">
-                              <div className="w-2 h-2 bg-red-500 rounded-full"></div>
-                            </div>
-                          )}
                         </div>
                       </div>
                       <div className="space-y-2">
@@ -570,11 +544,11 @@ export default function CheckoutPage() {
                                 : "border-slate-200 bg-white hover:border-slate-300 focus:border-blue-500"
                             }`}
                           />
-                          {errors.city && (
+                          {/* {errors.city && (
                             <div className="absolute inset-y-0 right-0 flex items-center pr-3">
                               <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                             </div>
-                          )}
+                          )} */}
                         </div>
                       </div>
 
@@ -800,7 +774,7 @@ export default function CheckoutPage() {
                             <div className="flex items-center space-x-3">
                               <div>
                                 <p className="font-semibold text-slate-900">
-                                  Pay on Delivery (POD)
+                                  Cash on Delivery (COD)
                                 </p>
                               </div>
                             </div>
@@ -815,7 +789,7 @@ export default function CheckoutPage() {
                               Your order can be paid for upon delivery, subject
                               to order confirmation via phone call/message or
                               email. To help us serve everyone better, please
-                              select Pay on Delivery only if you're certain
+                              select Cash on Delivery only if you're certain
                               you'll be available to receive and pay for your
                               order. Thank you!
                             </p>
@@ -828,9 +802,6 @@ export default function CheckoutPage() {
                   {error && (
                     <div className="bg-red-50 border border-red-200 rounded-xl p-4">
                       <div className="flex items-center space-x-3">
-                        <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center flex-shrink-0">
-                          <div className="w-2 h-2 bg-white rounded-full"></div>
-                        </div>
                         <p className="text-red-800 font-medium">{error}</p>
                       </div>
                     </div>
