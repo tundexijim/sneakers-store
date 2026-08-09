@@ -110,7 +110,6 @@ export default function CheckoutPage() {
     const phoneRegex =
       /^(?:0(?:70|71|80|81|90|91)\d{8}|\+234(?:70|71|80|81|90|91)\d{8}|(?:70|71|80|81|90|91)\d{8})$/;
     if (!form.firstname) newErrors.firstname = true;
-    if (!form.lastname) newErrors.lastname = true;
 
     if (!normalizedPhone || !phoneRegex.test(normalizedPhone)) {
       newErrors.phone = true;
@@ -435,7 +434,7 @@ export default function CheckoutPage() {
 
                       <div className="space-y-2">
                         <label className="block text-sm font-medium text-slate-700">
-                          Last Name <span className="text-red-500">*</span>
+                          Last Name
                         </label>
                         <div className="relative">
                           <input
@@ -444,11 +443,7 @@ export default function CheckoutPage() {
                             placeholder="Enter your last name"
                             value={form.lastname}
                             onChange={handleChange}
-                            className={`w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 ${
-                              errors.lastname
-                                ? "border-red-300 bg-red-50 focus:border-red-500"
-                                : "border-slate-200 bg-white hover:border-slate-300 focus:border-blue-500"
-                            }`}
+                            className="w-full px-4 py-3 rounded-xl border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 border-slate-200 bg-white hover:border-slate-300 focus:border-blue-500"
                           />
                           {errors.lastname && (
                             <div className="absolute inset-y-0 right-0 flex items-center pr-3">
@@ -457,7 +452,6 @@ export default function CheckoutPage() {
                           )}
                         </div>
                       </div>
-
                       <div className="space-y-2">
                         <label className="block text-sm font-medium text-slate-700">
                           Phone Number <span className="text-red-500">*</span>
