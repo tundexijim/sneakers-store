@@ -695,8 +695,9 @@ export default function CheckoutPage() {
                                 value="paystack"
                                 checked={form.paymentMethod === "paystack"}
                                 onChange={handleChange}
-                                className="w-4 h-4 accent-slate-700"
+                                className="peer sr-only"
                               />
+                              <span className="w-4 h-4 rounded-full border-2 border-slate-400 flex items-center justify-center transition-all peer-checked:border-slate-700 after:content-[''] after:w-2 after:h-2 after:rounded-full after:bg-slate-700 after:scale-0 peer-checked:after:scale-100 after:transition-transform" />
 
                               <p className="text-[16px] font-medium text-slate-900">
                                 Paystack
@@ -740,8 +741,9 @@ export default function CheckoutPage() {
                               value="bank"
                               checked={form.paymentMethod === "bank"}
                               onChange={handleChange}
-                              className="w-4 h-4 accent-slate-700"
+                              className="peer sr-only"
                             />
+                            <span className="w-4 h-4 rounded-full border-2 border-slate-400 flex items-center justify-center transition-all peer-checked:border-slate-700 after:content-[''] after:w-2 after:h-2 after:rounded-full after:bg-slate-700 after:scale-0 peer-checked:after:scale-100 after:transition-transform" />
 
                             <p className="text-[16px] font-medium text-slate-900">
                               Bank Transfer
@@ -778,8 +780,9 @@ export default function CheckoutPage() {
                               value="pay on delivery"
                               checked={form.paymentMethod === "pay on delivery"}
                               onChange={handleChange}
-                              className="w-4 h-4 accent-slate-700"
+                              className="peer sr-only"
                             />
+                            <span className="w-4 h-4 rounded-full border-2 border-slate-400 flex items-center justify-center transition-all peer-checked:border-slate-700 after:content-[''] after:w-2 after:h-2 after:rounded-full after:bg-slate-700 after:scale-0 peer-checked:after:scale-100 after:transition-transform" />
 
                             <p className="text-[16px] font-medium text-slate-900">
                               Cash on Delivery (COD)
