@@ -667,25 +667,27 @@ export default function CheckoutPage() {
                   </div>
 
                   {/* Payment Method */}
+                  {/* Payment Method */}
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
-                    <h3 className="text-xl font-semibold text-slate-900 mb-2 flex items-center">
+                    <h3 className="text-xl font-semibold text-slate-900 mb-2">
                       Payment Method
                     </h3>
+
                     <p className="text-slate-600 mb-6">
                       All transactions are secure and encrypted.
                     </p>
 
-                    <div className="space-y-4">
-                      {/* Paystack Option */}
-                      <label
-                        className={`relative block cursor-pointer rounded-xl border-2 transition-all duration-200 ${
-                          form.paymentMethod === "paystack"
-                            ? "border-blue-500 bg-blue-50 shadow-lg shadow-blue-500/10"
-                            : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                        }`}
-                      >
-                        <div className="p-4">
-                          <div className="flex items-center justify-between">
+                    <div className="overflow-hidden rounded-xl border border-slate-200">
+                      {/* Paystack */}
+                      <label className="block cursor-pointer">
+                        <div
+                          className={`p-5 transition-all duration-200 ${
+                            form.paymentMethod === "paystack"
+                              ? "bg-blue-50"
+                              : "bg-white hover:bg-slate-50"
+                          }`}
+                        >
+                          <div className="flex items-center justify-between gap-4">
                             <div className="flex items-center space-x-4">
                               <input
                                 type="radio"
@@ -693,37 +695,44 @@ export default function CheckoutPage() {
                                 value="paystack"
                                 checked={form.paymentMethod === "paystack"}
                                 onChange={handleChange}
-                                className="w-3 h-3 text-blue-600 border-slate-300 focus:ring-blue-500"
+                                className="w-4 h-4 accent-slate-700"
                               />
-                              <p className="font-semibold text-slate-900">
+
+                              <p className="text-[16px] font-medium text-slate-900">
                                 Paystack
                               </p>
                             </div>
+
                             <Image
                               src="/paystack.png"
                               alt="Paystack"
-                              width={150}
-                              height={50}
+                              width={120}
+                              height={40}
+                              className="object-contain"
                             />
                           </div>
                         </div>
                       </label>
+
                       {form.paymentMethod === "paystack" && (
-                        <div className="mt-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200">
-                          <p className="text-sm text-slate-600">
-                            Pay with card, bank transfer, or USSD
-                          </p>
+                        <div className="px-5 pb-5 bg-blue-50">
+                          <div className="pt-4 border-t border-slate-200">
+                            <p className="text-sm text-slate-600">
+                              Pay with card, bank transfer, or USSD
+                            </p>
+                          </div>
                         </div>
                       )}
-                      {/* Bank Transfer Option */}
-                      <label
-                        className={`relative block cursor-pointer rounded-xl border-2 transition-all duration-200 ${
-                          form.paymentMethod === "bank"
-                            ? "border-blue-500 bg-blue-50 shadow-lg shadow-blue-500/10"
-                            : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                        }`}
-                      >
-                        <div className="p-4">
+
+                      {/* Bank Transfer */}
+                      <label className="block cursor-pointer border-t border-slate-200">
+                        <div
+                          className={`p-5 transition-all duration-200 ${
+                            form.paymentMethod === "bank"
+                              ? "bg-blue-50"
+                              : "bg-white hover:bg-slate-50"
+                          }`}
+                        >
                           <div className="flex items-center space-x-4">
                             <input
                               type="radio"
@@ -731,37 +740,37 @@ export default function CheckoutPage() {
                               value="bank"
                               checked={form.paymentMethod === "bank"}
                               onChange={handleChange}
-                              className="w-3 h-3 text-blue-600 border-slate-300 focus:ring-blue-500"
+                              className="w-4 h-4 accent-slate-700"
                             />
-                            <div className="flex items-center space-x-3">
-                              <div>
-                                <p className="font-semibold text-slate-900">
-                                  Bank Transfer
-                                </p>
-                              </div>
-                            </div>
+
+                            <p className="text-[16px] font-medium text-slate-900">
+                              Bank Transfer
+                            </p>
                           </div>
                         </div>
                       </label>
-                      {/* Bank Details (shown when bank transfer is selected) */}
 
                       {form.paymentMethod === "bank" && (
-                        <div className="mt-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200">
-                          <p className="text-sm text-gray-600">
-                            Pay into the account provided after submitting your
-                            order. All orders will be processed immediately
-                            after your payment is confirmed.
-                          </p>
+                        <div className="px-5 pb-5 bg-blue-50">
+                          <div className="pt-4 border-t border-slate-200">
+                            <p className="text-sm text-gray-600">
+                              Pay into the account provided after submitting
+                              your order. All orders will be processed
+                              immediately after your payment is confirmed.
+                            </p>
+                          </div>
                         </div>
                       )}
-                      <label
-                        className={`relative block cursor-pointer rounded-xl border-2 transition-all duration-200 ${
-                          form.paymentMethod === "pay on delivery"
-                            ? "border-blue-500 bg-blue-50 shadow-lg shadow-blue-500/10"
-                            : "border-slate-200 bg-white hover:border-slate-300 hover:bg-slate-50"
-                        }`}
-                      >
-                        <div className="p-4">
+
+                      {/* Pay on Delivery */}
+                      <label className="block cursor-pointer border-t border-slate-200">
+                        <div
+                          className={`p-5 transition-all duration-200 ${
+                            form.paymentMethod === "pay on delivery"
+                              ? "bg-blue-50"
+                              : "bg-white hover:bg-slate-50"
+                          }`}
+                        >
                           <div className="flex items-center space-x-4">
                             <input
                               type="radio"
@@ -769,30 +778,29 @@ export default function CheckoutPage() {
                               value="pay on delivery"
                               checked={form.paymentMethod === "pay on delivery"}
                               onChange={handleChange}
-                              className="w-3 h-3 text-blue-600 border-slate-300 focus:ring-blue-500"
+                              className="w-4 h-4 accent-slate-700"
                             />
-                            <div className="flex items-center space-x-3">
-                              <div>
-                                <p className="font-semibold text-slate-900">
-                                  Cash on Delivery (COD)
-                                </p>
-                              </div>
-                            </div>
+
+                            <p className="text-[16px] font-medium text-slate-900">
+                              Cash on Delivery (COD)
+                            </p>
                           </div>
                         </div>
                       </label>
 
                       {form.paymentMethod === "pay on delivery" && (
-                        <div className="mt-4 p-6 bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200">
-                          <div className="text-sm text-gray-600 space-y-4">
-                            <p>
-                              Your order can be paid for upon delivery, subject
-                              to order confirmation via phone call/message or
-                              email. To help us serve everyone better, please
-                              select Cash on Delivery only if you're certain
-                              you'll be available to receive and pay for your
-                              order. Thank you!
-                            </p>
+                        <div className="px-5 pb-5 bg-blue-50">
+                          <div className="pt-4 border-t border-slate-200">
+                            <div className="text-sm text-gray-600 space-y-4">
+                              <p>
+                                Your order can be paid for upon delivery,
+                                subject to order confirmation via phone
+                                call/message or email. To help us serve everyone
+                                better, please select Cash on Delivery only if
+                                you're certain you'll be available to receive
+                                and pay for your order. Thank you!
+                              </p>
+                            </div>
                           </div>
                         </div>
                       )}
