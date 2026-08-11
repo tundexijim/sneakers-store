@@ -17,7 +17,7 @@ import { payWithPaystack, PaystackResponse } from "@/util/paystack";
 import WhatsAppFloatingButton from "@/components/WhatsApp";
 
 export default function CheckoutPage() {
-  const { cart, total } = useCart();
+  const { cart, total, clearCart } = useCart();
   const router = useRouter();
   const [ShippingCost, setShippingCost] = useState(0);
   const [selectedState, setSelectedState] = useState("");
@@ -181,6 +181,7 @@ export default function CheckoutPage() {
 
         if (success) {
           localStorage.removeItem("checkoutForm");
+          clearCart();
           router.push(
             `/payment-success/success?orderNumber=${result.data.reference}&amount=${Subtotal}`,
           );
@@ -274,6 +275,7 @@ export default function CheckoutPage() {
       const success = await placeOrder(cart, orderData, setLoading, setError);
       if (success) {
         localStorage.removeItem("checkoutForm");
+        clearCart();
         if (form.paymentMethod === "pay on delivery") {
           router.push(
             `/payment-success/success?orderNumber=${orderData.orderNumber}&amount=${Subtotal}`,

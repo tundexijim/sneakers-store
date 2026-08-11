@@ -16,9 +16,6 @@ export default function SuccessPage() {
       setIsReady(true);
 
       const { orderNumber, account, amount } = router.query;
-      // const queryOrderNumber = router.query.orderNumber;
-      // const queryAccountNumber = router.query.account;
-      // const queryAmount = router.query.amount;
       if (typeof orderNumber === "string") {
         setOrderNumber(orderNumber);
       }
@@ -108,7 +105,7 @@ export default function SuccessPage() {
             Continue Shopping
           </button>
         </div>
-        <PurchaseTracker value={cost} />
+        <PurchaseTracker value={cost} orderNumber={orderNumber} />
       </div>
     </>
   );
