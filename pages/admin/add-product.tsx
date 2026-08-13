@@ -39,7 +39,12 @@ export default function AddProductPage({ product }: { product?: Product }) {
   const [uploadProgress, setUploadProgress] = useState<{
     [key: string]: number;
   }>({});
-  const [sizeInput, setSizeInput] = useState({ size: "", stock: "" });
+  const [sizeInput, setSizeInput] = useState({
+    size: "",
+    stock: "",
+    chest: "",
+    length: "",
+  });
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const { user, loading: authloading, logOut } = useAuth();
@@ -163,26 +168,66 @@ export default function AddProductPage({ product }: { product?: Product }) {
 
   const addSize = () => {
     const trimmedSize = sizeInput.size.trim();
+
     const size = /^\d+$/.test(trimmedSize)
       ? parseInt(trimmedSize, 10)
       : trimmedSize;
+
     const stock = parseInt(sizeInput.stock.trim(), 10);
-    if (!isNaN(stock) && !form.sizes.some((s) => s.size === size)) {
+    const chest = parseInt(sizeInput.chest.trim(), 10);
+    const length = parseInt(sizeInput.length.trim(), 10);
+
+    if (!isNaN(Number(stock)) && !form.sizes.some((s) => s.size === size)) {
+      const newSize: ProductSize = {
+        size,
+        stock,
+        ...(chest && { chest }),
+        ...(length && { length }),
+      };
+
       setForm((prev) => ({
         ...prev,
-        sizes: [...prev.sizes, { size, stock }],
+        sizes: [...prev.sizes, newSize],
       }));
-      setSizeInput({ size: "", stock: "" });
+
+      setSizeInput({
+        size: "",
+        stock: "",
+        chest: "",
+        length: "",
+      });
+
+      return;
     }
-    if (!isNaN(stock) && form.sizes.some((s) => s.size === size)) {
-      const updatedSizes = form.sizes.map((s) =>
-        s.size === size ? { ...s, stock } : s,
-      );
+
+    if (!isNaN(Number(stock)) && form.sizes.some((s) => s.size === size)) {
+      const updatedSizes = form.sizes.map((s) => {
+        if (s.size !== size) return s;
+        const updatedSize: ProductSize = {
+          size: s.size,
+          stock,
+        };
+        if (chest) {
+          updatedSize.chest = chest;
+        }
+        if (length) {
+          updatedSize.length = length;
+        }
+
+        return updatedSize;
+      });
+
       setForm((prev) => ({
         ...prev,
         sizes: updatedSizes,
       }));
-      setSizeInput({ size: "", stock: "" });
+
+      setSizeInput({
+        size: "",
+        stock: "",
+        chest: "",
+        length: "",
+      });
     }
   };
 
@@ -509,37 +554,87 @@ export default function AddProductPage({ product }: { product?: Product }) {
                   Sizes and Stock <span className="text-red-500">*</span>
                 </label>
                 <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                  <div className="flex gap-3 mb-4">
-                    <div className="flex-1">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 mb-4">
+                    {/* Size */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Size
+                      </label>
+
                       <input
                         name="size"
                         type="text"
                         value={sizeInput.size}
                         onChange={handlesizeInputchange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        placeholder="Size (e.g. 42)"
+                        placeholder="e.g. 42"
                       />
                     </div>
-                    <div className="flex-1">
+
+                    {/* Stock */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Stock
+                      </label>
+
                       <input
                         name="stock"
                         type="number"
                         value={sizeInput.stock}
                         onChange={handlesizeInputchange}
                         className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                        placeholder="Stock (e.g. 10)"
+                        placeholder="e.g. 10"
                         min="0"
                       />
                     </div>
-                    <button
-                      type="button"
-                      onClick={addSize}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors font-medium"
-                    >
-                      Add Size
-                    </button>
-                  </div>
 
+                    {/* Chest */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Chest <span className="text-gray-400">(optional)</span>
+                      </label>
+
+                      <input
+                        name="chest"
+                        type="number"
+                        value={sizeInput.chest}
+                        onChange={handlesizeInputchange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder='e.g. 46"'
+                        min="0"
+                        step="0.5"
+                      />
+                    </div>
+
+                    {/* Length */}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-600 mb-1">
+                        Length <span className="text-gray-400">(optional)</span>
+                      </label>
+
+                      <input
+                        name="length"
+                        type="number"
+                        value={sizeInput.length}
+                        onChange={handlesizeInputchange}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                        placeholder='e.g. 28"'
+                        min="0"
+                        step="0.5"
+                      />
+                    </div>
+
+                    {/* Add / Update button */}
+                    <div className="flex items-end">
+                      <button
+                        type="button"
+                        onClick={addSize}
+                        className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors font-medium"
+                      >
+                        Add / Update
+                      </button>
+                    </div>
+                  </div>
                   {form.sizes.length > 0 && (
                     <div>
                       <h4 className="text-sm font-medium text-gray-700 mb-2">
@@ -557,11 +652,17 @@ export default function AddProductPage({ product }: { product?: Product }) {
                                 setSizeInput({
                                   size: String(size.size),
                                   stock: String(size.stock),
+                                  chest: size.chest ? String(size.chest) : "",
+                                  length: size.length
+                                    ? String(size.length)
+                                    : "",
                                 })
                               }
                             >
                               {" "}
-                              Size {size.size} - Stock: {size.stock}
+                              Size: {size.size} - Stock: {size.stock}{" "}
+                              {size.chest && ` - Chest: ${size.chest}"`}{" "}
+                              {size.length && ` - Length: ${size.length}"`}
                             </button>
                             <button
                               type="button"

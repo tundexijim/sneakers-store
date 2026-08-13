@@ -13,6 +13,7 @@ import {
   Truck,
   ChevronLeft,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 import { useAuth } from "@/context/authContext";
 import { useRouter } from "next/router";
@@ -38,6 +39,7 @@ export default function ProductPage({
   const [showDelete, setShowDelete] = useState<boolean>(false);
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [showSizeChart, setShowSizeChart] = useState<boolean>(false);
 
   // Gallery states
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
@@ -46,6 +48,11 @@ export default function ProductPage({
   const [touchEnd, setTouchEnd] = useState(0);
 
   const stock = product.sizes.reduce((sum, size) => sum + size.stock, 0);
+  const hasSizeChart = product.sizes.some(
+    (size) =>
+      (size.chest !== undefined && size.chest !== null && size.chest !== "") ||
+      (size.length !== undefined && size.length !== null && size.length !== ""),
+  );
   const router = useRouter();
   const eventId = "addtocart_" + Date.now();
   const eventIdView = "viewcontent_" + Date.now();
@@ -477,6 +484,106 @@ export default function ProductPage({
                       </div>
                     ))}
                 </div>
+                {/* Size Chart */}
+                {hasSizeChart && (
+                  <div
+                    className="pt-2 flex items-center justify-between underline text-[12px] font-medium text-gray-700 cursor-pointer select-none hover:text-black transition-colors duration-300"
+                    onClick={() => setShowSizeChart(!showSizeChart)}
+                  >
+                    SIZE GUIDE AND FIT{" "}
+                    <ChevronDown
+                      className={`w-3 h-3 transition-transform ${
+                        showSizeChart ? "rotate-180" : ""
+                      }`}
+                    />
+                  </div>
+                )}
+                {!showSizeChart ||
+                  (hasSizeChart && (
+                    <div className="pt-2">
+                      <div className="border border-gray-200 overflow-hidden bg-white shadow-sm">
+                        <div className="overflow-x-auto">
+                          <table className="w-full text-sm">
+                            <thead>
+                              <tr className="bg-gray-50 border-b border-gray-200">
+                                <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                                  Size
+                                </th>
+
+                                {product.sizes.some(
+                                  (size) =>
+                                    size.chest !== undefined &&
+                                    size.chest !== null &&
+                                    size.chest !== "",
+                                ) && (
+                                  <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                                    Chest (inches)
+                                  </th>
+                                )}
+
+                                {product.sizes.some(
+                                  (size) =>
+                                    size.length !== undefined &&
+                                    size.length !== null &&
+                                    size.length !== "",
+                                ) && (
+                                  <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                                    Length (inches)
+                                  </th>
+                                )}
+                              </tr>
+                            </thead>
+
+                            <tbody className="divide-y divide-gray-100">
+                              {product.sizes
+                                .sort((a, b) => Number(a.size) - Number(b.size))
+                                .map((size, index) => (
+                                  <tr
+                                    key={index}
+                                    className={`transition-colors ${
+                                      selectedSize === size.size
+                                        ? "bg-gray-100"
+                                        : "hover:bg-gray-50"
+                                    }`}
+                                  >
+                                    <td className="px-4 py-3 font-semibold text-gray-900">
+                                      {size.size}
+                                    </td>
+
+                                    {product.sizes.some(
+                                      (item) =>
+                                        item.chest !== undefined &&
+                                        item.chest !== null &&
+                                        item.chest !== "",
+                                    ) && (
+                                      <td className="px-4 py-3 text-gray-600">
+                                        {size.chest ? `${size.chest}"` : "—"}
+                                      </td>
+                                    )}
+
+                                    {product.sizes.some(
+                                      (item) =>
+                                        item.length !== undefined &&
+                                        item.length !== null &&
+                                        item.length !== "",
+                                    ) && (
+                                      <td className="px-4 py-3 text-gray-600">
+                                        {size.length ? `${size.length}"` : "—"}
+                                      </td>
+                                    )}
+                                  </tr>
+                                ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                      <p className="text-xs text-gray-500 px-4 py-2">
+                        Note: Measurements are approximate and may vary
+                        slightly. NFL Jerseys are designed to fit loosely, so
+                        consider one size down for a more fitted look.
+                      </p>
+                    </div>
+                  ))}
               </div>
 
               {/* Action Buttons */}

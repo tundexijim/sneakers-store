@@ -2,6 +2,8 @@
 export type ProductSize = {
   size: number | string;
   stock: number;
+  chest?: number | string;
+  length?: number | string;
 };
 export type Product = {
   id: string;
