@@ -577,7 +577,11 @@ export default function ProductPage({
                           </table>
                         </div>
                       </div>
-                      <p className="text-xs text-gray-500 px-4 py-2">
+                      <p className="text-xs text-gray-500 px-2 pt-2">
+                        Garments measured flat across the chest (full width) in
+                        inches.
+                      </p>
+                      <p className="text-xs text-gray-500 px-2 pt-1">
                         Note: Measurements are approximate and may vary
                         slightly. NFL Jerseys are designed to fit loosely, so
                         consider one size down for a more fitted look.
