@@ -53,6 +53,7 @@ export default function ProductPage({
       (size.chest !== undefined && size.chest !== null && size.chest !== "") ||
       (size.length !== undefined && size.length !== null && size.length !== ""),
   );
+  const isNFLProduct = product.description.toLocaleLowerCase().includes("nfl");
   const router = useRouter();
   const eventId = "addtocart_" + Date.now();
   const eventIdView = "viewcontent_" + Date.now();
@@ -583,8 +584,10 @@ export default function ProductPage({
                       </p>
                       <p className="text-xs text-gray-500 px-2 pt-1">
                         Note: Measurements are approximate and may vary
-                        slightly. NFL Jerseys are designed to fit loosely, so
-                        consider one size down for a more fitted look.
+                        slightly.{" "}
+                        {isNFLProduct
+                          ? "NFL Jerseys are designed to fit loosely, so consider one size down for a more fitted look."
+                          : ""}
                       </p>
                     </div>
                   ))}
