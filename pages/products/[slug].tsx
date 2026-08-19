@@ -417,9 +417,9 @@ export default function ProductPage({
             </div>
 
             {/* Product Info Section */}
-            <div className="space-y-8">
+            <div className="space-y-4">
               {/* Header */}
-              <div className="space-y-4">
+              <div className="space-y-2">
                 <h1 className="text-2xl lg:text-3xl font-semibold text-gray-900 leading-tight">
                   {product.name}
                 </h1>
@@ -451,9 +451,7 @@ export default function ProductPage({
 
               {/* Size Selection */}
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-[18px]  text-gray-900">Select Size:</h3>
-                </div>
+                <h3 className="text-[16px]  text-gray-900">Select Size:</h3>
                 <div className="flex flex-wrap gap-2">
                   {product.sizes
                     .sort((a, b) => Number(a.size) - Number(b.size))
@@ -464,7 +462,7 @@ export default function ProductPage({
                             handleSelectSize(size.size, size.stock)
                           }
                           disabled={size.stock <= 0}
-                          className={`w-12 h-10 flex items-center justify-center rounded-2xl border-2 text-base font-semibold transition-all duration-300 relative overflow-hidden ${
+                          className={`w-12 h-10 flex items-center justify-center rounded-xl border-2 text-base font-semibold transition-all duration-300 relative overflow-hidden ${
                             selectedSize === size.size
                               ? "bg-black text-white border-black shadow-lg scale-105"
                               : size.stock <= 0
@@ -477,7 +475,7 @@ export default function ProductPage({
                             <div className="absolute inset-0 flex items-center justify-center">
                               <X
                                 className="w-8 h-8 text-red-500"
-                                strokeWidth={3}
+                                strokeWidth={1.5}
                               />
                             </div>
                           )}
@@ -488,7 +486,7 @@ export default function ProductPage({
                 {/* Size Chart */}
                 {hasSizeChart && (
                   <div
-                    className="pt-2 flex items-center justify-between underline text-[12px] font-medium text-gray-700 cursor-pointer select-none hover:text-black transition-colors duration-300"
+                    className="flex items-center justify-between underline text-[12px] font-medium text-gray-700 cursor-pointer select-none hover:text-black transition-colors duration-300"
                     onClick={() => setShowSizeChart(!showSizeChart)}
                   >
                     SIZE GUIDE AND FIT{" "}
@@ -499,98 +497,98 @@ export default function ProductPage({
                     />
                   </div>
                 )}
-                {!showSizeChart ||
-                  (hasSizeChart && (
-                    <div className="pt-2">
-                      <div className="border border-gray-200 overflow-hidden bg-white shadow-sm">
-                        <div className="overflow-x-auto">
-                          <table className="w-full text-sm">
-                            <thead>
-                              <tr className="bg-gray-50 border-b border-gray-200">
+                {hasSizeChart && (
+                  <div
+                    className={`overflow-hidden transition-all duration-300 ease-in-out ${showSizeChart ? "max-h-[1000px] opacity-100 mt-4 pointer-events-auto" : "max-h-0 opacity-0 mt-0 pointer-events-none"}`}
+                  >
+                    <div className="border border-gray-200 overflow-hidden bg-white shadow-sm">
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-sm">
+                          <thead>
+                            <tr className="bg-gray-50 border-b border-gray-200">
+                              <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                                Size
+                              </th>
+
+                              {product.sizes.some(
+                                (size) =>
+                                  size.chest !== undefined &&
+                                  size.chest !== null &&
+                                  size.chest !== "",
+                              ) && (
                                 <th className="px-4 py-3 text-left font-semibold text-gray-700">
-                                  Size
+                                  Chest (inches)
                                 </th>
+                              )}
 
-                                {product.sizes.some(
-                                  (size) =>
-                                    size.chest !== undefined &&
-                                    size.chest !== null &&
-                                    size.chest !== "",
-                                ) && (
-                                  <th className="px-4 py-3 text-left font-semibold text-gray-700">
-                                    Chest (inches)
-                                  </th>
-                                )}
+                              {product.sizes.some(
+                                (size) =>
+                                  size.length !== undefined &&
+                                  size.length !== null &&
+                                  size.length !== "",
+                              ) && (
+                                <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                                  Length (inches)
+                                </th>
+                              )}
+                            </tr>
+                          </thead>
 
-                                {product.sizes.some(
-                                  (size) =>
-                                    size.length !== undefined &&
-                                    size.length !== null &&
-                                    size.length !== "",
-                                ) && (
-                                  <th className="px-4 py-3 text-left font-semibold text-gray-700">
-                                    Length (inches)
-                                  </th>
-                                )}
-                              </tr>
-                            </thead>
+                          <tbody className="divide-y divide-gray-100">
+                            {product.sizes
+                              .sort((a, b) => Number(a.size) - Number(b.size))
+                              .map((size, index) => (
+                                <tr
+                                  key={index}
+                                  className={`transition-colors ${
+                                    selectedSize === size.size
+                                      ? "bg-gray-100"
+                                      : "hover:bg-gray-50"
+                                  }`}
+                                >
+                                  <td className="px-4 py-3 font-semibold text-gray-900">
+                                    {size.size}
+                                  </td>
 
-                            <tbody className="divide-y divide-gray-100">
-                              {product.sizes
-                                .sort((a, b) => Number(a.size) - Number(b.size))
-                                .map((size, index) => (
-                                  <tr
-                                    key={index}
-                                    className={`transition-colors ${
-                                      selectedSize === size.size
-                                        ? "bg-gray-100"
-                                        : "hover:bg-gray-50"
-                                    }`}
-                                  >
-                                    <td className="px-4 py-3 font-semibold text-gray-900">
-                                      {size.size}
+                                  {product.sizes.some(
+                                    (item) =>
+                                      item.chest !== undefined &&
+                                      item.chest !== null &&
+                                      item.chest !== "",
+                                  ) && (
+                                    <td className="px-4 py-3 text-gray-600">
+                                      {size.chest ? `${size.chest}"` : "—"}
                                     </td>
+                                  )}
 
-                                    {product.sizes.some(
-                                      (item) =>
-                                        item.chest !== undefined &&
-                                        item.chest !== null &&
-                                        item.chest !== "",
-                                    ) && (
-                                      <td className="px-4 py-3 text-gray-600">
-                                        {size.chest ? `${size.chest}"` : "—"}
-                                      </td>
-                                    )}
-
-                                    {product.sizes.some(
-                                      (item) =>
-                                        item.length !== undefined &&
-                                        item.length !== null &&
-                                        item.length !== "",
-                                    ) && (
-                                      <td className="px-4 py-3 text-gray-600">
-                                        {size.length ? `${size.length}"` : "—"}
-                                      </td>
-                                    )}
-                                  </tr>
-                                ))}
-                            </tbody>
-                          </table>
-                        </div>
+                                  {product.sizes.some(
+                                    (item) =>
+                                      item.length !== undefined &&
+                                      item.length !== null &&
+                                      item.length !== "",
+                                  ) && (
+                                    <td className="px-4 py-3 text-gray-600">
+                                      {size.length ? `${size.length}"` : "—"}
+                                    </td>
+                                  )}
+                                </tr>
+                              ))}
+                          </tbody>
+                        </table>
                       </div>
-                      <p className="text-xs text-gray-500 px-2 pt-2">
-                        Garments measured flat across the chest (full width) in
-                        inches.
-                      </p>
-                      <p className="text-xs text-gray-500 px-2 pt-1">
-                        Note: Measurements are approximate and may vary
-                        slightly.{" "}
-                        {isNFLProduct
-                          ? "NFL Jerseys are designed to fit loosely, so consider one size down for a more fitted look."
-                          : ""}
-                      </p>
                     </div>
-                  ))}
+                    <p className="text-xs text-gray-500 px-2 pt-2">
+                      Garments measured flat across the chest (full width) in
+                      inches.
+                    </p>
+                    <p className="text-xs text-gray-500 px-2 pt-1">
+                      Note: Measurements are approximate and may vary slightly.{" "}
+                      {isNFLProduct
+                        ? "NFL Jerseys are designed to fit loosely, so consider one size down for a more fitted look."
+                        : ""}
+                    </p>
+                  </div>
+                )}
               </div>
 
               {/* Action Buttons */}
