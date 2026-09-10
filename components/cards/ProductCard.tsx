@@ -37,7 +37,7 @@ export default function ProductCard({
           />
         </div>
 
-        <div className={`${isListView ? "flex-1" : "p-4"} relative`}>
+        <div className={`${isListView ? "flex-1" : "py-4"} relative`}>
           <h3
             className={`${
               isListView ? "text-[12px]" : "text-[13px]"
@@ -51,7 +51,7 @@ export default function ProductCard({
                 {formatPrice(product.oldPrice)}
               </p>
             )}
-            <p className="text-[14px] font-bold text-[#00C8C8]">
+            <p className="text-[14px] font-bold text-red-500 line-clamp-1">
               {formatPrice(product.price)}
             </p>
           </div>

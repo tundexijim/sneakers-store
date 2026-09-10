@@ -32,7 +32,7 @@ export default function DTwears({ topbanner, settopbanner }: Props) {
   return (
     <>
       {topbanner && (
-        <div className="w-full h-10 bg-[#00C8C8] items-center justify-center flex px-4 md:px-16 text-white relative">
+        <div className="w-full h-10 bg-red-500 items-center justify-center flex px-4 md:px-16 text-white relative">
           <p className="text-[12px] md:text-[16px] transition-opacity duration-300">
             {text[index]}
           </p>

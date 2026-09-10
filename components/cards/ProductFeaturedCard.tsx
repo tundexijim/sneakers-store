@@ -32,7 +32,7 @@ export default function ProductFeaturedCard({ product }: { product: Product }) {
               {formatPrice(product.oldPrice)}
             </p>
           )}
-          <p className="text-[14px] font-bold text-[#00C8C8]">
+          <p className="text-[14px] font-bold text-red-500 line-clamp-1">
             {formatPrice(product.price)}
           </p>
         </div>

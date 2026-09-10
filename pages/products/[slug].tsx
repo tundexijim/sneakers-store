@@ -40,6 +40,7 @@ export default function ProductPage({
   const [showInfo, setShowInfo] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [showSizeChart, setShowSizeChart] = useState<boolean>(false);
+  const [sizeUnit, setSizeUnit] = useState<"in" | "cm">("in");
 
   // Gallery states
   const [selectedImageIndex, setSelectedImageIndex] = useState<number>(0);
@@ -188,6 +189,19 @@ export default function ProductPage({
   const handleThumbnailClick = (index: number) => {
     setSelectedImageIndex(index);
     setIsImageLoading(true);
+  };
+  const formatMeasurement = (value: number | string | undefined) => {
+    if (value === undefined || value === null || value === "") {
+      return "—";
+    }
+
+    const numericValue = Number(value);
+
+    if (sizeUnit === "cm") {
+      return `${(numericValue * 2.54).toFixed(1)} cm`;
+    }
+
+    return `${numericValue}"`;
   };
   return (
     <>
@@ -430,7 +444,7 @@ export default function ProductPage({
                         {formatPrice(product.oldPrice)}
                       </p>
                     )}
-                    <p className="text-xl font-bold text-[#00C8C8]">
+                    <p className="text-xl font-bold text-red-500">
                       {formatPrice(product.price)}
                     </p>
                   </div>
@@ -503,10 +517,41 @@ export default function ProductPage({
                   >
                     <div className="border border-gray-200 overflow-hidden bg-white shadow-sm">
                       <div className="overflow-x-auto">
-                        <table className="w-full text-sm">
+                        <div className="flex items-center justify-between mb-3">
+                          <span className="text-xs font-medium text-gray-500">
+                            MEASUREMENTS
+                          </span>
+
+                          <div className="flex border border-gray-200 rounded-md overflow-hidden">
+                            <button
+                              type="button"
+                              onClick={() => setSizeUnit("in")}
+                              className={`px-3 py-1.5 text-[10px] font-semibold transition-colors ${
+                                sizeUnit === "in"
+                                  ? "bg-black text-white"
+                                  : "bg-white text-gray-600 hover:bg-gray-50"
+                              }`}
+                            >
+                              INCHES
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setSizeUnit("cm")}
+                              className={`px-3 py-1.5 text-[10px] font-semibold transition-colors ${
+                                sizeUnit === "cm"
+                                  ? "bg-black text-white"
+                                  : "bg-white text-gray-600 hover:bg-gray-50"
+                              }`}
+                            >
+                              CM
+                            </button>
+                          </div>
+                        </div>
+                        <table className="w-full table-fixed text-sm">
                           <thead>
                             <tr className="bg-gray-50 border-b border-gray-200">
-                              <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                              <th className="w-1/3 px-4 py-3 text-left font-semibold text-gray-700">
                                 Size
                               </th>
 
@@ -516,8 +561,8 @@ export default function ProductPage({
                                   size.chest !== null &&
                                   size.chest !== "",
                               ) && (
-                                <th className="px-4 py-3 text-left font-semibold text-gray-700">
-                                  Chest (inches)
+                                <th className="w-1/3 px-4 py-3 text-left font-semibold text-gray-700">
+                                  Chest
                                 </th>
                               )}
 
@@ -527,8 +572,8 @@ export default function ProductPage({
                                   size.length !== null &&
                                   size.length !== "",
                               ) && (
-                                <th className="px-4 py-3 text-left font-semibold text-gray-700">
-                                  Length (inches)
+                                <th className="w-1/3 px-4 py-3 text-left font-semibold text-gray-700">
+                                  Length
                                 </th>
                               )}
                             </tr>
@@ -556,8 +601,8 @@ export default function ProductPage({
                                       item.chest !== null &&
                                       item.chest !== "",
                                   ) && (
-                                    <td className="px-4 py-3 text-gray-600">
-                                      {size.chest ? `${size.chest}"` : "—"}
+                                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                                      {formatMeasurement(size.chest)}
                                     </td>
                                   )}
 
@@ -567,8 +612,8 @@ export default function ProductPage({
                                       item.length !== null &&
                                       item.length !== "",
                                   ) && (
-                                    <td className="px-4 py-3 text-gray-600">
-                                      {size.length ? `${size.length}"` : "—"}
+                                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">
+                                      {formatMeasurement(size.length)}
                                     </td>
                                   )}
                                 </tr>
@@ -612,7 +657,7 @@ export default function ProductPage({
 
                 {isInCart && (
                   <Link href="/cart" className="block">
-                    <button className="w-full h-14 bg-[#00c8c8] text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
+                    <button className="w-full h-14 bg-red-500 text-white font-bold text-lg rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] active:scale-[0.98]">
                       View Cart & Checkout
                     </button>
                   </Link>
@@ -707,8 +752,8 @@ export default function ProductPage({
 - Cash on delivery`,
               },
               {
-                header: "Do you offer same day delivery within Lagos?",
-                body: "Yes we do! However, your order must be placed and confirmed before 10am to be eligible for same day delivery.\nDelivery timeframe is between 10:30am - 6:30pm",
+                header: "How long does your delivery take?",
+                body: "Delivery within Lagos takes 1-2 days. Outside Lagos takes 3-5 days\nDelivery timeframe is between 10:30am - 6:30pm",
               },
               {
                 header: "Do you ship nationwide?",

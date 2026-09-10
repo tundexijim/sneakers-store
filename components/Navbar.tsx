@@ -55,7 +55,7 @@ export default function Navbar() {
         unlockScroll();
       }
     },
-    [lockScroll, unlockScroll]
+    [lockScroll, unlockScroll],
   );
 
   // Handle scroll effect for navbar
@@ -90,7 +90,7 @@ export default function Navbar() {
         setMenuState(false);
       }
     },
-    [setMenuState]
+    [setMenuState],
   );
 
   useEffect(() => {
@@ -193,7 +193,7 @@ export default function Navbar() {
           {/* Desktop Logo */}
           <Link href="/" className="hidden md:flex group">
             <Image
-              src="/logo2.png"
+              src="/newlogo.png"
               alt="logo"
               width={56}
               height={56}
@@ -223,7 +223,7 @@ export default function Navbar() {
           {/* Mobile Logo */}
           <Link href="/" className="md:hidden group">
             <Image
-              src="/logo2.png"
+              src="/newlogo.png"
               alt="logo"
               width={56}
               height={56}
