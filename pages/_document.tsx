@@ -35,7 +35,7 @@ export default function Document() {
               "@type": "Organiztion",
               name: "DTwears",
               url: "https://dtwears.ng",
-              logo: "https://dtwears.ng/logo2.png",
+              logo: "https://dtwears.ng/newlogo.png",
             }),
           }}
         />

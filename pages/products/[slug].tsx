@@ -623,8 +623,7 @@ export default function ProductPage({
                       </div>
                     </div>
                     <p className="text-xs text-gray-500 px-2 pt-2">
-                      Garments measured flat round the chest (full width) in
-                      inches.
+                      Garments measured flat round the chest (full width).
                     </p>
                     <p className="text-xs text-gray-500 px-2 pt-1">
                       Note: Measurements are approximate and may vary slightly.{" "}

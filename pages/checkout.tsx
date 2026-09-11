@@ -824,7 +824,7 @@ export default function CheckoutPage() {
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full relative bg-gradient-to-r rounded-xl cursor-pointer bg-blue-900 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 transition-all duration-200 shadow-lg shadow-blue-500/25 hover:shadow-xl hover:shadow-blue-500/30 disabled:shadow-none transform hover:scale-[1.02] disabled:scale-100 disabled:cursor-not-allowed"
+                      className="w-full relative bg-gradient-to-r rounded-xl cursor-pointer bg-gray-900 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 disabled:shadow-none transform disabled:scale-100 disabled:cursor-not-allowed"
                     >
                       <span
                         className={`flex items-center justify-center gap-2 ${

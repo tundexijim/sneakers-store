@@ -65,7 +65,7 @@ const SneakersHomepageContent = ({
           duration: 1.5,
           stagger: 0.2,
           immediateRender: false,
-        }
+        },
       );
 
       // Featured products animation
@@ -83,11 +83,11 @@ const SneakersHomepageContent = ({
               start: "top 85%",
               toggleActions: "play none none none",
             },
-          }
+          },
         );
       }
     },
-    { scope: containerRef }
+    { scope: containerRef },
   );
   return (
     <>
@@ -143,7 +143,7 @@ const SneakersHomepageContent = ({
               "@type": "Organization",
               name: "DTwears",
               url: "https://dtwears.ng",
-              logo: "https://dtwears.ng/logo2.png",
+              logo: "https://dtwears.ng/newlogo.png",
             }),
           }}
         />
@@ -180,10 +180,7 @@ const SneakersHomepageContent = ({
                   ref={headingRef}
                   className="text-4xl lg:text-6xl font-bold leading-tight"
                 >
-                  Step Up Your{" "}
-                  <span className="block bg-gradient-to-r from-blue-600 to-blue-900 bg-clip-text text-transparent">
-                    Game
-                  </span>
+                  Step Up Your Game
                 </h1>
                 <p ref={subRef} className="text-xl text-gray-300 max-w-lg">
                   Discover the latest jerseys and sneakers to elevate your style
@@ -193,7 +190,7 @@ const SneakersHomepageContent = ({
                 <Link href="/products">
                   <button
                     ref={ctaRef}
-                    className="bg-[#00C8C8] text-black px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 flex items-center justify-center space-x-2 group cursor-pointer"
+                    className="bg-red-600 text-white px-8 py-4 rounded-full font-semibold hover:bg-gray-100 transition-all duration-300 flex items-center justify-center space-x-2 group cursor-pointer"
                   >
                     <span>Shop Now</span>
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
