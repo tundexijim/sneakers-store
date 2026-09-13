@@ -296,60 +296,60 @@ export default function CheckoutPage() {
   };
   // Order summary component
   const OrderSummary = () => (
-    <div className="lg:col-span-2 space-y-6">
-      <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
-        <h2 className="text-xl font-semibold text-slate-900 mb-6 flex items-center">
-          Order Summary
-        </h2>
+    <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
+      <h2 className="text-xl font-semibold text-slate-900 mb-6 flex items-center">
+        Order Summary
+      </h2>
 
-        <div className="space-y-4 mb-6">
-          {cart.map((item) => (
-            <Link
-              href={`/products/${item.slug}`}
-              key={`${item.id}-${item.selectedSize}`}
-            >
-              <div className="grid grid-cols-3 p-4 mb-4 bg-slate-50 rounded-xl border border-slate-100">
-                <div className="w-12 h-12 relative">
-                  <Image
-                    src={item.image}
-                    alt={item.name}
-                    fill
-                    className="rounded-lg"
-                    priority
-                  />
-                </div>
-                <div className="flex-1">
-                  <p className="font-medium text-slate-900 mb-1">{item.name}</p>
-                  <p className="text-sm text-slate-600 flex-1">
-                    Size {item.selectedSize} × {item.qty}
-                  </p>
-                </div>
-                <p className="font-semibold text-slate-900">
-                  {formatPrice(item.price * item.qty)}
+      <div className="space-y-4 mb-6">
+        {cart.map((item) => (
+          <Link
+            href={`/products/${item.slug}`}
+            key={`${item.id}-${item.selectedSize}`}
+          >
+            <div className="flex justify-between py-4">
+              <div className="w-12 h-12 relative">
+                <Image
+                  src={item.image}
+                  alt={item.name}
+                  fill
+                  className="rounded-lg"
+                  priority
+                />
+              </div>
+              <div>
+                <p className="font-medium text-slate-900 mb-1 w-28 md:w-36 truncate">
+                  {item.name}
+                </p>
+                <p className="text-sm text-slate-600 flex-1">
+                  Size {item.selectedSize} × {item.qty}
                 </p>
               </div>
-            </Link>
-          ))}
+              <p className="font-semibold text-slate-900">
+                {formatPrice(item.price * item.qty)}
+              </p>
+            </div>
+          </Link>
+        ))}
+      </div>
+
+      <div className=" space-y-3 pt-4 border-t border-slate-200">
+        <div className="grid grid-cols-[1fr_auto] gap-4 text-slate-600 items-center">
+          <span>Shipping fee</span>
+          <span className="text-right whitespace-nowrap">
+            {form.paymentMethod === "pay on delivery"
+              ? formatPrice(ShippingCost)
+              : total <= 100000
+                ? formatPrice(ShippingCost)
+                : formatPrice(0)}
+          </span>
         </div>
 
-        <div className=" space-y-3 pt-4 border-t border-slate-200">
-          <div className="grid grid-cols-[1fr_auto] gap-4 text-slate-600 items-center">
-            <span>Shipping fee</span>
-            <span className="text-right whitespace-nowrap">
-              {form.paymentMethod === "pay on delivery"
-                ? formatPrice(ShippingCost)
-                : total <= 100000
-                  ? formatPrice(ShippingCost)
-                  : formatPrice(0)}
-            </span>
-          </div>
-
-          <div className="grid grid-cols-[1fr_auto] gap-4 items-baseline pt-2">
-            <span className="text-lg font-medium text-slate-700">Total</span>
-            <span className="text-xl font-bold text-slate-900 text-right whitespace-nowrap">
-              {formatPrice(Subtotal)}
-            </span>
-          </div>
+        <div className="grid grid-cols-[1fr_auto] gap-4 items-baseline pt-2">
+          <span className="text-lg font-medium text-slate-700">Total</span>
+          <span className="text-xl font-bold text-slate-900 text-right whitespace-nowrap">
+            {formatPrice(Subtotal)}
+          </span>
         </div>
       </div>
     </div>

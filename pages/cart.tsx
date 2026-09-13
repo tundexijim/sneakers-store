@@ -22,7 +22,7 @@ export default function CartPage() {
 
   const cartIds = useMemo(
     () => cart?.map((item) => item.id).join(",") || "",
-    [cart]
+    [cart],
   );
 
   useEffect(() => {
@@ -44,7 +44,7 @@ export default function CartPage() {
         .map((item) => {
           const product = products.find((p) => p.id === item.id);
           const sizeData = product?.sizes?.find(
-            (s) => s.size === item.selectedSize
+            (s) => s.size === item.selectedSize,
           );
           return {
             ...item,
@@ -76,7 +76,7 @@ export default function CartPage() {
       if (item.qty > stock) {
         updateQty(item.id, item.selectedSize, stock);
         newMessages.push(
-          `"${item.name}" (size ${item.selectedSize}) quantity reduced to available stock (${stock}).`
+          `"${item.name}" (size ${item.selectedSize}) quantity reduced to available stock (${stock}).`,
         );
       }
     });
@@ -191,7 +191,7 @@ export default function CartPage() {
                         <div className="flex-1 min-w-0">
                           <div className="flex items-start justify-between">
                             <div>
-                              <h3 className="text-lg font-semibold text-gray-900 mb-1">
+                              <h3 className="text-lg font-semibold text-gray-900 mb-1 w-30 md:w-36 truncate">
                                 {item.name}
                               </h3>
                               <div className="flex items-center space-x-4 text-sm text-gray-600 mb-2">
@@ -235,7 +235,7 @@ export default function CartPage() {
                                     updateQty(
                                       item.id,
                                       item.selectedSize,
-                                      item.qty - 1
+                                      item.qty - 1,
                                     )
                                   }
                                   disabled={item.qty <= 1}
@@ -251,7 +251,7 @@ export default function CartPage() {
                                     updateQty(
                                       item.id,
                                       item.selectedSize,
-                                      item.qty + 1
+                                      item.qty + 1,
                                     );
                                   }}
                                   disabled={item.qty >= stock}
