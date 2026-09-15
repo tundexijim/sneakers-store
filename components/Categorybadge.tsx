@@ -10,6 +10,7 @@ export default function CategoryBadge({ category }: { category: string }) {
     { href: "/products", label: "Shop" },
     { href: "/collections/jerseys", label: "Jerseys" },
     { href: "/collections/sneakers", label: "Sneakers" },
+    { href: "/collections/pants", label: "Pants" },
   ];
 
   useEffect(() => {
