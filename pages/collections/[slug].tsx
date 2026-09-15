@@ -82,7 +82,7 @@ export default function ProductsList({
       let start = Math.max(2, currentPage - Math.floor(showPages / 2));
       let end = Math.min(
         totalPages - 1,
-        currentPage + Math.floor(showPages / 2)
+        currentPage + Math.floor(showPages / 2),
       );
       if (start > 2) {
         pages.push("...");
@@ -191,7 +191,7 @@ export default function ProductsList({
                 // calculate total stock for this product
                 const stock = product.sizes.reduce(
                   (sum, size) => sum + size.stock,
-                  0
+                  0,
                 );
 
                 return (
@@ -214,7 +214,6 @@ export default function ProductsList({
                         SALES
                       </div>
                     )}
-
                     <ProductCard
                       product={product}
                       isListView={viewMode === "list"}
@@ -329,7 +328,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     const { products, total } = await getProductsByCategory(
       catName,
       page,
-      sortBy
+      sortBy,
     );
 
     if (!products) {

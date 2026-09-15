@@ -11,7 +11,7 @@ import {
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/authContext";
 import Link from "next/link";
-import { Product, ProductSize } from "@/types";
+import { Category, Product, ProductSize } from "@/types";
 import { useIsClient } from "@/hooks/useIsClient";
 import {
   getProductBySlug,
@@ -20,6 +20,7 @@ import {
 } from "@/services/productService";
 import { GetServerSideProps } from "next";
 import Image from "next/image";
+import { getAllCategories } from "@/services/categoriesService";
 
 export default function AddProductPage({ product }: { product?: Product }) {
   const [form, setForm] = useState({
@@ -48,6 +49,7 @@ export default function AddProductPage({ product }: { product?: Product }) {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const { user, loading: authloading, logOut } = useAuth();
+  const [categories, setCategories] = useState<Category[]>([]);
   const router = useRouter();
   const isClient = useIsClient();
 
@@ -58,13 +60,20 @@ export default function AddProductPage({ product }: { product?: Product }) {
     }
   }, [user, authloading]);
 
+  useEffect(() => {
+    async function fetchCategories() {
+      const categories = await getAllCategories();
+      setCategories(categories);
+    }
+    fetchCategories();
+  }, []);
+
   const getPathFromUrl = (url: string) => {
     const decodedUrl = decodeURIComponent(url);
     const pathStart = decodedUrl.indexOf("/o/") + 3;
     const pathEnd = decodedUrl.indexOf("?alt=");
     return decodedUrl.substring(pathStart, pathEnd);
   };
-
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -543,8 +552,11 @@ export default function AddProductPage({ product }: { product?: Product }) {
                   <option value="" disabled>
                     Select a Category
                   </option>
-                  <option value="sneakers">Sneakers</option>
-                  <option value="jerseys">Jerseys</option>
+                  {categories.map((category: any) => (
+                    <option key={category.slug} value={category.slug}>
+                      {category.name}
+                    </option>
+                  ))}
                 </select>
               </div>
 

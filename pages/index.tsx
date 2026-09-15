@@ -283,7 +283,7 @@ const SneakersHomepageContent = ({
                 categories.map((category, index) => (
                   <Link
                     key={category.id || index}
-                    href={`collections/${category.name}`}
+                    href={`collections/${category.slug}`}
                   >
                     <div className="relative group w-full h-80 cursor-pointer overflow-hidden rounded-xl">
                       <Image
@@ -295,8 +295,7 @@ const SneakersHomepageContent = ({
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
                       <div className="absolute bottom-4 left-4 right-4">
                         <h3 className="text-xl font-bold mb-1">
-                          {category.name.charAt(0).toLocaleUpperCase() +
-                            category.name.slice(1).toLocaleLowerCase()}
+                          {category.name}
                         </h3>
                       </div>
                       <div className="absolute inset-0 bg-purple-600/0 group-hover:bg-purple-600/20 transition-colors duration-300"></div>
