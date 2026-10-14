@@ -9,11 +9,10 @@ const formatPrice = (price: number) => {
 };
 
 type Props = {
-  topbanner: boolean;
   settopbanner: (topbanner: boolean) => void;
 };
 
-export default function DTwears({ topbanner, settopbanner }: Props) {
+export default function DTwears({ settopbanner }: Props) {
   const text = [
     `Free shipping for orders above ${formatPrice(100000)}.`,
     "Welcome to DTwears",
@@ -30,20 +29,16 @@ export default function DTwears({ topbanner, settopbanner }: Props) {
   }, [text.length]);
 
   return (
-    <>
-      {topbanner && (
-        <div className="w-full h-10 bg-red-500 items-center justify-center flex px-4 md:px-16 text-white relative">
-          <p className="text-[12px] md:text-[16px] transition-opacity duration-300">
-            {text[index]}
-          </p>
-          <div
-            onClick={() => settopbanner(false)}
-            className="absolute right-4 cursor-pointer"
-          >
-            <X />
-          </div>
-        </div>
-      )}
-    </>
+    <div className="w-full h-10 bg-red-500 items-center justify-center flex px-4 md:px-16 text-white relative">
+      <p className="text-[12px] md:text-[16px] transition-opacity duration-300">
+        {text[index]}
+      </p>
+      <div
+        onClick={() => settopbanner(false)}
+        className="absolute right-4 cursor-pointer"
+      >
+        <X />
+      </div>
+    </div>
   );
 }

@@ -18,7 +18,7 @@ export default function AuthPage() {
 
   useEffect(() => {
     if (!authloading && user) {
-      router.push("/admin/AdminPanel"); // redirect to login/signup if not logged in
+      router.push("/admin/AdminPanel");
     }
   }, [user]);
 

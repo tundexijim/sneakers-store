@@ -68,10 +68,9 @@ export default function App({ Component, pageProps }: AppProps) {
             showNavbar ? "translate-y-0" : "-translate-y-full"
           }`}
         >
-          <DTwears topbanner={topbannner} settopbanner={setTopbanner} />
+          {topbannner && <DTwears settopbanner={setTopbanner} />}
           <Navbar />
         </header>
-
         {/* Spacer to prevent content jump - adjust height based on your header height */}
         <div className={`flex-shrink-0 ${topbannner ? "h-26" : "h-16"}`} />
 
