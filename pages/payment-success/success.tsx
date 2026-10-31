@@ -3,19 +3,27 @@ import { useEffect, useState } from "react";
 import Head from "next/head";
 import { CheckCircle } from "lucide-react";
 import PurchaseTracker from "@/components/PurchaseTracker";
+import WhatsAppFloatingButton from "@/components/WhatsApp";
 
 export default function SuccessPage() {
   const router = useRouter();
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
   const [accountNumber, setAccountNumber] = useState<string | null>(null);
+  const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
   const [cost, setCost] = useState<number | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const formatPrice = (price: number) => {
+    return new Intl.NumberFormat("en-NG", {
+      style: "currency",
+      currency: "NGN",
+    }).format(price);
+  };
 
   useEffect(() => {
     if (router.isReady) {
       setIsReady(true);
 
-      const { orderNumber, account, amount } = router.query;
+      const { orderNumber, account, amount, paymentMethod } = router.query;
       if (typeof orderNumber === "string") {
         setOrderNumber(orderNumber);
       }
@@ -24,6 +32,9 @@ export default function SuccessPage() {
       }
       if (amount && !isNaN(Number(amount))) {
         setCost(Number(amount));
+      }
+      if (typeof paymentMethod === "string") {
+        setPaymentMethod(paymentMethod);
       }
     }
   }, [router.isReady, orderNumber]);
@@ -72,6 +83,11 @@ export default function SuccessPage() {
             Thank you for your purchase. Your order has been successfully placed
             and is being processed.
           </p>
+          {paymentMethod === "pay on delivery" && (
+            <span className="text-gray-600 mb-6 block">
+              You will pay <strong>{formatPrice(cost || 0)}</strong> on delivery
+            </span>
+          )}
           <div className="bg-gray-50 rounded-lg p-4 mb-6">
             <p className="text-sm text-gray-700">
               <strong>Order ID:</strong> {orderNumber}
@@ -92,9 +108,17 @@ export default function SuccessPage() {
               </p>
               <p className="mt-2">
                 All orders will be processed immediately after your payment is
-                confirmed. Please include your order ID as reference for easy
-                confirmation of your payment. For easy confirmation, kindly send
-                proof of payment to 08150548525 on WhatsApp.
+                confirmed.
+                <br />
+                <span className="font-bold">
+                  Amount to Pay: {formatPrice(cost || 0)}
+                </span>
+                <br />
+                Please include your <strong>Order ID</strong> as the payment
+                reference for easy confirmation. After making payment, kindly
+                send your proof of payment to{" "}
+                <strong>08150548525 on WhatsApp</strong> for prompt
+                confirmation.
               </p>
             </div>
           )}
@@ -106,6 +130,13 @@ export default function SuccessPage() {
           </button>
         </div>
         <PurchaseTracker value={cost} orderNumber={orderNumber} />
+        <div className="fixed bottom-6 right-6 z-40 transition-all duration-300 hover:scale-105">
+          <WhatsAppFloatingButton
+            message="Hello!"
+            position="bottom-right"
+            showTooltip={false}
+          />
+        </div>
       </div>
     </>
   );

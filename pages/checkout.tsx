@@ -9,7 +9,7 @@ import { useIsClient } from "@/hooks/useIsClient";
 import Link from "next/link";
 import { validateStockAvailability } from "@/util/saveOrder";
 import { Loading } from "@/components/Loading";
-import { ShoppingBag, Lock, ChevronDown, X, Plus, Minus } from "lucide-react";
+import { ShoppingBag, ChevronDown, Plus, Minus } from "lucide-react";
 import Image from "next/image";
 import { httpsCallable } from "firebase/functions";
 import { functions } from "@/lib/firebaseConfig";
@@ -20,6 +20,7 @@ export default function CheckoutPage() {
   const { cart, total, clearCart } = useCart();
   const router = useRouter();
   const [ShippingCost, setShippingCost] = useState(0);
+  const [shippingLoading, setShippingLoading] = useState(false);
   const [selectedState, setSelectedState] = useState("");
   const [form, setForm] = useState({
     firstname: "",
@@ -39,13 +40,7 @@ export default function CheckoutPage() {
   const [textOptIn, setTextOptIn] = useState(false);
   const submittingRef = useRef(false);
   const isClient = useIsClient();
-  const Subtotal =
-    total +
-    (form.paymentMethod === "pay on delivery"
-      ? ShippingCost
-      : total <= 100000
-        ? ShippingCost
-        : 0);
+  const Subtotal = total + ShippingCost;
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-NG", {
       style: "currency",
@@ -72,8 +67,29 @@ export default function CheckoutPage() {
   }, [form, hasRestoredForm, isClient]);
 
   useEffect(() => {
-    setShippingCost(getStateCode(selectedState));
-  }, [form.paymentMethod]);
+    setShippingLoading(true);
+
+    const timeout = setTimeout(() => {
+      if (!selectedState) {
+        setShippingCost(0);
+      } else {
+        const stateShippingCost = getStateCode(selectedState);
+
+        const shippingCost =
+          form.paymentMethod === "pay on delivery"
+            ? stateShippingCost
+            : total <= 100000
+              ? stateShippingCost
+              : 0;
+
+        setShippingCost(shippingCost);
+      }
+
+      setShippingLoading(false);
+    }, 700);
+
+    return () => clearTimeout(timeout);
+  }, [selectedState, form.paymentMethod, total]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -86,17 +102,9 @@ export default function CheckoutPage() {
       }));
     }
   };
-
   const handleStateChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const state = e.target.value;
     setSelectedState(state);
-    setShippingCost(
-      form.paymentMethod === "pay on delivery"
-        ? getStateCode(state)
-        : total <= 100000
-          ? getStateCode(state)
-          : 0,
-    );
 
     if (errors.state) {
       setErrors((prev) => ({ ...prev, state: false }));
@@ -215,6 +223,7 @@ export default function CheckoutPage() {
   };
   const handlePay = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (shippingLoading) return;
     const isValid = validateForm();
     if (!isValid) {
       // setError("Please fill out all required fields correctly.");
@@ -256,6 +265,7 @@ export default function CheckoutPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (shippingLoading) return;
     const isValid = validateForm();
     if (!isValid) {
       return;
@@ -278,7 +288,7 @@ export default function CheckoutPage() {
         clearCart();
         if (form.paymentMethod === "pay on delivery") {
           router.push(
-            `/payment-success/success?orderNumber=${orderData.orderNumber}&amount=${Subtotal}`,
+            `/payment-success/success?orderNumber=${orderData.orderNumber}&amount=${Subtotal}&paymentMethod=pay on delivery`,
           );
         } else if (form.paymentMethod === "bank") {
           router.push(
@@ -337,18 +347,26 @@ export default function CheckoutPage() {
         <div className="grid grid-cols-[1fr_auto] gap-4 text-slate-600 items-center">
           <span>Shipping fee</span>
           <span className="text-right whitespace-nowrap">
-            {form.paymentMethod === "pay on delivery"
-              ? formatPrice(ShippingCost)
-              : total <= 100000
-                ? formatPrice(ShippingCost)
-                : formatPrice(0)}
+            {shippingLoading ? (
+              <div className="flex justify-end">
+                <Loading />
+              </div>
+            ) : (
+              formatPrice(ShippingCost)
+            )}
           </span>
         </div>
 
         <div className="grid grid-cols-[1fr_auto] gap-4 items-baseline pt-2">
           <span className="text-lg font-medium text-slate-700">Total</span>
           <span className="text-xl font-bold text-slate-900 text-right whitespace-nowrap">
-            {formatPrice(Subtotal)}
+            {shippingLoading ? (
+              <div className="flex justify-end">
+                <Loading />
+              </div>
+            ) : (
+              formatPrice(Subtotal)
+            )}
           </span>
         </div>
       </div>
@@ -823,7 +841,7 @@ export default function CheckoutPage() {
                   <div className="bg-white rounded-2xl p-6 shadow-lg shadow-slate-200/50 border border-slate-200/50">
                     <button
                       type="submit"
-                      disabled={loading}
+                      disabled={loading || shippingLoading}
                       className="w-full relative bg-gradient-to-r rounded-xl cursor-pointer bg-gray-900 disabled:from-slate-400 disabled:to-slate-500 text-white font-semibold py-4 px-8 disabled:shadow-none transform disabled:scale-100 disabled:cursor-not-allowed"
                     >
                       <span
@@ -832,7 +850,7 @@ export default function CheckoutPage() {
                         }`}
                       >
                         Place Order <span />
-                        {formatPrice(Subtotal)}
+                        {shippingLoading ? <Loading /> : formatPrice(Subtotal)}
                       </span>
                       {loading && (
                         <div className="absolute inset-0 flex items-center justify-center">
