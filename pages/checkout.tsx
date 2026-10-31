@@ -292,7 +292,7 @@ export default function CheckoutPage() {
           );
         } else if (form.paymentMethod === "bank") {
           router.push(
-            `/payment-success/success?orderNumber=${orderData.orderNumber}&amount=${Subtotal}&account=1235`,
+            `/payment-success/success?orderNumber=${orderData.orderNumber}&amount=${Subtotal}&paymentMethod=bank`,
           );
         }
       }

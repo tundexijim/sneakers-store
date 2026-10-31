@@ -8,7 +8,6 @@ import WhatsAppFloatingButton from "@/components/WhatsApp";
 export default function SuccessPage() {
   const router = useRouter();
   const [orderNumber, setOrderNumber] = useState<string | null>(null);
-  const [accountNumber, setAccountNumber] = useState<string | null>(null);
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
   const [cost, setCost] = useState<number | null>(null);
   const [isReady, setIsReady] = useState(false);
@@ -26,9 +25,6 @@ export default function SuccessPage() {
       const { orderNumber, account, amount, paymentMethod } = router.query;
       if (typeof orderNumber === "string") {
         setOrderNumber(orderNumber);
-      }
-      if (typeof account === "string") {
-        setAccountNumber(account);
       }
       if (amount && !isNaN(Number(amount))) {
         setCost(Number(amount));
@@ -93,7 +89,7 @@ export default function SuccessPage() {
               <strong>Order ID:</strong> {orderNumber}
             </p>
           </div>
-          {accountNumber && (
+          {paymentMethod === "bank" && (
             <div className="mb-6 text-gray-600">
               <p>Kindly make payment into this account</p>
               <p>
