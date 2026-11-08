@@ -22,7 +22,7 @@ export default function SuccessPage() {
     if (router.isReady) {
       setIsReady(true);
 
-      const { orderNumber, account, amount, paymentMethod } = router.query;
+      const { orderNumber, amount, paymentMethod } = router.query;
       if (typeof orderNumber === "string") {
         setOrderNumber(orderNumber);
       }
