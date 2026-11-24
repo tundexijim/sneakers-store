@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import Head from "next/head";
 import { CheckCircle } from "lucide-react";
-import PurchaseTracker from "@/components/PurchaseTracker";
+import { useCart } from "@/context/CartContext";
 import WhatsAppFloatingButton from "@/components/WhatsApp";
 
 export default function SuccessPage() {
@@ -11,13 +11,13 @@ export default function SuccessPage() {
   const [paymentMethod, setPaymentMethod] = useState<string | null>(null);
   const [cost, setCost] = useState<number | null>(null);
   const [isReady, setIsReady] = useState(false);
+  const { clearCart } = useCart();
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat("en-NG", {
       style: "currency",
       currency: "NGN",
     }).format(price);
   };
-
   useEffect(() => {
     if (router.isReady) {
       setIsReady(true);
@@ -34,6 +34,9 @@ export default function SuccessPage() {
       }
     }
   }, [router.isReady, orderNumber]);
+  useEffect(() => {
+    clearCart();
+  }, []);
 
   if (!isReady) {
     return <div>Loading...</div>;
@@ -125,7 +128,7 @@ export default function SuccessPage() {
             Continue Shopping
           </button>
         </div>
-        <PurchaseTracker value={cost} orderNumber={orderNumber} />
+        {/* <PurchaseTracker value={cost} orderNumber={orderNumber} /> */}
         <div className="fixed bottom-6 right-6 z-40 transition-all duration-300 hover:scale-105">
           <WhatsAppFloatingButton
             message="Hello!"

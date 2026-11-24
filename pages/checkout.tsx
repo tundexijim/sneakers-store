@@ -8,6 +8,7 @@ import { nigerianStates } from "@/data/nigerianStates";
 import { useIsClient } from "@/hooks/useIsClient";
 import Link from "next/link";
 import { validateStockAvailability } from "@/util/saveOrder";
+import { PurchaseTracker } from "@/util/PurchaseTracker";
 import { Loading } from "@/components/Loading";
 import { ShoppingBag, ChevronDown, Plus, Minus } from "lucide-react";
 import Image from "next/image";
@@ -17,7 +18,7 @@ import { payWithPaystack, PaystackResponse } from "@/util/paystack";
 import WhatsAppFloatingButton from "@/components/WhatsApp";
 
 export default function CheckoutPage() {
-  const { cart, total, clearCart } = useCart();
+  const { cart, total } = useCart();
   const router = useRouter();
   const [ShippingCost, setShippingCost] = useState(0);
   const [shippingLoading, setShippingLoading] = useState(false);
@@ -189,7 +190,7 @@ export default function CheckoutPage() {
 
         if (success) {
           localStorage.removeItem("checkoutForm");
-          clearCart();
+          PurchaseTracker(cart, total);
           router.push(
             `/payment-success/success?orderNumber=${result.data.reference}&amount=${Subtotal}`,
           );
@@ -285,7 +286,7 @@ export default function CheckoutPage() {
       const success = await placeOrder(cart, orderData, setLoading, setError);
       if (success) {
         localStorage.removeItem("checkoutForm");
-        clearCart();
+        PurchaseTracker(cart, total);
         if (form.paymentMethod === "pay on delivery") {
           router.push(
             `/payment-success/success?orderNumber=${orderData.orderNumber}&amount=${Subtotal}&paymentMethod=pay on delivery`,
